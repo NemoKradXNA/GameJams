@@ -19,7 +19,6 @@ namespace Geopoiesis.Models
         public Effect effect { get; set; }
         string _effectAsset;
         VertexPositionColorNormalTextureTangent[] vertexArray;
-        VertexBuffer vb;
 
         public GeometryBase(Game game, string effectAsset) : base(game)
         {
@@ -35,8 +34,6 @@ namespace Geopoiesis.Models
 
         protected void SetVertexBuffer()
         {
-            vb = new VertexBuffer(Game.GraphicsDevice, typeof(VertexPositionColorNormalTextureTangent), meshData.Vertices.Count, BufferUsage.None);
-
             vertexArray = new VertexPositionColorNormalTextureTangent[meshData.Vertices.Count];
 
             if (meshData.Tangents.Count != meshData.Vertices.Count)
@@ -44,8 +41,6 @@ namespace Geopoiesis.Models
 
             for (int v = 0; v < meshData.Vertices.Count; v++)
                 vertexArray[v] = new VertexPositionColorNormalTextureTangent(meshData.Vertices[v], meshData.Normals[v], meshData.Tangents[v], meshData.TextCoords[v], meshData.Colors[v]);
-            
-            vb.SetData(vertexArray);
         }
 
         public void CalculateNormals()
@@ -139,15 +134,14 @@ namespace Geopoiesis.Models
         {
             if (vertexArray != null)
             {
-                Game.GraphicsDevice.SetVertexBuffer(vb);
                 int pCnt = effect.CurrentTechnique.Passes.Count;
 
                 for (int p = 0; p < pCnt; p++)
-                {
-                    effect.CurrentTechnique.Passes[p].Apply();
+                {                  
 
                     effect.Parameters["world"].SetValue(Transform.World);
                     effect.Parameters["wvp"].SetValue(Transform.World * Camera.View * Camera.Projection);
+                    effect.CurrentTechnique.Passes[p].Apply();
 
                     Game.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertexArray, 0, meshData.Vertices.Count, meshData.Indicies.ToArray(), 0, meshData.Indicies.Count / 3);
 

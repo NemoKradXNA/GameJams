@@ -7,6 +7,7 @@ using Geopoiesis.Services.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections;
 
 /// <summary>
@@ -57,6 +58,7 @@ namespace Geopoiesis
         SpriteFont testFont;
         SpriteFont debugFont;
         PlanetGeometry planet;
+        ParticleEmitter pet;
         Cube cube;
 
         protected float DisplacementMag = 0;
@@ -102,10 +104,37 @@ namespace Geopoiesis
             planet.Transform.Position = new Vector3(0, 0, -15);
             Components.Add(planet);
 
+            // Make sure all particle emitters are added last...
+            pet = new ParticleEmitter(this);
+            Components.Add(pet);
+
             base.Initialize();
 
             initialRasterizerState = GraphicsDevice.RasterizerState;
             currentRasterizerState = initialRasterizerState;
+
+            // particle test..
+            int totalParticles = 1000;
+            int volumeSize = 100;
+            Random rnd = new Random(1971);
+            Vector3 v = Vector3.Zero;
+            Texture2D t = null;
+
+            
+            for (int p = 0; p < totalParticles; p++)
+            {
+
+                float x = rnd.Next(-volumeSize / 2, volumeSize / 2);
+                float y = rnd.Next(-volumeSize / 2, volumeSize / 2);
+                float z = rnd.Next(-volumeSize / 2, volumeSize / 2);
+
+                v = new Vector3(x, y, z);
+                int i = rnd.Next(6);
+
+                t = Content.Load<Texture2D>($"Textures/Particles/flare{i}");
+
+                pet.AddParticle(v, Vector3.One * .25f, t, Color.White);
+            }
         }
 
         protected override void LoadContent()
