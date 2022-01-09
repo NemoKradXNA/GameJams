@@ -92,8 +92,12 @@ namespace Geopoiesis
             kbManager = new KeyboardStateManager(this);
             inputHandlerService = new InputHandlerService(this, kbManager);
 
-            camera = new CameraService(this,0.1f,2000f);
+            SkyBox skyBox = new SkyBox(this, "Shaders/SkyBox");
+            Components.Add(skyBox);
+
+            camera = new CameraService(this,0.1f,20000f);
             camera.ClearColor = Color.Black;
+            camera.Transform.Position = new Vector3(0, 0, 500);
 
 
             cube = new Cube(this, "Shaders/basic");
@@ -101,7 +105,7 @@ namespace Geopoiesis
             Components.Add(cube);
 
             planet = new PlanetGeometry(this, "Shaders/ShaderColor");
-            planet.Transform.Position = new Vector3(0, 0, -15);
+            planet.Transform.Position = new Vector3(0, 0, 0);
             Components.Add(planet);
 
             // Make sure all particle emitters are added last...
@@ -135,6 +139,8 @@ namespace Geopoiesis
 
                 pet.AddParticle(v, Vector3.One * .25f, t, Color.White);
             }
+
+            coroutineService.StartCoroutine(WaitForPlanetBuild());
         }
 
         protected override void LoadContent()
@@ -205,7 +211,12 @@ namespace Geopoiesis
             if (kbManager.KeyDown(Keys.I))
                 _MinHill = MathHelper.Min(1, _MinHill + dmod);
             if (kbManager.KeyDown(Keys.O))
-                _MinHill = MathHelper.Max(0, _MinHill - dmod);            
+                _MinHill = MathHelper.Max(0, _MinHill - dmod);
+
+            if (kbManager.KeyPress(Keys.F2))
+                planet.SetLODLevel(planet.LodLevel + 1);
+            if (kbManager.KeyPress(Keys.F3))
+                planet.SetLODLevel(planet.LodLevel - 1);
 
 
             // Change values in the planet's shader.
@@ -232,6 +243,36 @@ namespace Geopoiesis
 
             inputHandlerService.PreUpdate(gameTime);
             base.Update(gameTime);
+        }
+
+        IEnumerator WaitForPlanetBuild()
+        {
+            while (!planet.Generated)
+            {
+                yield return new WaitForEndOfFrame(this);
+            }
+
+            float d = Vector3.Distance(planet.Transform.Position, camera.Transform.Position);
+            float distToPlanetTarget = 10;
+            float zoomLag = 1 - (distToPlanetTarget / d);
+            float speed = 1;
+
+            while (d > distToPlanetTarget)
+            {
+                d = Vector3.Distance(planet.Transform.Position, camera.Transform.Position);
+                zoomLag = 1 - (distToPlanetTarget / d);
+
+                Vector3 dir = planet.Transform.Position - camera.Transform.Position;
+                dir.Normalize();
+                
+                camera.Transform.Translate(dir * speed * zoomLag);
+                
+                yield return new WaitForEndOfFrame(this);
+
+                if (d - distToPlanetTarget < .025f)
+                    break;
+            }
+            yield return new WaitForEndOfFrame(this);
         }
 
         protected override void Draw(GameTime gameTime)
@@ -282,7 +323,11 @@ namespace Geopoiesis
             textPos.Y += testFont.LineSpacing;
             DrawSring($"I/O = _MinHill [{_MinHill}]", textPos, Color.Gold, testFont);
             textPos.Y += testFont.LineSpacing;
-
+            if (planet.Generated)
+            {
+                DrawSring($"F2/F3 = LOD [{planet.LodLevel+1}] ({planet.LodSizes[planet.LodLevel]})", textPos, Color.Gold, testFont);
+                textPos.Y += testFont.LineSpacing;
+            }
 
             // Render planet cube map.
 

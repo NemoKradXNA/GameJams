@@ -130,6 +130,13 @@ namespace Geopoiesis.Models
             base.Update(gameTime);
         }
 
+        public virtual void SetEffectParamters()
+        {
+
+            effect.Parameters["world"].SetValue(Transform.World);
+            effect.Parameters["wvp"].SetValue(Transform.World * Camera.View * Camera.Projection);
+        }
+
         public override void Draw(GameTime gameTime)
         {
             if (vertexArray != null)
@@ -137,12 +144,9 @@ namespace Geopoiesis.Models
                 int pCnt = effect.CurrentTechnique.Passes.Count;
 
                 for (int p = 0; p < pCnt; p++)
-                {                  
-
-                    effect.Parameters["world"].SetValue(Transform.World);
-                    effect.Parameters["wvp"].SetValue(Transform.World * Camera.View * Camera.Projection);
+                {
+                    SetEffectParamters();
                     effect.CurrentTechnique.Passes[p].Apply();
-
                     Game.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertexArray, 0, meshData.Vertices.Count, meshData.Indicies.ToArray(), 0, meshData.Indicies.Count / 3);
 
                 }

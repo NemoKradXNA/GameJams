@@ -114,7 +114,7 @@ namespace Geopoiesis.Models.Planet
 
             //if (faceHeightMap == null)
             {
-                WriteToDebug("Building face mesh data...");
+                //WriteToDebug("Building face mesh data...");
                 faceHeightMap = new Texture2D(_game.GraphicsDevice, CubeSize, CubeSize, false, SurfaceFormat.Color);
 
                 faceNormalMap = new Texture2D(_game.GraphicsDevice, CubeSize, CubeSize, false, SurfaceFormat.Color);
@@ -199,7 +199,7 @@ namespace Geopoiesis.Models.Planet
                     }
                 }
 
-                WriteToDebug("Height and normal map map generated.");
+                //WriteToDebug("Height and normal map map generated.");
                 faceHeightMap.SetData(col);
 
                 faceNormalMap.SetData(nc);
@@ -207,7 +207,7 @@ namespace Geopoiesis.Models.Planet
 
             vh = h - 1;
 
-            WriteToDebug("Building mesh data map...");
+            //WriteToDebug("Building mesh data map...");
 
             for (float x = -h; x < h; x++)
             {
@@ -270,7 +270,7 @@ namespace Geopoiesis.Models.Planet
 
             //faceNormalMap.SetData(nc);
 
-            WriteToDebug("Building index map...");
+            //WriteToDebug("Building index map...");
             // Build triangles. 
             for (int x = 0; x < Dimension - 1; x++)
             {
@@ -289,7 +289,7 @@ namespace Geopoiesis.Models.Planet
 
             yield return new WaitForEndOfFrame(_game);
 
-            WriteToDebug("Face done.");
+            //WriteToDebug("Face done.");
         }
     }
 }
