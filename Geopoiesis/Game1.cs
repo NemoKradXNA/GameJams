@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 /// <summary>
 /// geopoiesis
@@ -52,6 +53,8 @@ namespace Geopoiesis
         protected IKeyboardStateManager kbManager;
         protected ICameraService camera;
 
+        protected GeopoiesisService geopoiesisService;
+
         protected RasterizerState initialRasterizerState;
         protected RasterizerState currentRasterizerState;
 
@@ -61,12 +64,22 @@ namespace Geopoiesis
         ParticleEmitter pet;
         Cube cube;
 
-        protected float DisplacementMag = 0;
+        protected float DisplacementMag = .5f;
         float _MinDeepSeaDepth = .07f;
         float _MinSeaDepth = .4f;
         float _MinShoreDepth = .42f;
         float _MinLand = .55f;
         float _MinHill = .7f;
+
+        Dictionary<float, int> LODSettings = new Dictionary<float, int>()
+        {
+            { 500, 7 },
+            { 300, 6 },
+            { 200, 5 },
+            { 100, 4 },
+            { 50, 3 },
+            { 25, 2 },
+        };
 
         public Game1()
         {
@@ -89,6 +102,7 @@ namespace Geopoiesis
         {
             noiseService = new KeijiroPerlinService(this);
             coroutineService = new CoroutineService(this);
+            geopoiesisService = new GeopoiesisService(this);
             kbManager = new KeyboardStateManager(this);
             inputHandlerService = new InputHandlerService(this, kbManager);
 
@@ -100,9 +114,9 @@ namespace Geopoiesis
             camera.Transform.Position = new Vector3(0, 0, 500);
 
 
-            cube = new Cube(this, "Shaders/basic");
-            cube.Transform.Position = new Vector3(-3, 0, -10);
-            Components.Add(cube);
+            //cube = new Cube(this, "Shaders/basic");
+            //cube.Transform.Position = new Vector3(-3, 0, -10);
+            //Components.Add(cube);
 
             planet = new PlanetGeometry(this, "Shaders/ShaderColor");
             planet.Transform.Position = new Vector3(0, 0, 0);
@@ -110,7 +124,7 @@ namespace Geopoiesis
 
             // Make sure all particle emitters are added last...
             pet = new ParticleEmitter(this);
-            Components.Add(pet);
+            //Components.Add(pet);
 
             base.Initialize();
 
@@ -141,6 +155,7 @@ namespace Geopoiesis
             }
 
             coroutineService.StartCoroutine(WaitForPlanetBuild());
+            coroutineService.StartCoroutine(StartGame());
         }
 
         protected override void LoadContent()
@@ -177,7 +192,7 @@ namespace Geopoiesis
             if (kbManager.KeyDown(Keys.Left))
                 camera.Transform.Rotate(Vector3.Up, rotateSpeed);
 
-            //planet.Transform.Rotate(Vector3.Up, .01f);
+            planet.Transform.Rotate(Vector3.Up, .001f);
 
             if (kbManager.KeyPress(Keys.F1))
                 camera.RenderWireFrame = !camera.RenderWireFrame;
@@ -269,10 +284,28 @@ namespace Geopoiesis
                 
                 yield return new WaitForEndOfFrame(this);
 
+                foreach (float key in LODSettings.Keys) 
+                {
+                    if (d <= key && planet.LodLevel != LODSettings[key])
+                        planet.SetLODLevel(LODSettings[key]);
+                }
+                
+
                 if (d - distToPlanetTarget < .025f)
                     break;
             }
             yield return new WaitForEndOfFrame(this);
+        }
+
+        // Needs to be part of scene manager (thegame scene)
+        IEnumerator StartGame()
+        {
+            while (!planet.Generated)
+            {
+                yield return new WaitForEndOfFrame(this);
+            }
+
+            geopoiesisService.StartTheMarchOfTime();
         }
 
         protected override void Draw(GameTime gameTime)
@@ -328,6 +361,12 @@ namespace Geopoiesis
                 DrawSring($"F2/F3 = LOD [{planet.LodLevel+1}] ({planet.LodSizes[planet.LodLevel]})", textPos, Color.Gold, testFont);
                 textPos.Y += testFont.LineSpacing;
             }
+
+            DrawSring($"Time: [{geopoiesisService.Years, 0:###,###,###,0} years]", textPos, Color.Gold, testFont);
+            textPos.Y += testFont.LineSpacing;
+            DrawSring($"Epoch: [{geopoiesisService.CurrentEpoch}]", textPos, Color.Gold, testFont);
+            textPos.Y += testFont.LineSpacing;
+
 
             // Render planet cube map.
 
