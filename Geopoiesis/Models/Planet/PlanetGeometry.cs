@@ -32,13 +32,15 @@ namespace Geopoiesis.Models.Planet
 
         public int FaceDimensions = 2;
         public float Radius = 2;
-        public float NoiseMod = 4.8f;
+        public float NoiseMod = 1.25f;
         public int CubeSize = 32;
         public float DisplaceMesh = 0f;
         public int LodLevel = 8;
         public int MaxLodLevel = 8;
 
         public bool Generated = false;
+
+        public int Seed = 1971;
 
         List<MeshData> lodMeshData = new List<MeshData>();
         public List<int> LodSizes = new List<int>();
@@ -72,6 +74,7 @@ namespace Geopoiesis.Models.Planet
                     //if (Faces[idx] == null)
                         Faces[idx] = new PlanetFace(Game, Transform.Position, n, FaceDimensions, Radius, NoiseMod, CubeSize, FaceMap, DisplaceMesh);
 
+                    Faces[idx].Seed = Seed;
                     //WriteToDebug($"Building Face [{n}] mesh data...");
                     yield return coroutineService.StartCoroutine(Faces[idx].BuildMesh(Debug));
 

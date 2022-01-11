@@ -28,9 +28,13 @@ namespace Geopoiesis.Models.Planet
 
         protected Random rnd;
 
+        public int Seed { get; set; }
+
         public PlanetFace(Game game) 
-        { 
-            Normal = Vector3.Backward; Dimension = 20;
+        {
+            Seed = 1;
+            Normal = Vector3.Backward; 
+            Dimension = 20;
 
             _game = game;
             rnd = new Random();
@@ -162,7 +166,8 @@ namespace Geopoiesis.Models.Planet
                                 py = (faceHeightMap.Height - 1) - py;
                         }
 
-                        float p = Get3DPerlinValue(cubeV * NoiseMod);
+                        Vector3 nV = cubeV + (Vector3.One * Seed);
+                        float p = Get3DPerlinValue(nV * NoiseMod);
 
                         // Move p from -1 - 1 to 0 - 1
                         p = (p + 1) * .5f;

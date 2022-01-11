@@ -22,5 +22,7 @@ namespace Geopoiesis.Interfaces
         Texture2D faceNormalMap { get; set; }
         MeshData meshData { get; set; }
         IEnumerator BuildMesh(List<string> debug);
+
+        int Seed { get; set; }
     }
 }
