@@ -81,6 +81,7 @@ namespace Geopoiesis
             { 25, 2 },
         };
 
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -120,7 +121,13 @@ namespace Geopoiesis
 
             planet = new PlanetGeometry(this, "Shaders/ShaderColor");
             planet.Transform.Position = new Vector3(0, 0, 0);
+            
             Components.Add(planet);
+
+            Atmosphere atmos = new Atmosphere(this, "Shaders/AtmosShader");
+            atmos.Transform.Scale = Vector3.One * 4.25f;
+            //atmos.Transform.Parent = planet.Transform;
+            Components.Add(atmos);
 
             // Make sure all particle emitters are added last...
             pet = new ParticleEmitter(this);
@@ -193,6 +200,7 @@ namespace Geopoiesis
                 camera.Transform.Rotate(Vector3.Up, rotateSpeed);
 
             planet.Transform.Rotate(Vector3.Up, .001f);
+            
 
             if (kbManager.KeyPress(Keys.F1))
                 camera.RenderWireFrame = !camera.RenderWireFrame;
@@ -373,6 +381,7 @@ namespace Geopoiesis
 
             _spriteBatch.End();
 
+            GraphicsDevice.BlendState = BlendState.Opaque;
             GraphicsDevice.RasterizerState = currentRasterizerState;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
         }
