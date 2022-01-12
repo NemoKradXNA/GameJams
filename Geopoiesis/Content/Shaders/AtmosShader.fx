@@ -69,7 +69,7 @@ vOut VertexShaderFunction(vIn input)
 
 
 	output.pos = mul(input.pos, wvp);
-    output.normal = input.normal;
+    output.normal = normalize(float3(0,0,0) - input.pos.xyz);
 	
 	
 	return output;
@@ -81,7 +81,7 @@ float4 PixelShaderFunction(vOut input) : COLOR
 
     float n = dot(input.normal, -lightDirection);
 	
-	col = lerp(float3(1,.5,.2), lightColor, n);
+	col = lerp(float3(1,.5,.2), lightColor, n) * .5;
 
     return float4(col, n);
 }
