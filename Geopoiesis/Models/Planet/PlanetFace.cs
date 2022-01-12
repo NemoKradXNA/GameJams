@@ -22,6 +22,7 @@ namespace Geopoiesis.Models.Planet
 
         public Texture2D faceHeightMap { get; set; }
         public Texture2D faceNormalMap { get; set; }
+        public Texture2D faceSplatMap { get; set; }
         public MeshData meshData { get; set; }
 
         protected Game _game;
@@ -112,6 +113,7 @@ namespace Geopoiesis.Models.Planet
             float ch = 0;
             Color[] col;
             Color[] nc;
+            Color[] sc;
 
             float vh;
 
@@ -120,14 +122,15 @@ namespace Geopoiesis.Models.Planet
             {
                 //WriteToDebug("Building face mesh data...");
                 faceHeightMap = new Texture2D(_game.GraphicsDevice, CubeSize, CubeSize, false, SurfaceFormat.Color);
-
                 faceNormalMap = new Texture2D(_game.GraphicsDevice, CubeSize, CubeSize, false, SurfaceFormat.Color);
+                faceSplatMap = new Texture2D(_game.GraphicsDevice, CubeSize, CubeSize, false, SurfaceFormat.Color);
 
                 ch = faceHeightMap.Width * .5f;
                 col = new Color[faceHeightMap.Width * faceHeightMap.Height];
                 vh = h - 1;
 
                 nc = new Color[faceNormalMap.Width * faceNormalMap.Height];
+                sc = new Color[faceSplatMap.Width * faceSplatMap.Height];
 
                 float randomOffset = rnd.Next();
 
@@ -201,13 +204,34 @@ namespace Geopoiesis.Models.Planet
 
                         nc[px + py * faceNormalMap.Width] = new Color(normal.X, normal.Y, normal.Z, 1);
 
+
+                        // Calculate splat map values.
+                        float r, g, b, a;
+
+                        r = g = b = a = 0;
+                        if (p < .1f)
+                            r = 1;
+                        if (p >= .1f && p < .3f)
+                            g = 1;
+                        if (p >= .3f && p < .7f)
+                            b = 1;
+                        if (p >= .7f)
+                            a = 1;
+
+                        if (Math.Abs(Vector3.Dot(Vector3.Left, normal)) > .6f)
+                            r = 1;
+
+                        if (Math.Abs(Vector3.Dot(Vector3.Left, normal)) <= .01f)
+                            b = 1;
+
+                        sc[px + py * faceSplatMap.Width] = new Color(r, g, b, a);
                     }
                 }
 
                 //WriteToDebug("Height and normal map map generated.");
                 faceHeightMap.SetData(col);
-
                 faceNormalMap.SetData(nc);
+                faceSplatMap.SetData(sc);
             }
 
             vh = h - 1;

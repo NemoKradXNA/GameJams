@@ -73,7 +73,7 @@ namespace Geopoiesis.Models
 
             effect.Parameters["EyePosition"].SetValue(Camera.Transform.Position);
             effect.Parameters["lightDirection"].SetValue(Vector3.Forward);
-            effect.Parameters["lightColor"].SetValue(Color.SkyBlue.ToVector3());
+            effect.Parameters["lightColor"].SetValue(Color.Azure.ToVector3());
             effect.Parameters["lightBrightnes"].SetValue(lightBrightnes_Offset);
 
 

@@ -81,7 +81,9 @@ float4 PixelShaderFunction(vOut input) : COLOR
 
     float n = dot(input.normal, -lightDirection);
 	
-    return float4(col * n, n);
+	col = lerp(float3(1,.5,.2), lightColor, n);
+
+    return float4(col, n);
 }
 
 

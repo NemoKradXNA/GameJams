@@ -9,10 +9,12 @@ using System.Text;
 
 namespace Geopoiesis.Models.Planet
 {
+    // http://spiralgraphics.biz/packs/planet/index.htm
     public class PlanetGeometry : GeometryBase
     {
         ICoroutineService coroutineService { get { return Game.Services.GetService<ICoroutineService>(); } }
         public TextureCube CubeHeightMap { get; set; }
+        public TextureCube CubeNormalMap { get; set; }
         public TextureCube CubeSplatMap { get; set; }
         public List<Texture2D> FaceTextures { get; set; }
 
@@ -94,37 +96,48 @@ namespace Geopoiesis.Models.Planet
                         Color[] np = new Color[CubeSize * CubeSize];
                         Faces[idx].faceNormalMap.GetData(np);
 
+                        Color[] sp = new Color[CubeSize * CubeSize];
+                        Faces[idx].faceSplatMap.GetData(sp);
+
                         if (n == Vector3.Left)
                         {
                             CubeHeightMap.SetData(CubeMapFace.NegativeX, p);
-                            CubeSplatMap.SetData(CubeMapFace.NegativeX, np);
+                            CubeNormalMap.SetData(CubeMapFace.NegativeX, np);
+                            CubeSplatMap.SetData(CubeMapFace.NegativeX, sp);
                         }
+
                         if (n == Vector3.Right)
                         {
                             CubeHeightMap.SetData(CubeMapFace.PositiveX, p);
-                            CubeSplatMap.SetData(CubeMapFace.PositiveX, np);
+                            CubeNormalMap.SetData(CubeMapFace.PositiveX, np);
+                            CubeSplatMap.SetData(CubeMapFace.PositiveX, sp);
                         }
 
                         if (n == Vector3.Up)
                         {
                             CubeHeightMap.SetData(CubeMapFace.PositiveY, p);
-                            CubeSplatMap.SetData(CubeMapFace.PositiveY, np);
+                            CubeNormalMap.SetData(CubeMapFace.PositiveY, np);
+                            CubeSplatMap.SetData(CubeMapFace.PositiveY, sp);
                         }
                         if (n == Vector3.Down)
                         {
                             CubeHeightMap.SetData(CubeMapFace.NegativeY, p);
-                            CubeSplatMap.SetData(CubeMapFace.NegativeY, np);
+                            CubeNormalMap.SetData(CubeMapFace.NegativeY, np);
+                            CubeSplatMap.SetData(CubeMapFace.NegativeY, sp);
                         }
 
                         if (n == Vector3.Forward)
                         {
                             CubeHeightMap.SetData(CubeMapFace.PositiveZ, p);
-                            CubeSplatMap.SetData(CubeMapFace.PositiveZ, np);
+                            CubeNormalMap.SetData(CubeMapFace.PositiveZ, np);
+                            CubeSplatMap.SetData(CubeMapFace.PositiveZ, sp);
                         }
+
                         if (n == Vector3.Backward)
                         {
                             CubeHeightMap.SetData(CubeMapFace.NegativeZ, p);
-                            CubeSplatMap.SetData(CubeMapFace.NegativeZ, np);
+                            CubeNormalMap.SetData(CubeMapFace.NegativeZ, np);
+                            CubeSplatMap.SetData(CubeMapFace.NegativeZ, sp);
                         }
                     }
                 }
@@ -149,6 +162,7 @@ namespace Geopoiesis.Models.Planet
             WriteToDebug("GenerateFaces...");
 
             CubeHeightMap = new TextureCube(Game.GraphicsDevice, CubeSize, false, SurfaceFormat.Color);
+            CubeNormalMap = new TextureCube(Game.GraphicsDevice, CubeSize, false, SurfaceFormat.Color);
             CubeSplatMap = new TextureCube(Game.GraphicsDevice, CubeSize, false, SurfaceFormat.Color);
 
             if (FaceTextures == null)

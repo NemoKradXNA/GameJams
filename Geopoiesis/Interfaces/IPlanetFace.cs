@@ -19,6 +19,7 @@ namespace Geopoiesis.Interfaces
         float DisplaceMesh { get; set; }
 
         Texture2D faceHeightMap { get; set; }
+        Texture2D faceSplatMap { get; set; }
         Texture2D faceNormalMap { get; set; }
         MeshData meshData { get; set; }
         IEnumerator BuildMesh(List<string> debug);

@@ -61,6 +61,7 @@ namespace Geopoiesis
         SpriteFont testFont;
         SpriteFont debugFont;
         PlanetGeometry planet;
+        Atmosphere atmos;
         ParticleEmitter pet;
         Cube cube;
 
@@ -124,7 +125,7 @@ namespace Geopoiesis
             
             Components.Add(planet);
 
-            Atmosphere atmos = new Atmosphere(this, "Shaders/AtmosShader");
+            atmos = new Atmosphere(this, "Shaders/AtmosShader");
             atmos.Transform.Scale = Vector3.One * 4.25f;
             //atmos.Transform.Parent = planet.Transform;
             Components.Add(atmos);
@@ -200,7 +201,7 @@ namespace Geopoiesis
                 camera.Transform.Rotate(Vector3.Up, rotateSpeed);
 
             planet.Transform.Rotate(Vector3.Up, .001f);
-            
+            atmos.Transform.Scale = (Vector3.One * 4.25f) + (Vector3.One * (planet.Radius*.8f) * DisplacementMag); 
 
             if (kbManager.KeyPress(Keys.F1))
                 camera.RenderWireFrame = !camera.RenderWireFrame;
