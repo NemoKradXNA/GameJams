@@ -120,7 +120,7 @@ namespace Geopoiesis
             //cube.Transform.Position = new Vector3(-3, 0, -10);
             //Components.Add(cube);
 
-            planet = new PlanetGeometry(this, "Shaders/ShaderColor");
+            planet = new PlanetGeometry(this, "Shaders/PlanetSplatMap");
             planet.Transform.Position = new Vector3(0, 0, 0);
             
             Components.Add(planet);

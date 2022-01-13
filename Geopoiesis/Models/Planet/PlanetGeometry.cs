@@ -9,7 +9,8 @@ using System.Text;
 
 namespace Geopoiesis.Models.Planet
 {
-    // http://spiralgraphics.biz/packs/planet/index.htm
+    
+    //https://3dtextures.me/2021/05/28/rock-042/
     public class PlanetGeometry : GeometryBase
     {
         ICoroutineService coroutineService { get { return Game.Services.GetService<ICoroutineService>(); } }
@@ -194,6 +195,12 @@ namespace Geopoiesis.Models.Planet
         {
             if (effect.Parameters["heightTexture"] != null)
                 effect.Parameters["heightTexture"].SetValue(CubeHeightMap);
+
+            if (effect.Parameters["splatTexture"] != null)
+                effect.Parameters["splatTexture"].SetValue(CubeSplatMap);
+
+            if (effect.Parameters["splatTexture"] != null)
+                effect.Parameters["splatTexture"].SetValue(CubeNormalMap);
 
             base.Draw(gameTime);
         }
