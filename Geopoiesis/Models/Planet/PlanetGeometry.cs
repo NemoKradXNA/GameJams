@@ -45,6 +45,8 @@ namespace Geopoiesis.Models.Planet
 
         public int Seed = 1971;
 
+        public Vector3 LightDirection { get; set; }
+
         List<MeshData> lodMeshData = new List<MeshData>();
         public List<int> LodSizes = new List<int>();
 
@@ -199,8 +201,20 @@ namespace Geopoiesis.Models.Planet
             if (effect.Parameters["splatTexture"] != null)
                 effect.Parameters["splatTexture"].SetValue(CubeSplatMap);
 
-            if (effect.Parameters["splatTexture"] != null)
-                effect.Parameters["splatTexture"].SetValue(CubeNormalMap);
+            if (effect.Parameters["normalTexture"] != null)
+                effect.Parameters["normalTexture"].SetValue(CubeNormalMap);
+
+            if (effect.Parameters["lightDirection"] != null)
+                effect.Parameters["lightDirection"].SetValue(LightDirection);
+
+            if (effect.Parameters["sandTexture"] != null)
+                effect.Parameters["sandTexture"].SetValue(Game.Content.Load<Texture2D>("Textures/Terrain/Sand_005_baseColor"));
+            if (effect.Parameters["grassTexture"] != null)
+                effect.Parameters["grassTexture"].SetValue(Game.Content.Load<Texture2D>("Textures/Terrain/foliage"));
+            if (effect.Parameters["rockTexture"] != null)
+                effect.Parameters["rockTexture"].SetValue(Game.Content.Load<Texture2D>("Textures/Terrain/Rock_042_BaseColor"));
+            if (effect.Parameters["snowTexture"] != null)
+                effect.Parameters["snowTexture"].SetValue(Game.Content.Load<Texture2D>("Textures/Terrain/snow"));
 
             base.Draw(gameTime);
         }

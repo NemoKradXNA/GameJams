@@ -29,6 +29,7 @@ namespace Geopoiesis.Models
         string _effectAsset;
         protected Effect effect;
 
+        public Vector3 LightDirection { get; set; }
 
         protected Model mesh;
         protected Matrix[] transforms;
@@ -72,7 +73,7 @@ namespace Geopoiesis.Models
             effect.Parameters["wvp"].SetValue(meshWorld * Camera.View * Camera.Projection);
 
             effect.Parameters["EyePosition"].SetValue(Camera.Transform.Position);
-            effect.Parameters["lightDirection"].SetValue(Vector3.Forward);
+            effect.Parameters["lightDirection"].SetValue(LightDirection);
             effect.Parameters["lightColor"].SetValue(Color.Azure.ToVector3());
             effect.Parameters["lightBrightnes"].SetValue(lightBrightnes_Offset);
 

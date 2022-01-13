@@ -13,6 +13,7 @@ float4x4 itw : WorldInverseTranspose;
 float4x4 lightViewProjection : LightViewProjection;
 
 float displacemntMag = 1;
+float3 lightDirection;
 
 float _MinDeepSeaDepth = 0;
 float _MinSeaDepth = .241f;
@@ -47,6 +48,61 @@ samplerCUBE splatMapSampler = sampler_state
     MagFilter = Linear;
     AddressU = Clamp;
     AddressV = Clamp;
+};
+
+texture normalTexture;
+
+samplerCUBE normalMapSampler = sampler_state
+{
+    Texture = (normalTexture);
+    MinFilter = Linear;
+    MagFilter = Linear;
+    AddressU = Clamp;
+    AddressV = Clamp;
+};
+
+texture sandTexture;
+
+sampler2D sandSampler = sampler_state
+{
+    Texture = (sandTexture);
+    MinFilter = Linear;
+    MagFilter = Linear;
+    AddressU = Wrap;
+    AddressV = Wrap;
+};
+
+texture grassTexture;
+
+sampler2D grassSampler = sampler_state
+{
+    Texture = (grassTexture);
+    MinFilter = Linear;
+    MagFilter = Linear;
+    AddressU = Wrap;
+    AddressV = Wrap;
+};
+
+texture rockTexture;
+
+sampler2D rockSampler = sampler_state
+{
+    Texture = (rockTexture);
+    MinFilter = Linear;
+    MagFilter = Linear;
+    AddressU = Wrap;
+    AddressV = Wrap;
+};
+
+texture snowTexture;
+
+sampler2D snowSampler = sampler_state
+{
+    Texture = (snowTexture);
+    MinFilter = Linear;
+    MagFilter = Linear;
+    AddressU = Wrap;
+    AddressV = Wrap;
 };
 
 struct vIn
@@ -84,6 +140,8 @@ vOut VertexShaderFunction(vIn input)
     output.normal = input.normal;
     output.texCoords = input.texCoords;  
     output.tangent = input.tangent;
+    
+    
     output.color = input.color;
     
     return output;
@@ -92,26 +150,31 @@ vOut VertexShaderFunction(vIn input)
 PixelShaderOutput PixelShaderFunction(vOut input) : Color
 {
     PixelShaderOutput output = (PixelShaderOutput) 0;
-
-    /*float r = texCUBE(heightMapSampler, input.normal).r;
     
-    float4 col = 0;
 
-    if (r <= _MinSeaDepth)
-        col = lerp(_DeepSea, _Sea, (r - _MinDeepSeaDepth) / _MinSeaDepth);
-    else if (r <= _MinShoreDepth)
-        col = lerp(_Sea, _Shore, (r - _MinSeaDepth) / _MinShoreDepth);
-    else if (r < _MinLand)
-        col = _Land;
-    else if (r < _MinHill)
-        col = _Hills;
-    else
-        col = _SnowCap;
+    float3 n = texCUBE(normalMapSampler, input.normal);
     
-    */
+    float3 lightVector = normalize(-lightDirection);    
+    float NdL = saturate(dot(input.normal, -lightVector)) + .125f;
 
-    float4 col = texCUBE(splatMapSampler, input.normal);
-    output.Color = col;
+    
+    float4 splat = texCUBE(splatMapSampler, input.normal);
+    
+    float4 sand = tex2D(sandSampler, input.texCoords * 3);
+    float4 grass = tex2D(grassSampler, input.texCoords * 3);
+    float4 rock = tex2D(rockSampler, input.texCoords * 3);
+    float4 snow = tex2D(snowSampler, input.texCoords * 3);
+    
+    float4x4 col = 0;
+    col[0] = sand;
+    col[1] = grass;
+    col[2] = rock;
+    col[3] = snow;
+    
+    output.Color = mul(splat, col) * NdL;
+    
+    output.Color = float4(n, 1);
+    
     return output;
 }
 

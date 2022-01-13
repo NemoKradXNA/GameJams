@@ -210,13 +210,15 @@ namespace Geopoiesis.Models.Planet
 
                         // Calc normal map
                         Vector3 pos = cubeV;
+
                         float nh = col[Math.Min(faceHeightMap.Width - 1, px + 1) + py * faceHeightMap.Width].R / 255f;
-                        Vector3 lN = new Vector3(x + 1, ch - 1, y) + (Vector3.One * nh);
+
+                        Vector3 lN = new Vector3(x + 1, ch - 1, y) + (Vector3.One * .5f);                        
                         lN.Normalize();
                         lN = Vector3.Transform(lN, cubeRot) + RootPosition;
 
                         nh = col[px + Math.Max(faceHeightMap.Height - 1, py - 1) * faceHeightMap.Width].R / 255f;
-                        Vector3 bN = new Vector3(x, ch - 1, y - 1) + (Vector3.One * nh);
+                        Vector3 bN = new Vector3(x, ch - 1, y - 1) + (Vector3.One * .5f);                        
                         bN.Normalize();
                         bN = Vector3.Transform(bN, cubeRot) + RootPosition;
 
@@ -224,43 +226,43 @@ namespace Geopoiesis.Models.Planet
                         //lN.Y = Get3DPerlinValue(lN) * 10;
                         //bN.Y = Get3DPerlinValue(bN) * 10;
 
+                        //lN.Y += col[Math.Min(faceHeightMap.Width - 1, px + 1) + py * faceHeightMap.Width].R / 255f;
+                        //bN.Y += col[px + Math.Max(faceHeightMap.Height - 1, py - 1) * faceHeightMap.Width].R / 255f;
+
                         Vector3 side1 = (lN - pos);
                         Vector3 side2 = (bN - pos);
-                        Vector3 normal = Vector3.Cross(side1, side2);
+                        Vector3 normal = Vector3.Cross(side2, side1);
                         normal.Normalize();
-
                         normal = (normal + Vector3.One) * .5f;
-                        //normal = (cubeRot * normal);
 
-                        //normal = new Vector3(normal.x, normal.y * Normal.y, normal.z * -1);
+                        //normal = Vector3.Transform(normal, cubeRot) + RootPosition;
 
-                        nc[px + py * faceNormalMap.Width] = new Color(normal.X, normal.Y, normal.Z, 1);
+                        nc[px + py * faceNormalMap.Width] = new Color(normal.X, normal.Y , normal.Z, 1);
 
 
                         // Calculate splat map values.
                         float r, g, b, a;
                         float p = col[px + py * faceHeightMap.Width].R / 255f;
                         r = g = b = a = 0;
-                        if (p < .1f)
+                        if (p < .50f)
                             r = 1;
-                        if (p >= .1f && p < .3f)
+                        if (p >= .50f && p < .7f)
                             g = 1;
-                        if (p >= .3f && p < .7f)
+                        if (p >= .7f && p < .9f)
                             b = 1;
-                        if (p >= .7f)
+                        if (p >= .9f)
                             a = 1;
 
-                        if (Math.Abs(Vector3.Dot(Vector3.Left, normal)) > .6f)
+                        if (Math.Abs(Vector3.Dot(Vector3.Up, normal)) > .6f)
                             r = 1;
 
-                        if (Math.Abs(Vector3.Dot(Vector3.Left, normal)) <= .01f)
-                            b = 1;
+                        //if (Math.Abs(Vector3.Dot(Vector3.Up, normal)) <= .01f)
+                        //    b = 1;
 
                         sc[px + py * faceSplatMap.Width] = new Color(r, g, b, a);
                     }
                 }
 
-                //WriteToDebug("Height and normal map map generated.");
                 faceHeightMap.SetData(col);
                 faceNormalMap.SetData(nc);
                 faceSplatMap.SetData(sc);
@@ -312,9 +314,8 @@ namespace Geopoiesis.Models.Planet
                     v.Normalize();
                     meshData.Normals.Add(v);
 
+                    
                     v = v * (Radius + hm);
-
-
 
                     //v += RootPosition;
                     meshData.Vertices.Add(v);

@@ -200,7 +200,7 @@ namespace Geopoiesis
             if (kbManager.KeyDown(Keys.Left))
                 camera.Transform.Rotate(Vector3.Up, rotateSpeed);
 
-            planet.Transform.Rotate(Vector3.Up, .001f);
+            //planet.Transform.Rotate(Vector3.Up, .001f);
             atmos.Transform.Scale = (Vector3.One * 4.25f) + (Vector3.One * (planet.Radius*.8f) * DisplacementMag); 
 
             if (kbManager.KeyPress(Keys.F1))
@@ -265,9 +265,15 @@ namespace Geopoiesis
             if (planet.effect.Parameters["_MinHill"] != null)
                 planet.effect.Parameters["_MinHill"].SetValue(_MinHill);
 
+
+            planet.LightDirection = ld;
+            atmos.LightDirection = ld;
+
             inputHandlerService.PreUpdate(gameTime);
             base.Update(gameTime);
         }
+
+        Vector3 ld = Vector3.Left;
 
         IEnumerator WaitForPlanetBuild()
         {

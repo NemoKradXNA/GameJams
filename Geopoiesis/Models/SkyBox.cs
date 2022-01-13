@@ -34,6 +34,8 @@ namespace Geopoiesis.Models
                 Vector3.Right,Vector3.Right,Vector3.Right,Vector3.Right,
             };
 
+            meshData.Tangents = new List<Vector3>(meshData.Normals);
+
             meshData.TextCoords = new List<Vector2>()
             {
                 new Vector2(0, 0),new Vector2(1, 0),new Vector2(1, 1),new Vector2(0, 1),
