@@ -327,9 +327,49 @@ namespace Geopoiesis.Scenes
 
             _spriteBatch.End();
 
+            if (hudBorder == null)
+            {
+                hudBorder = CreateBox(Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height, new Rectangle(1,1,1,2), new Color(0, 0, 0, 0), new Color(1, 1, 1, .75f));
+                
+            }
+            // HUD
+            _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
+
+            _spriteBatch.Draw(hudBorder, new Rectangle(0, 0, hudBorder.Width, hudBorder.Height), Color.LimeGreen);
+
+            _spriteBatch.End();
+
             GraphicsDevice.BlendState = BlendState.Opaque;
             GraphicsDevice.RasterizerState = currentRasterizerState;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+        }
+
+        Texture2D hudBorder;
+
+        protected Texture2D CreateBox(int width, int height, Rectangle thickenss, Color bgColor, Color edgeColor)
+        {
+            Texture2D boxTexture = new Texture2D(Game.GraphicsDevice, width, height);
+
+            Color[] c = new Color[width * height];
+
+            Color color = new Color(0, 0, 0, 0);
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    if (x < thickenss.X || x >= width - thickenss.Width || y <  thickenss.Height || y >= height - thickenss.Y)
+                        color = edgeColor;
+                    else
+                        color = bgColor;
+
+                    c[x + y * width] = color;
+                }
+            }
+
+            boxTexture.SetData(c);
+
+            return boxTexture;
         }
 
         protected void DrawSring(string msg, Vector2 position, Color color, SpriteFont font)
