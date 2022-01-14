@@ -36,7 +36,7 @@ namespace Geopoiesis.Models
         protected Matrix meshWorld;
         protected Matrix meshWVP;
 
-        public Atmosphere(Game1 game, string effectAsset) : base(game)
+        public Atmosphere(Game game, string effectAsset) : base(game)
         {
             SkyColor = new Color(84, 107, 148, 255);
             GroundColor = new Color(105, 98, 93, 255);

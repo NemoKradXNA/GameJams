@@ -158,12 +158,27 @@ PixelShaderOutput PixelShaderFunction(vOut input) : Color
     float NdL = saturate(dot(input.normal, -lightVector)) + .125f;
 
     
-    float4 splat = texCUBE(splatMapSampler, input.normal);
-    
+    float4 splat = 0;
+
+    float r = texCUBE(heightMapSampler, input.normal).r;
+
     float4 sand = tex2D(sandSampler, input.texCoords * 3);
     float4 grass = tex2D(grassSampler, input.texCoords * 3);
     float4 rock = tex2D(rockSampler, input.texCoords * 3);
     float4 snow = tex2D(snowSampler, input.texCoords * 3);
+
+    if (r <= _MinSeaDepth)
+        splat.r = .5f;
+    else if (r <= _MinShoreDepth)
+        splat.r = 1;
+    else if (r < _MinLand)
+        splat.g = 1;
+    else if (r < _MinHill)
+        splat.b = 1;
+    else
+        splat.a = 1;
+    
+   
     
     float4x4 col = 0;
     col[0] = sand;
@@ -173,7 +188,7 @@ PixelShaderOutput PixelShaderFunction(vOut input) : Color
     
     output.Color = mul(splat, col) * NdL;
     
-    output.Color = float4(n, 1);
+    //output.Color = float4(n, 1);
     
     return output;
 }

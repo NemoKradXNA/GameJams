@@ -50,7 +50,6 @@ namespace Geopoiesis.Models.Planet
         List<MeshData> lodMeshData = new List<MeshData>();
         public List<int> LodSizes = new List<int>();
 
-        float _lastDisplaceMesh;
 
         public PlanetGeometry(Game game, string effectAsset) : base(game, effectAsset)
         {
@@ -154,10 +153,13 @@ namespace Geopoiesis.Models.Planet
 
         public void SetLODLevel(int lvl)
         {
-            //LodLevel = Math.Min(MaxLodLevel - 1, lvl);
-            LodLevel = Math.Max(0, Math.Min(MaxLodLevel , lvl));
-            meshData = lodMeshData[LodLevel];
-            SetVertexBuffer();
+            if (lodMeshData.Count > lvl)
+            {
+                //LodLevel = Math.Min(MaxLodLevel - 1, lvl);
+                LodLevel = Math.Max(0, Math.Min(MaxLodLevel, lvl));
+                meshData = lodMeshData[LodLevel];
+                SetVertexBuffer();
+            }
         }
 
         public virtual IEnumerator GenerateFaces()
@@ -193,6 +195,8 @@ namespace Geopoiesis.Models.Planet
             SetVertexBuffer();
         }
 
+        protected List<Texture2D> textures = null;
+
         public override void Draw(GameTime gameTime)
         {
             if (effect.Parameters["heightTexture"] != null)
@@ -207,14 +211,34 @@ namespace Geopoiesis.Models.Planet
             if (effect.Parameters["lightDirection"] != null)
                 effect.Parameters["lightDirection"].SetValue(LightDirection);
 
+
+            if (textures == null)
+            {
+                textures = new List<Texture2D>();
+                for (int t = 0; t < 4; t++)
+                    textures.Add(new Texture2D(Game.GraphicsDevice, 1, 1));
+
+                Color[] c = new Color[] { new Color(.2f, .2f, .8f, 1f) };
+                textures[0].SetData(c);
+
+                c = new Color[] { new Color(.4f, .4f, .3f, 1f) };
+                textures[1].SetData(c);
+
+                c = new Color[] { new Color(.8f, .4f, .3f, 1f) };
+                textures[2].SetData(c);
+
+                c = new Color[] { new Color(1f, 1f, 1f, 1f) };
+                textures[3].SetData(c);
+            }
+
             if (effect.Parameters["sandTexture"] != null)
-                effect.Parameters["sandTexture"].SetValue(Game.Content.Load<Texture2D>("Textures/Terrain/Sand_005_baseColor"));
+                effect.Parameters["sandTexture"].SetValue(textures[0]);
             if (effect.Parameters["grassTexture"] != null)
-                effect.Parameters["grassTexture"].SetValue(Game.Content.Load<Texture2D>("Textures/Terrain/foliage"));
+                effect.Parameters["grassTexture"].SetValue(textures[1]);
             if (effect.Parameters["rockTexture"] != null)
-                effect.Parameters["rockTexture"].SetValue(Game.Content.Load<Texture2D>("Textures/Terrain/Rock_042_BaseColor"));
+                effect.Parameters["rockTexture"].SetValue(textures[2]);
             if (effect.Parameters["snowTexture"] != null)
-                effect.Parameters["snowTexture"].SetValue(Game.Content.Load<Texture2D>("Textures/Terrain/snow"));
+                effect.Parameters["snowTexture"].SetValue(textures[3]);
 
             base.Draw(gameTime);
         }
