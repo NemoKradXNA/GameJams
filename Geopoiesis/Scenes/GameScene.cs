@@ -7,6 +7,7 @@ using Geopoiesis.Services;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -20,6 +21,7 @@ namespace Geopoiesis.Scenes
 
         SpriteBatch _spriteBatch;
         SpriteFont testFont;
+        SpriteFont logFont;
         SpriteFont debugFont;
         PlanetGeometry planet;
         ITransform moonAnchor;
@@ -111,6 +113,18 @@ namespace Geopoiesis.Scenes
 
             geopoiesisService.StartType = StartType.G;
 
+            geopoiesisService.OnSystemEventFired -= EventFired;
+            geopoiesisService.OnSystemEventFired += EventFired;
+
+        }
+
+
+        List<SystemEvent> LoggedEvents = new List<SystemEvent>();
+        protected void EventFired(SystemEvent evt)
+        {
+            SystemEvent clone = JsonConvert.DeserializeObject<SystemEvent>(JsonConvert.SerializeObject(evt));
+            clone.YearArrives = geopoiesisService.Years;
+            LoggedEvents.Add(clone);
         }
 
         protected override void LoadContent()
@@ -118,6 +132,7 @@ namespace Geopoiesis.Scenes
             base.LoadContent();
             _spriteBatch = new SpriteBatch(Game.GraphicsDevice);
             testFont = Game.Content.Load<SpriteFont>("SpriteFont/font");
+            logFont = Game.Content.Load<SpriteFont>("SpriteFont/logFont");
             debugFont = Game.Content.Load<SpriteFont>("SpriteFont/debugfont");
         }
 
@@ -163,8 +178,8 @@ namespace Geopoiesis.Scenes
             //moon.Transform.Rotate(Vector3.Up + Vector3.Right, .0025f);
             atmos.Transform.Scale = (Vector3.One * 4.25f) + (Vector3.One * (planet.Radius * .8f) * DisplacementMag);
 
-            //if (kbManager.KeyPress(Keys.F1))
-            //    camera.RenderWireFrame = !camera.RenderWireFrame;
+            if (kbManager.KeyPress(Keys.F1))
+                camera.RenderWireFrame = !camera.RenderWireFrame;
 
             float dmod = .01f;
             if (kbManager.KeyDown(Keys.Q))
@@ -197,14 +212,18 @@ namespace Geopoiesis.Scenes
             //if (kbManager.KeyDown(Keys.O))
             //    _MinHill = MathHelper.Max(0, _MinHill - dmod);
 
-            //if (kbManager.KeyPress(Keys.F2))
-            //    planet.SetLODLevel(planet.LodLevel + 1);
-            //if (kbManager.KeyPress(Keys.F3))
-            //    planet.SetLODLevel(planet.LodLevel - 1);
+            if (kbManager.KeyPress(Keys.F2))
+                planet.SetLODLevel(planet.LodLevel + 1);
+            if (kbManager.KeyPress(Keys.F3))
+                planet.SetLODLevel(planet.LodLevel - 1);
 
 
             if (planet.effect != null)
             {
+
+                if (atmos.effect.Parameters["atmos"] != null)
+                    atmos.effect.Parameters["atmos"].SetValue(geopoiesisService.OZone);
+
                 if (planet.effect.Parameters["res"] != null)
                     planet.effect.Parameters["res"].SetValue(new Vector2(Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height));
 
@@ -258,6 +277,7 @@ namespace Geopoiesis.Scenes
 
         IEnumerator WaitForPlanetBuild()
         {
+            geopoiesisService.FireAnEvent(new SystemEvent() { Title = "Planet Forming!", Description = "There is an eon long swirl of dust and rock...." });
             while (!planet.Generated)
             {
                 yield return new WaitForEndOfFrame(Game);
@@ -292,7 +312,9 @@ namespace Geopoiesis.Scenes
             }
             yield return new WaitForEndOfFrame(Game);
 
-            geopoiesisService.CurrentEpoch = Epoch.PlanetFormed; 
+            geopoiesisService.CurrentEpoch = Epoch.PlanetFormed;
+
+            geopoiesisService.FireAnEvent(new SystemEvent() { Title = "Planet Formed!", Description = "Dust and rock have coalesced into a planet..." });
         }
 
         // Needs to be part of scene manager (thegame scene)
@@ -371,6 +393,8 @@ namespace Geopoiesis.Scenes
                 starBox = CreateBox(256, 256, new Rectangle(1, 1, 1, 1), new Color(0, 0, 0, a), new Color(1, 1, 1, .75f));
                 pixel = CreateBox(1, 1, new Rectangle(1, 1, 1, 1), Color.Transparent, new Color(1, 1, 1, .75f));
                 statBox = CreateBox(256, testFont.LineSpacing,  new Rectangle(1,1,1,1), new Color(0, 0, 0, a), new Color(1, 1, 1, .75f));
+
+                logBox = CreateBox(512, 780, new Rectangle(1, 1, 1, 1), new Color(0, 0, 0, a), new Color(1, 1, 1, .75f));
             }
             Color hudColor = Color.LimeGreen;
             Color shadowColor = Color.DarkGreen;
@@ -393,29 +417,30 @@ namespace Geopoiesis.Scenes
             p -= testFont.MeasureString(str) * .5f;
             _spriteBatch.DrawString(testFont, str, p, hudColor);
 
+            int l = 32;
             str = "H2O:";
             p = new Vector2(256 + 8 , 8);
             _spriteBatch.DrawString(testFont, str, p, hudColor);
-            _spriteBatch.Draw(statBox, new Rectangle((int)p.X + 64, (int)p.Y, 256, testFont.LineSpacing), hudColor);
+            _spriteBatch.Draw(statBox, new Rectangle((int)p.X + 64 + l, (int)p.Y, 256, testFont.LineSpacing), hudColor);
 
             // Calc stat Value
             SetStatTexutre(geopoiesisService.WaterLevel,Color.DarkBlue, Color.LightBlue);
-            _spriteBatch.Draw(statValue, new Rectangle((int)p.X + 64 + 1, (int)p.Y + 1, 256-1, testFont.LineSpacing-1), Color.White);
+            _spriteBatch.Draw(statValue, new Rectangle((int)p.X + 64 + 1 + l, (int)p.Y + 1, 256-1, testFont.LineSpacing-1), Color.White);
             str = $"{geopoiesisService.WaterLevel * 100, 0:000}";
-            Vector2 pp = new Vector2(p.X + 64 + 128, p.Y + testFont.LineSpacing *.5f);
+            Vector2 pp = new Vector2(p.X + 64 + 128 + l, p.Y + testFont.LineSpacing *.5f);
             pp -= testFont.MeasureString(str) * .5f;
             _spriteBatch.DrawString(testFont, str, pp, hudColor);
 
             str = "O3:";
             p.Y += testFont.LineSpacing;
             _spriteBatch.DrawString(testFont, str, p, hudColor);
-            _spriteBatch.Draw(statBox, new Rectangle((int)p.X + 64, (int)p.Y, 256, testFont.LineSpacing), hudColor);
+            _spriteBatch.Draw(statBox, new Rectangle((int)p.X + 64 + l, (int)p.Y, 256, testFont.LineSpacing), hudColor);
 
             // Calc stat Value
             SetStatTexutre(geopoiesisService.OZone, Color.DarkSlateGray, Color.LightSkyBlue);
-            _spriteBatch.Draw(statValue, new Rectangle((int)p.X + 64 + 1, (int)p.Y + 1, 256 - 1, testFont.LineSpacing - 1), Color.White);
+            _spriteBatch.Draw(statValue, new Rectangle((int)p.X + 64 + 1 + l, (int)p.Y + 1, 256 - 1, testFont.LineSpacing - 1), Color.White);
             str = $"{geopoiesisService.OZone * 100,0:000}";
-            pp = new Vector2(p.X + 64 + 128, p.Y + testFont.LineSpacing * .5f);
+            pp = new Vector2(p.X + 64 + 128 + l, p.Y + testFont.LineSpacing * .5f);
             pp -= testFont.MeasureString(str) * .5f;
             _spriteBatch.DrawString(testFont, str, pp, hudColor);
 
@@ -423,13 +448,39 @@ namespace Geopoiesis.Scenes
             str = "Life:";
             p.Y += testFont.LineSpacing;
             _spriteBatch.DrawString(testFont, str, p, hudColor);
-            _spriteBatch.Draw(statBox, new Rectangle((int)p.X + 64, (int)p.Y, 256, testFont.LineSpacing), hudColor);
+            _spriteBatch.Draw(statBox, new Rectangle((int)p.X + 64 + l, (int)p.Y, 256, testFont.LineSpacing), hudColor);
 
             // Calc stat Value
             SetStatTexutre(geopoiesisService.LifeLevel, Color.Firebrick, Color.ForestGreen);
-            _spriteBatch.Draw(statValue, new Rectangle((int)p.X + 64 + 1, (int)p.Y + 1, 256 - 1, testFont.LineSpacing - 1), Color.White);
+            _spriteBatch.Draw(statValue, new Rectangle((int)p.X + 64 + 1 + l, (int)p.Y + 1, 256 - 1, testFont.LineSpacing - 1), Color.White);
             str = $"{geopoiesisService.LifeLevel * 100,0:000}";
-            pp = new Vector2(p.X + 64 + 128, p.Y + testFont.LineSpacing * .5f);
+            pp = new Vector2(p.X + 64 + 128 + l, p.Y + testFont.LineSpacing * .5f);
+            pp -= testFont.MeasureString(str) * .5f;
+            _spriteBatch.DrawString(testFont, str, pp, hudColor);
+
+            str = "AU:";
+            p.Y += testFont.LineSpacing;
+            _spriteBatch.DrawString(testFont, str, p, hudColor);
+            _spriteBatch.Draw(statBox, new Rectangle((int)p.X + 64 + l, (int)p.Y, 256, testFont.LineSpacing), hudColor);
+
+            // Calc stat Value
+            SetStatTexutre(geopoiesisService.DistanceFromStar/10f, Color.Gold, Color.White);
+            _spriteBatch.Draw(statValue, new Rectangle((int)p.X + 64 + 1 + l, (int)p.Y + 1, 256 - 1, testFont.LineSpacing - 1), Color.White);
+            str = $"{geopoiesisService.DistanceFromStar,0:00} AU";
+            pp = new Vector2(p.X + 64 + 128 + l, p.Y + testFont.LineSpacing * .5f);
+            pp -= testFont.MeasureString(str) * .5f;
+            _spriteBatch.DrawString(testFont, str, pp, hudColor);
+
+            str = "Temp:";
+            p.Y += testFont.LineSpacing;
+            _spriteBatch.DrawString(testFont, str, p, hudColor);
+            _spriteBatch.Draw(statBox, new Rectangle((int)p.X + 64 + l, (int)p.Y, 256, testFont.LineSpacing), hudColor);
+
+            // Calc stat Value
+            SetStatTexutre(geopoiesisService.SurfaceTemp / 10f, Color.Gold, Color.White);
+            _spriteBatch.Draw(statValue, new Rectangle((int)p.X + 64 + 1 + l, (int)p.Y + 1, 256 - 1, testFont.LineSpacing - 1), Color.White);
+            str = $"{geopoiesisService.SurfaceTemp,0:00} c";
+            pp = new Vector2(p.X + 64 + 128 + l, p.Y + testFont.LineSpacing * .5f);
             pp -= testFont.MeasureString(str) * .5f;
             _spriteBatch.DrawString(testFont, str, pp, hudColor);
 
@@ -447,6 +498,8 @@ namespace Geopoiesis.Scenes
             _spriteBatch.DrawString(testFont, str, p, hudColor);
 
 
+            
+            
             p = screeCenter;
             if (!planet.Generated)
             {                
@@ -478,7 +531,35 @@ namespace Geopoiesis.Scenes
                 _spriteBatch.DrawString(gameFont, str, p + shaddowOffset, shadowColor);
                 _spriteBatch.DrawString(gameFont, str, p, hudColor);
             }
+
+            // Draw Event Logger
+            Rectangle eventLogRect = new Rectangle(0, 300, logBox.Width, logBox.Height);
+            str = "Events:-";
+            _spriteBatch.DrawString(testFont, str, new Vector2(8, 300 - testFont.LineSpacing), hudColor);
+            _spriteBatch.Draw(logBox, eventLogRect, hudColor);
+
             _spriteBatch.End();
+
+            Rectangle orgRect = _spriteBatch.GraphicsDevice.ScissorRectangle;
+            Rectangle eventLogRectCull = new Rectangle(eventLogRect.X + 1, eventLogRect.Y + 1, eventLogRect.Width - 2, eventLogRect.Height - 2);
+            _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.DepthRead, new RasterizerState() { ScissorTestEnable = true, });
+            _spriteBatch.GraphicsDevice.ScissorRectangle = eventLogRectCull;
+            p = new Vector2(12, eventLogRect.Y + logFont.LineSpacing*.5f);
+            for (int e = LoggedEvents.Count - 1; e >= 0; e--)
+            {
+                SystemEvent thisEvt = LoggedEvents[e];
+                _spriteBatch.DrawString(logFont, $"[{thisEvt.Title}] - {thisEvt.YearArrives, 0:###,###,##0} years", p, thisEvt.TitleColor);
+                p.Y += logFont.LineSpacing;
+                _spriteBatch.DrawString(logFont, thisEvt.Description, p, thisEvt.TextColor);
+                p.Y += logFont.LineSpacing;
+            }
+
+            if (LoggedEvents.Count > 21)
+                LoggedEvents.RemoveRange(0, 1);
+            
+
+            _spriteBatch.End();
+
 
             GraphicsDevice.BlendState = BlendState.Opaque;
             GraphicsDevice.RasterizerState = currentRasterizerState;
@@ -488,6 +569,7 @@ namespace Geopoiesis.Scenes
         SpriteFont gameFont;
         Texture2D hudBorder;
         Texture2D starBox;
+        Texture2D logBox;
         Texture2D pixel;
 
         Texture2D statBox;

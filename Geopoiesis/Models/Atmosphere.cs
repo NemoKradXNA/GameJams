@@ -27,7 +27,7 @@ namespace Geopoiesis.Models
         public ITransform Transform { get; set; }
 
         string _effectAsset;
-        protected Effect effect;
+        public Effect effect;
 
         public Vector3 LightDirection { get; set; }
 
@@ -75,20 +75,7 @@ namespace Geopoiesis.Models
             effect.Parameters["EyePosition"].SetValue(Camera.Transform.Position);
             effect.Parameters["lightDirection"].SetValue(LightDirection);
             effect.Parameters["lightColor"].SetValue(Color.Azure.ToVector3());
-            effect.Parameters["lightBrightnes"].SetValue(lightBrightnes_Offset);
-
-
-            effect.Parameters["ScatteringWavelength"].SetValue(ScatteringWavelength.ToVector3());
-            effect.Parameters["RangeForScatteringWavelength"].SetValue(RangeForScatteringWavelength.ToVector3());
-            effect.Parameters["kMIE"].SetValue(kMIE);
-            effect.Parameters["OUTER_RADIUS"].SetValue(Outer_radius);
-            effect.Parameters["INNER_RADUIS"].SetValue(Inner_radius);
-
-            effect.Parameters["_GroundColor"].SetValue(GroundColor.ToVector3());
-            effect.Parameters["_SunSize"].SetValue(SunSize);
-            effect.Parameters["_Exposure"].SetValue(Exposure);
-            effect.Parameters["_SkyTint"].SetValue(SkyColor.ToVector4());
-            effect.Parameters["_AtmosphereThickness"].SetValue(AtmosphereThickness);
+            
         }
 
         public override void Draw(GameTime gameTime)

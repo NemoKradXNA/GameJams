@@ -70,7 +70,7 @@ namespace Geopoiesis
             _graphics.GraphicsProfile = GraphicsProfile.HiDef;
 
 
-            //Window.AllowUserResizing = true;
+            Window.AllowUserResizing = true;
             //Window.IsBorderless = false;
             //_graphics.IsFullScreen = true;
             _graphics.PreferredBackBufferHeight = 1080;

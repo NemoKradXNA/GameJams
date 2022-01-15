@@ -113,6 +113,13 @@
 /processorParam:TextureFormat=Compressed
 /build:SpriteFont/GameFont.spritefont
 
+#begin SpriteFont/logFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:SpriteFont/logFont.spritefont
+
 #begin Textures/CubeMap/space.dds
 /importer:TextureImporter
 /processor:TextureProcessor
