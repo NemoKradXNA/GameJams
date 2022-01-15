@@ -18,7 +18,6 @@ namespace Geopoiesis.Models.Planet
         public float Radius { get; set; }
         public float NoiseMod { get; set; }
         public int CubeSize { get; set; }
-        public float DisplaceMesh { get; set; }
 
         public Texture2D faceHeightMap { get; set; }
         public Texture2D faceNormalMap { get; set; }
@@ -53,9 +52,8 @@ namespace Geopoiesis.Models.Planet
 
 
 
-        public PlanetFace(Game game, Vector3 rootPosition, Vector3 normal, int dim, float radius, float noiseMod, int cubeSize, Texture2D faceMap = null, float displace = 0) : this(game)
+        public PlanetFace(Game game, Vector3 rootPosition, Vector3 normal, int dim, float radius, float noiseMod, int cubeSize, Texture2D faceMap = null, int seed= 1971) : this(game)
         {
-            DisplaceMesh = displace;
             faceHeightMap = faceMap;
             CubeSize = cubeSize;
             NoiseMod = noiseMod;
@@ -63,6 +61,7 @@ namespace Geopoiesis.Models.Planet
             Normal = normal;
             Dimension = dim;
             Radius = radius;
+            Seed = seed;
         }
 
 
@@ -91,16 +90,8 @@ namespace Geopoiesis.Models.Planet
             return Quaternion.Identity;
         }
 
-        List<string> Debug; // Need to write a console logger service.
-        protected void WriteToDebug(string msg)
+        public IEnumerator BuildMesh()
         {
-            Debug.Add(string.Format("[{0:dd-MMM-yyyy HH:mm:ss}] +{1}", DateTime.Now, msg));
-        }
-
-        public IEnumerator BuildMesh(List<string> debug)
-        {
-            Debug = debug;
-
             Quaternion rotation = RotateToFace(Normal);
 
             Vector3 cubeNormal = new Vector3(Normal.X * -1, Normal.Y * -1, Normal.Z);
@@ -303,19 +294,12 @@ namespace Geopoiesis.Models.Planet
 
                     v += Vector3.Up * vh;
 
-
-                    //float hm = (col[px + py * faceHeightMap.Width].R * 2) - 1;
-                    float hm = ((col[px + py * faceHeightMap.Width].R) - 1)/256f;
-
-
-                    hm *= DisplaceMesh;// ? 10 : 0;
-
                     v = Vector3.Transform(v, rotation);
                     v.Normalize();
                     meshData.Normals.Add(v);
 
                     
-                    v = v * (Radius + hm);
+                    v = v * (Radius);
 
                     //v += RootPosition;
                     meshData.Vertices.Add(v);

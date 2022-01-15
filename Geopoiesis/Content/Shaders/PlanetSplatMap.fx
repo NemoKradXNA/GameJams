@@ -7,6 +7,8 @@
     #define PS_SHADERMODEL ps_5_0
 #endif
 
+#include "GenericHeader.fxh"
+
 float4x4 world : World;
 float4x4 wvp : WorldViewProjection;
 float4x4 itw : WorldInverseTranspose;
@@ -27,6 +29,8 @@ float4 _Sea = float4(.38f,.41f,1,1);
 float4 _Shore = float4(.04f,.52f,.65f,1);
 float4 _Land = float4(0, .5, .16, 1);
 float4 _Hills = float4(.42f, .15f, .05f, 1);
+
+float2 res;
 
 texture heightTexture;
 
@@ -105,42 +109,26 @@ sampler2D snowSampler = sampler_state
     AddressV = Wrap;
 };
 
-struct vIn
-{
-    float4 pos : SV_POSITION;
-    float2 texCoords : TEXCOORD0;
-    float3 normal : NORMAL0;
-    float3 tangent : TANGENT0;
-    float4 color : COLOR0;
-};
 
-struct vOut
-{
-    float4 pos : SV_POSITION;
-    float2 texCoords : TEXCOORD0;
-    float3 normal : NORMAL0;
-    float3 tangent : TANGENT0;
-    float4 color : COLOR0;
-};
-struct PixelShaderOutput
-{
-    float4 Color : COLOR0; 
-};
 
 vOut VertexShaderFunction(vIn input)
 {
     vOut output;
 
-    float h = texCUBElod(heightMapSampler, float4(input.normal,1)).r;
+    float h = getHeight(heightMapSampler,input.normal).r;
     
-    //h = (h * 2) -1;
-    input.pos.xyz += input.normal * h * displacemntMag;
+    input.pos.xyz += normalize(input.pos.xyz) * h * displacemntMag;
 
     output.pos = mul(input.pos, wvp);
     output.normal = input.normal;
-    output.texCoords = input.texCoords;  
-    output.tangent = input.tangent;
     
+    float3 n = normalize(mul(input.pos.xyz, (float3x3)world));
+    
+    output.texCoords = input.texCoords;  
+    
+    output.tangent[0] = normalize(mul(input.tangent, (float3x3)world));
+    output.tangent[1] = normalize(mul(cross(input.tangent, n), (float3x3) world));
+    output.tangent[2] = normalize(n);
     
     output.color = input.color;
     
@@ -152,10 +140,13 @@ PixelShaderOutput PixelShaderFunction(vOut input) : Color
     PixelShaderOutput output = (PixelShaderOutput) 0;
     
 
-    float3 n = texCUBE(normalMapSampler, input.normal);
+    //float3 n = texCUBE(normalMapSampler, input.normal);
+    
+    float3 n = 2.0 * (getNormalMap(heightMapSampler,input.normal, res, .1).rgb * .5 + .5) - 1.0;
+    n = mul(n, input.tangent);
     
     float3 lightVector = normalize(-lightDirection);    
-    float NdL = saturate(dot(input.normal, -lightVector)) + .125f;
+    float NdL = saturate(dot(-n, lightVector)) + ambientPower;
 
     
     float4 splat = 0;
@@ -188,7 +179,9 @@ PixelShaderOutput PixelShaderFunction(vOut input) : Color
     
     output.Color = mul(splat, col) * NdL;
     
-    //output.Color = float4(n, 1);
+    //output.Color = float4(input.noff, 1);
+    
+    
     
     return output;
 }

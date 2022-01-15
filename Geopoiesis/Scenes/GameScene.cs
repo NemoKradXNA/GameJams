@@ -22,11 +22,14 @@ namespace Geopoiesis.Scenes
         SpriteFont testFont;
         SpriteFont debugFont;
         PlanetGeometry planet;
+        ITransform moonAnchor;
+        MorphableSphere moon;
+        MorphableSphere sun;
         Atmosphere atmos;
         ParticleEmitter pet;
         Cube cube;
 
-        protected float DisplacementMag = .5f;
+        protected float DisplacementMag = .15f;
         float _MinDeepSeaDepth = .07f;
         float _MinSeaDepth = .4f;
         float _MinShoreDepth = .42f;
@@ -44,7 +47,7 @@ namespace Geopoiesis.Scenes
         };
 
 
-        Vector3 ld = Vector3.Left;
+        Vector3 ld = new Vector3(-1, .25f, .25f);
 
         public GameScene(Game game, string name) : base(game, name) { }
 
@@ -53,23 +56,28 @@ namespace Geopoiesis.Scenes
             SkyBox skyBox = new SkyBox(Game, "Shaders/SkyBox");
             Components.Add(skyBox);
 
-
-            //cube = new Cube(this, "Shaders/basic");
-            //cube.Transform.Position = new Vector3(-3, 0, -10);
-            //Components.Add(cube);
-
             planet = new PlanetGeometry(Game, "Shaders/PlanetSplatMap");
             planet.Transform.Position = new Vector3(0, 0, 0);
+            moonAnchor = new Transform();
+            moonAnchor.Position = planet.Transform.Position;
             Components.Add(planet);
+
+            moon = new MorphableSphere(Game, "Shaders/Moon", 2, 1, 1.25f, 128,geopoiesisService.Seed*2, 5, 7 );
+            moon.Transform.Parent = moonAnchor;
+            moon.Transform.Position = (Vector3.Left + (Vector3.Up * .25f)) * 32;
+            Components.Add(moon);
+
+            sun = new MorphableSphere(Game, "Shaders/Sun", 2, 10,16, 16,1971,3,7 );
+            sun.Transform.Position = new Vector3(-1, 0, 0)  * 100;
+            Components.Add(sun);
 
             atmos = new Atmosphere(Game, "Shaders/AtmosShader");
             atmos.Transform.Scale = Vector3.One * 4.25f;
-            //atmos.Transform.Parent = planet.Transform;
             Components.Add(atmos);
 
             // Make sure all particle emitters are added last...
             pet = new ParticleEmitter(Game);
-            //Components.Add(pet);
+            Components.Add(pet);
 
             // particle test..
             int totalParticles = 1000;
@@ -101,6 +109,8 @@ namespace Geopoiesis.Scenes
 
             State = SceneStateEnum.Open;
 
+            geopoiesisService.StartType = StartType.G;
+
         }
 
         protected override void LoadContent()
@@ -122,7 +132,7 @@ namespace Geopoiesis.Scenes
         }
 
         public override void Update(GameTime gameTime)
-        {
+        { 
             float translateSpeed = 2f;
             float rotateSpeed = 1f;
 
@@ -148,11 +158,13 @@ namespace Geopoiesis.Scenes
             if (kbManager.KeyDown(Keys.Left))
                 camera.Transform.Rotate(Vector3.Up, rotateSpeed);
 
-            //planet.Transform.Rotate(Vector3.Up, .001f);
+            planet.Transform.Rotate(Vector3.Up, .0025f);
+            moonAnchor.Rotate((Vector3.Up * .25f) + (Vector3.Forward * .1f), -.005f);
+            //moon.Transform.Rotate(Vector3.Up + Vector3.Right, .0025f);
             atmos.Transform.Scale = (Vector3.One * 4.25f) + (Vector3.One * (planet.Radius * .8f) * DisplacementMag);
 
-            if (kbManager.KeyPress(Keys.F1))
-                camera.RenderWireFrame = !camera.RenderWireFrame;
+            //if (kbManager.KeyPress(Keys.F1))
+            //    camera.RenderWireFrame = !camera.RenderWireFrame;
 
             float dmod = .01f;
             if (kbManager.KeyDown(Keys.Q))
@@ -161,44 +173,53 @@ namespace Geopoiesis.Scenes
                 DisplacementMag = MathHelper.Max(0, DisplacementMag - dmod);
 
             if (kbManager.KeyDown(Keys.R))
-                _MinDeepSeaDepth = MathHelper.Min(1, _MinDeepSeaDepth + dmod);
+                geopoiesisService.WaterLevel = MathHelper.Min(1, geopoiesisService.WaterLevel + dmod);
             if (kbManager.KeyDown(Keys.T))
-                _MinDeepSeaDepth = MathHelper.Max(0, _MinDeepSeaDepth - dmod);
+                geopoiesisService.WaterLevel = MathHelper.Max(0, geopoiesisService.WaterLevel - dmod);
 
             if (kbManager.KeyDown(Keys.F))
-                _MinSeaDepth = MathHelper.Min(1, _MinSeaDepth + dmod);
+                geopoiesisService.OZone = MathHelper.Min(1, geopoiesisService.OZone + dmod);
             if (kbManager.KeyDown(Keys.G))
-                _MinSeaDepth = MathHelper.Max(0, _MinSeaDepth - dmod);
+                geopoiesisService.OZone = MathHelper.Max(0, geopoiesisService.OZone - dmod);
 
             if (kbManager.KeyDown(Keys.Y))
-                _MinShoreDepth = MathHelper.Min(1, _MinShoreDepth + dmod);
+                geopoiesisService.LifeLevel = MathHelper.Min(1, geopoiesisService.LifeLevel + dmod);
             if (kbManager.KeyDown(Keys.U))
-                _MinShoreDepth = MathHelper.Max(0, _MinShoreDepth - dmod);
+                geopoiesisService.LifeLevel = MathHelper.Max(0, geopoiesisService.LifeLevel - dmod);
 
-            if (kbManager.KeyDown(Keys.J))
-                _MinLand = MathHelper.Min(1, _MinLand + dmod);
-            if (kbManager.KeyDown(Keys.K))
-                _MinLand = MathHelper.Max(0, _MinLand - dmod);
+            //if (kbManager.KeyDown(Keys.J))
+            //    _MinLand = MathHelper.Min(1, _MinLand + dmod);
+            //if (kbManager.KeyDown(Keys.K))
+            //    _MinLand = MathHelper.Max(0, _MinLand - dmod);
 
-            if (kbManager.KeyDown(Keys.I))
-                _MinHill = MathHelper.Min(1, _MinHill + dmod);
-            if (kbManager.KeyDown(Keys.O))
-                _MinHill = MathHelper.Max(0, _MinHill - dmod);
+            //if (kbManager.KeyDown(Keys.I))
+            //    _MinHill = MathHelper.Min(1, _MinHill + dmod);
+            //if (kbManager.KeyDown(Keys.O))
+            //    _MinHill = MathHelper.Max(0, _MinHill - dmod);
 
-            if (kbManager.KeyPress(Keys.F2))
-                planet.SetLODLevel(planet.LodLevel + 1);
-            if (kbManager.KeyPress(Keys.F3))
-                planet.SetLODLevel(planet.LodLevel - 1);
+            //if (kbManager.KeyPress(Keys.F2))
+            //    planet.SetLODLevel(planet.LodLevel + 1);
+            //if (kbManager.KeyPress(Keys.F3))
+            //    planet.SetLODLevel(planet.LodLevel - 1);
 
 
             if (planet.effect != null)
             {
+                if (planet.effect.Parameters["res"] != null)
+                    planet.effect.Parameters["res"].SetValue(new Vector2(Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height));
+
+                if (moon.effect.Parameters["res"] != null)
+                    moon.effect.Parameters["res"].SetValue(new Vector2(Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height));
+
                 // Change values in the planet's shader.
                 if (planet.effect.Parameters["colorRamp"] != null) // Or generate this procedurally. 
                     planet.effect.Parameters["colorRamp"].SetValue(Game.Content.Load<Texture2D>("Textures/Ramp1"));
 
                 if (planet.effect.Parameters["displacemntMag"] != null)
                     planet.effect.Parameters["displacemntMag"].SetValue(DisplacementMag);
+
+                if (moon.effect.Parameters["displacemntMag"] != null)
+                    moon.effect.Parameters["displacemntMag"].SetValue(0.1f);
 
                 if (planet.effect.Parameters["_MinDeepSeaDepth"] != null)
                     planet.effect.Parameters["_MinDeepSeaDepth"].SetValue(_MinDeepSeaDepth);
@@ -216,8 +237,21 @@ namespace Geopoiesis.Scenes
                     planet.effect.Parameters["_MinHill"].SetValue(_MinHill);
             }
 
+            ld = sun.Transform.Position - planet.Transform.Position;
+            ld.Normalize();
+
             planet.LightDirection = ld;
+
+            ld = sun.Transform.Position - atmos.Transform.Position;
+            ld.Normalize();
+
             atmos.LightDirection = ld;
+
+            ld = sun.Transform.Position - moon.Transform.Position;
+            ld.Normalize();
+
+            moon.LightDirection = ld;
+
 
             base.Update(gameTime);
         }
@@ -257,6 +291,8 @@ namespace Geopoiesis.Scenes
                     break;
             }
             yield return new WaitForEndOfFrame(Game);
+
+            geopoiesisService.CurrentEpoch = Epoch.PlanetFormed; 
         }
 
         // Needs to be part of scene manager (thegame scene)
@@ -276,67 +312,172 @@ namespace Geopoiesis.Scenes
 
             base.Draw(gameTime);
 
-            _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
+            //_spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
 
-            Vector2 textPos = new Vector2(8, 8);
-            DrawSring($"Camera Transform: {camera.Transform}", textPos, Color.Gold, testFont);
-            textPos.Y += testFont.LineSpacing;
+            //Vector2 textPos = new Vector2(8, 8);
+            //DrawSring($"Camera Transform: {camera.Transform}", textPos, Color.Gold, testFont);
+            //textPos.Y += testFont.LineSpacing;
 
-            if (planet != null)
-            {
-                textPos.Y += testFont.LineSpacing;
-                foreach (string line in planet.Debug)
-                {
-                    DrawSring(line, textPos, Color.Silver, debugFont);
-                    textPos.Y += debugFont.LineSpacing;
-                }
-            }
+            //if (planet != null)
+            //{
+            //    textPos.Y += testFont.LineSpacing;
+            //    foreach (string line in planet.Debug)
+            //    {
+            //        DrawSring(line, textPos, Color.Silver, debugFont);
+            //        textPos.Y += debugFont.LineSpacing;
+            //    }
+            //}
 
-            textPos = new Vector2(GraphicsDevice.PresentationParameters.BackBufferWidth - 600, 8 + testFont.LineSpacing);
+            //textPos = new Vector2(GraphicsDevice.PresentationParameters.BackBufferWidth - 600, 8 + testFont.LineSpacing);
 
-            DrawSring($"F1 Toggle Wire Frame", textPos, Color.Gold, testFont);
-            textPos.Y += testFont.LineSpacing;
-            DrawSring($"WASD = Translate Camera", textPos, Color.Gold, testFont);
-            textPos.Y += testFont.LineSpacing;
-            DrawSring($"Q/E = Displacement [{DisplacementMag}]", textPos, Color.Gold, testFont);
-            textPos.Y += testFont.LineSpacing;
-            DrawSring($"R/T = _MinDeepSeaDepth [{_MinDeepSeaDepth}]", textPos, Color.Gold, testFont);
-            textPos.Y += testFont.LineSpacing;
-            DrawSring($"F/G = _MinSeaDepth [{_MinSeaDepth}]", textPos, Color.Gold, testFont);
-            textPos.Y += testFont.LineSpacing;
-            DrawSring($"Y/U = _MinShoreDepth [{_MinShoreDepth}]", textPos, Color.Gold, testFont);
-            textPos.Y += testFont.LineSpacing;
-            DrawSring($"J/K = _MinLand [{_MinLand}]", textPos, Color.Gold, testFont);
-            textPos.Y += testFont.LineSpacing;
-            DrawSring($"I/O = _MinHill [{_MinHill}]", textPos, Color.Gold, testFont);
-            textPos.Y += testFont.LineSpacing;
-            if (planet.Generated)
-            {
-                DrawSring($"F2/F3 = LOD [{planet.LodLevel + 1}] ({planet.LodSizes[planet.LodLevel]})", textPos, Color.Gold, testFont);
-                textPos.Y += testFont.LineSpacing;
-            }
+            //DrawSring($"F1 Toggle Wire Frame", textPos, Color.Gold, testFont);
+            //textPos.Y += testFont.LineSpacing;
+            //DrawSring($"WASD = Translate Camera", textPos, Color.Gold, testFont);
+            //textPos.Y += testFont.LineSpacing;
+            //DrawSring($"Q/E = Displacement [{DisplacementMag}]", textPos, Color.Gold, testFont);
+            //textPos.Y += testFont.LineSpacing;
+            //DrawSring($"R/T = _MinDeepSeaDepth [{_MinDeepSeaDepth}]", textPos, Color.Gold, testFont);
+            //textPos.Y += testFont.LineSpacing;
+            //DrawSring($"F/G = _MinSeaDepth [{_MinSeaDepth}]", textPos, Color.Gold, testFont);
+            //textPos.Y += testFont.LineSpacing;
+            //DrawSring($"Y/U = _MinShoreDepth [{_MinShoreDepth}]", textPos, Color.Gold, testFont);
+            //textPos.Y += testFont.LineSpacing;
+            //DrawSring($"J/K = _MinLand [{_MinLand}]", textPos, Color.Gold, testFont);
+            //textPos.Y += testFont.LineSpacing;
+            //DrawSring($"I/O = _MinHill [{_MinHill}]", textPos, Color.Gold, testFont);
+            //textPos.Y += testFont.LineSpacing;
+            //if (planet.Generated)
+            //{
+            //    DrawSring($"F2/F3 = LOD [{planet.LodLevel + 1}] ({planet.LodSizes[planet.LodLevel]})", textPos, Color.Gold, testFont);
+            //    textPos.Y += testFont.LineSpacing;
+            //}
 
-            DrawSring($"Time: [{geopoiesisService.Years,0:###,###,###,0} years]", textPos, Color.Gold, testFont);
-            textPos.Y += testFont.LineSpacing;
-            DrawSring($"Epoch: [{geopoiesisService.CurrentEpoch}]", textPos, Color.Gold, testFont);
-            textPos.Y += testFont.LineSpacing;
+            //DrawSring($"Time: [{geopoiesisService.Years,0:###,###,###,0} years]", textPos, Color.Gold, testFont);
+            //textPos.Y += testFont.LineSpacing;
+            //DrawSring($"Epoch: [{geopoiesisService.CurrentEpoch}]", textPos, Color.Gold, testFont);
+            //textPos.Y += testFont.LineSpacing;
 
 
             // Render planet cube map.
 
 
-            _spriteBatch.End();
-
+            //_spriteBatch.End();
+            
             if (hudBorder == null)
             {
-                hudBorder = CreateBox(Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height, new Rectangle(1,1,1,2), new Color(0, 0, 0, 0), new Color(1, 1, 1, .75f));
-                
+                gameFont = Game.Content.Load<SpriteFont>("SpriteFont/GameFont");
+                float a = .75f;
+                hudBorder = CreateBox(Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height, new Rectangle(1,1,1,1), Color.Transparent, new Color(1, 1, 1, a));
+                starBox = CreateBox(256, 256, new Rectangle(1, 1, 1, 1), new Color(0, 0, 0, a), new Color(1, 1, 1, .75f));
+                pixel = CreateBox(1, 1, new Rectangle(1, 1, 1, 1), Color.Transparent, new Color(1, 1, 1, .75f));
+                statBox = CreateBox(256, testFont.LineSpacing,  new Rectangle(1,1,1,1), new Color(0, 0, 0, a), new Color(1, 1, 1, .75f));
             }
+            Color hudColor = Color.LimeGreen;
+            Color shadowColor = Color.DarkGreen;
+            Vector2 screeCenter = new Vector2(Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height) * .5f;
+            Vector2 shaddowOffset = new Vector2(-2, 2);
+
             // HUD
+
+            Vector2 p = screeCenter;
+            string str;
             _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
 
-            _spriteBatch.Draw(hudBorder, new Rectangle(0, 0, hudBorder.Width, hudBorder.Height), Color.LimeGreen);
+            _spriteBatch.Draw(hudBorder, new Rectangle(0, 0, hudBorder.Width, hudBorder.Height), hudColor);
+            _spriteBatch.Draw(starBox, new Rectangle(0, 0, 256, 256), hudColor);
+            _spriteBatch.Draw(Game.Content.Load<Texture2D>($"Textures/Stars/{geopoiesisService.StartType}"), new Rectangle(64, 42, 120, 120), Color.White);
+            _spriteBatch.Draw(pixel, new Rectangle(0, 200, 256, 1), hudColor );
 
+            str = $"{geopoiesisService.StartType} - Class Star";
+            p = new Vector2(128, 256 - (testFont.LineSpacing * 1f));
+            p -= testFont.MeasureString(str) * .5f;
+            _spriteBatch.DrawString(testFont, str, p, hudColor);
+
+            str = "H2O:";
+            p = new Vector2(256 + 8 , 8);
+            _spriteBatch.DrawString(testFont, str, p, hudColor);
+            _spriteBatch.Draw(statBox, new Rectangle((int)p.X + 64, (int)p.Y, 256, testFont.LineSpacing), hudColor);
+
+            // Calc stat Value
+            SetStatTexutre(geopoiesisService.WaterLevel,Color.DarkBlue, Color.LightBlue);
+            _spriteBatch.Draw(statValue, new Rectangle((int)p.X + 64 + 1, (int)p.Y + 1, 256-1, testFont.LineSpacing-1), Color.White);
+            str = $"{geopoiesisService.WaterLevel * 100, 0:000}";
+            Vector2 pp = new Vector2(p.X + 64 + 128, p.Y + testFont.LineSpacing *.5f);
+            pp -= testFont.MeasureString(str) * .5f;
+            _spriteBatch.DrawString(testFont, str, pp, hudColor);
+
+            str = "O3:";
+            p.Y += testFont.LineSpacing;
+            _spriteBatch.DrawString(testFont, str, p, hudColor);
+            _spriteBatch.Draw(statBox, new Rectangle((int)p.X + 64, (int)p.Y, 256, testFont.LineSpacing), hudColor);
+
+            // Calc stat Value
+            SetStatTexutre(geopoiesisService.OZone, Color.DarkSlateGray, Color.LightSkyBlue);
+            _spriteBatch.Draw(statValue, new Rectangle((int)p.X + 64 + 1, (int)p.Y + 1, 256 - 1, testFont.LineSpacing - 1), Color.White);
+            str = $"{geopoiesisService.OZone * 100,0:000}";
+            pp = new Vector2(p.X + 64 + 128, p.Y + testFont.LineSpacing * .5f);
+            pp -= testFont.MeasureString(str) * .5f;
+            _spriteBatch.DrawString(testFont, str, pp, hudColor);
+
+
+            str = "Life:";
+            p.Y += testFont.LineSpacing;
+            _spriteBatch.DrawString(testFont, str, p, hudColor);
+            _spriteBatch.Draw(statBox, new Rectangle((int)p.X + 64, (int)p.Y, 256, testFont.LineSpacing), hudColor);
+
+            // Calc stat Value
+            SetStatTexutre(geopoiesisService.LifeLevel, Color.Firebrick, Color.ForestGreen);
+            _spriteBatch.Draw(statValue, new Rectangle((int)p.X + 64 + 1, (int)p.Y + 1, 256 - 1, testFont.LineSpacing - 1), Color.White);
+            str = $"{geopoiesisService.LifeLevel * 100,0:000}";
+            pp = new Vector2(p.X + 64 + 128, p.Y + testFont.LineSpacing * .5f);
+            pp -= testFont.MeasureString(str) * .5f;
+            _spriteBatch.DrawString(testFont, str, pp, hudColor);
+
+            // Epoch and years..
+            str = $"{$"[Epoch: {geopoiesisService.CurrentEpoch}]", 0:10}";
+            p = screeCenter;
+            p -= testFont.MeasureString(str) * .5f;
+            p.Y = testFont.LineSpacing;
+            _spriteBatch.DrawString(testFont, str, p, hudColor);
+
+            str = $"{$"{geopoiesisService.Years,0:###,###,###,0} years", 0:-100}";
+            p = new Vector2(Game.GraphicsDevice.Viewport.Width-64,0);
+            p -= testFont.MeasureString(str);
+            p.Y = testFont.LineSpacing;
+            _spriteBatch.DrawString(testFont, str, p, hudColor);
+
+
+            p = screeCenter;
+            if (!planet.Generated)
+            {                
+                str = $"Planet - {planet.GenerationString}";
+                p -= gameFont.MeasureString(str) * .5f;
+                
+                _spriteBatch.DrawString(gameFont, str, p + shaddowOffset, shadowColor);
+                _spriteBatch.DrawString(gameFont, str, p, hudColor);
+            }
+
+            if (!moon.Generated)
+            {
+                p = screeCenter;
+                p.Y += gameFont.LineSpacing;
+                str = $"Moon - {moon.GenerationString}";
+                p -= gameFont.MeasureString(str) * .5f;
+
+                _spriteBatch.DrawString(gameFont, str, p + shaddowOffset, shadowColor);
+                _spriteBatch.DrawString(gameFont, str, p, hudColor);
+            }
+
+            if (!sun.Generated)
+            {
+                p = screeCenter;
+                p.Y += gameFont.LineSpacing * 2;
+                str = $"Sun - {sun.GenerationString}";
+                p -= gameFont.MeasureString(str) * .5f;
+
+                _spriteBatch.DrawString(gameFont, str, p + shaddowOffset, shadowColor);
+                _spriteBatch.DrawString(gameFont, str, p, hudColor);
+            }
             _spriteBatch.End();
 
             GraphicsDevice.BlendState = BlendState.Opaque;
@@ -344,7 +485,32 @@ namespace Geopoiesis.Scenes
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
         }
 
+        SpriteFont gameFont;
         Texture2D hudBorder;
+        Texture2D starBox;
+        Texture2D pixel;
+
+        Texture2D statBox;
+        Texture2D statValue;
+
+        protected void SetStatTexutre(float v, Color min, Color max)
+        {
+            statValue = new Texture2D(Game.GraphicsDevice, 128, 1);
+            Color[] c = new Color[128];
+
+            for (int x = 0; x < 128; x++)
+            {
+                Color col = Color.Transparent;
+                float t = x / 128f;
+
+                if(t<= v)
+                    col = Color.Lerp(min, max, t/v);
+
+                c[x] = col;
+            }
+
+            statValue.SetData(c);
+        }
 
         protected Texture2D CreateBox(int width, int height, Rectangle thickenss, Color bgColor, Color edgeColor)
         {

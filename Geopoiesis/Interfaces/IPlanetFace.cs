@@ -16,13 +16,12 @@ namespace Geopoiesis.Interfaces
         float Radius { get; set; }
         float NoiseMod { get; set; }
         int CubeSize { get; set; }
-        float DisplaceMesh { get; set; }
 
         Texture2D faceHeightMap { get; set; }
         Texture2D faceSplatMap { get; set; }
         Texture2D faceNormalMap { get; set; }
         MeshData meshData { get; set; }
-        IEnumerator BuildMesh(List<string> debug);
+        IEnumerator BuildMesh();
 
         int Seed { get; set; }
     }

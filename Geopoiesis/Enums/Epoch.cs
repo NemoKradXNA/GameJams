@@ -7,6 +7,7 @@ namespace Geopoiesis.Enums
     // This is a bit time based and based on current life value, but life takes time to grow right?
     public enum Epoch // Time are "real" so need to be spread out a bit lol, or compress time as we age?
     {
+        PlanetForming,// -1
         PlanetFormed, // 0
         OceansForm, // Took ~500 million years on earth.
         Prokaryotes, // Took 1 billion years to arrive on earth

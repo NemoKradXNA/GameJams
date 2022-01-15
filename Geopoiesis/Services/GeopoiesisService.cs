@@ -16,7 +16,7 @@ namespace Geopoiesis.Services
         protected ICoroutineService coroutineService { get { return Game.Services.GetService<ICoroutineService>(); } }
 
         public StartType StartType = StartType.None;
-        public Epoch CurrentEpoch = Epoch.PlanetFormed;
+        public Epoch CurrentEpoch = Epoch.PlanetForming;
 
         public float OrbitalDistance = float.MaxValue;
         public int Years = 0;
@@ -27,8 +27,11 @@ namespace Geopoiesis.Services
         public bool InGame = false; // Needs this to be part of the scene manager really..
         public bool IsPaused = false;
 
+        public float OZone = 0; // 0-1
         public float WaterLevel = 0; // 0-1
         public float LifeLevel = 0; // 0-1
+
+        public int Seed = 1971;
 
         public GeopoiesisService(Game game) : base(game)
         {
