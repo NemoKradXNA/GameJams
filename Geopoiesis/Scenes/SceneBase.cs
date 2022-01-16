@@ -2,6 +2,7 @@
 using Geopoiesis.Interfaces;
 using Geopoiesis.Services;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -17,13 +18,13 @@ namespace Geopoiesis.Scenes
         protected IMouseStateManager msManager { get { return Game.Services.GetService<IInputStateHandler>().MouseManager; } }
         protected GeopoiesisService geopoiesisService { get { return Game.Services.GetService<GeopoiesisService>(); } }
 
+        protected IAudioManager audioManager { get { return Game.Services.GetService<IAudioManager>(); } }
+
         public string Name { get; set; }
         public IScene LastScene { get; set; }
         public SceneStateEnum State { get; set; }
 
-        public List<IGameComponent> Components { get; set; }
-
-        
+        public List<IGameComponent> Components { get; set; }        
 
         public SceneBase(Game game, string name) : base(game)
         { 
@@ -37,7 +38,6 @@ namespace Geopoiesis.Scenes
 
             foreach (IGameComponent component in Components)
                 component.Initialize();
-
         }
 
         protected override void UnloadContent()

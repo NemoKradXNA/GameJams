@@ -13,6 +13,36 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Audio/Music/Creepy-Hollow.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Audio/Music/Creepy-Hollow.mp3
+
+#begin Audio/Music/Midnight-Mist.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Audio/Music/Midnight-Mist.mp3
+
+#begin Audio/SFX/beep-07.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SFX/beep-07.wav
+
+#begin Audio/SFX/beep-10.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SFX/beep-10.wav
+
+#begin Audio/SFX/dtmf-5.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SFX/dtmf-5.mp3
+
 #begin Models/SkySphere.fbx
 /importer:FbxImporter
 /processor:ModelProcessor
@@ -131,6 +161,18 @@
 /processorParam:MakeSquare=True
 /processorParam:TextureFormat=Color
 /build:Textures/CubeMap/space.dds
+
+#begin Textures/Logo1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Logo1.png
 
 #begin Textures/MenuBG.png
 /importer:TextureImporter

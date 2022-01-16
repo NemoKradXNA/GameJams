@@ -43,6 +43,7 @@ using System.Collections.Generic;
 /// </summary>
 namespace Geopoiesis
 {
+    // Music thanks to https://soundimage.org/
     public class Game1 : Game
     {
         private GraphicsDeviceManager _graphics;
@@ -54,6 +55,7 @@ namespace Geopoiesis
         protected IKeyboardStateManager kbManager;
         protected IMouseStateManager msManager;
         protected ICameraService camera;
+        protected IAudioManager audioManager;
 
         protected GeopoiesisService geopoiesisService;
 
@@ -70,9 +72,13 @@ namespace Geopoiesis
 
             _graphics.GraphicsProfile = GraphicsProfile.HiDef;
 
+            _graphics.PreferredBackBufferHeight = 1080;
+            _graphics.PreferredBackBufferWidth = 1920;
 
-           
-           
+            _graphics.IsFullScreen = true;
+            Window.AllowUserResizing = true;
+            Window.AllowAltF4 = true;
+            _graphics.ApplyChanges();
         }
 
         protected override void Initialize()
@@ -83,6 +89,7 @@ namespace Geopoiesis
             kbManager = new KeyboardStateManager(this);
             msManager = new MouseStateManager(this);
             inputHandlerService = new InputHandlerService(this, kbManager, msManager);
+            audioManager = new AudioManagerService(this);
 
             camera = new CameraService(this, 0.1f, 20000f);
             camera.ClearColor = Color.Black;
@@ -98,31 +105,18 @@ namespace Geopoiesis
             sceneManager.AddScene(new GameScene(this, "mainGame"));
 
             base.Initialize();
-
-            //Window.IsBorderless = false;
-
-            _graphics.PreferredBackBufferHeight = 1080;
-            _graphics.PreferredBackBufferWidth = 1920;
-
-            //_graphics.IsFullScreen = true;
-            Window.AllowUserResizing = true;
-            _graphics.ApplyChanges();
-
-            sceneManager.LoadScene("mainMenu");
         }
 
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+
+
+            sceneManager.LoadScene("mainMenu");
         }
 
         protected override void Update(GameTime gameTime)
         {
-            if (kbManager.KeyPress(Keys.Escape))
-                Exit();
-
-            
-
             inputHandlerService.PreUpdate(gameTime);
             base.Update(gameTime);
         }

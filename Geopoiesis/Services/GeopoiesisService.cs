@@ -3,15 +3,52 @@ using Geopoiesis.Interfaces;
 using Geopoiesis.Managers.Coroutines;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace Geopoiesis.Services
 {
 
     public delegate void SystemEventFired(SystemEvent evt);
+
+    internal class SaveGame {
+        public bool IsPaused { get; set; }
+
+        public float OZone { get; set; }
+        public float WaterLevel { get; set; }
+        public float LifeLevel { get; set; }
+        public float DistanceFromStar { get; set; }
+        public float SurfaceTemp { get; set; }
+
+        public float Volcanism { get; set; }
+        public float Quakes { get; set; }
+
+        public int Seed { get; set; }
+
+        public int Years { get; set; }
+
+        public List<SystemEvent> LoggedEvents { get; set; }
+
+        public SaveGame() { }
+        public SaveGame(GeopoiesisService data)
+        {
+            IsPaused = data.IsPaused;
+            OZone = data.OZone;
+            WaterLevel = data.WaterLevel;
+            LifeLevel = data.LifeLevel;
+            DistanceFromStar = data.DistanceFromStar;
+            SurfaceTemp = data.SurfaceTemp;
+            Volcanism = data.Volcanism;
+            Quakes = data.Quakes;
+            Seed = data.Seed;
+            Years = data.Years;
+            LoggedEvents = data.LoggedEvents;
+        }
+    }
 
     public class GeopoiesisService : GameComponent
     {
@@ -44,6 +81,8 @@ namespace Geopoiesis.Services
 
         public event SystemEventFired OnSystemEventFired;
 
+        public List<SystemEvent> LoggedEvents = new List<SystemEvent>();
+
         public GeopoiesisService(Game game) : base(game)
         {
             CurrentTimeFlow = YearsFullSpeed;
@@ -55,6 +94,30 @@ namespace Geopoiesis.Services
         public void StartTheMarchOfTime()
         {
             coroutineService.StartCoroutine(TheMarchOfTime());
+        }
+
+        public void SaveGame()
+        {
+            SaveGame thisGame = new SaveGame(this);
+            File.WriteAllText("save.json",JsonConvert.SerializeObject(thisGame));
+        }
+
+        public void LoadGame()
+        {
+            string json = File.ReadAllText("save.json");
+            SaveGame thisGame = JsonConvert.DeserializeObject<SaveGame>(json);
+
+            IsPaused = thisGame.IsPaused;
+            OZone = thisGame.OZone;
+            WaterLevel = thisGame.WaterLevel;
+            LifeLevel = thisGame.LifeLevel;
+            DistanceFromStar = thisGame.DistanceFromStar;
+            SurfaceTemp = thisGame.SurfaceTemp;
+            Volcanism = thisGame.Volcanism;
+            Quakes = thisGame.Quakes;
+            Seed = thisGame.Seed;
+            Years = thisGame.Years;
+            LoggedEvents = thisGame.LoggedEvents;
         }
 
         IEnumerator TheMarchOfTime()
@@ -163,15 +226,15 @@ namespace Geopoiesis.Services
 
         public List<SystemEvent> EvenstList = new List<SystemEvent>()
         {
-            new SystemEvent(){ Title = "Ice Meteor Shower", Description = "A shower of rocks and ICE!", WaterLevel = .01f, TitleColor = Color.Silver, TextColor = Color.SteelBlue },
-            new SystemEvent(){ Title = "Ice Meteor Shower", Description = "A shower of rocks and ICE!", WaterLevel = .02f, TitleColor = Color.Silver, TextColor = Color.SteelBlue },
-            new SystemEvent(){ Title = "Solar Flare!", Description = "A coronal mass ejection has occurred", OZone = -.01f, SurfaceTemp = .01f, TitleColor = Color.Gold, TextColor = Color.Goldenrod  },
-            new SystemEvent(){ Title = "Asteroid Strike", Description = "An small asteroid has stuck!", LifeLevel = .01f, OZone = .01f, SurfaceTemp=.01f, WaterLevel=.0125f, TitleColor = Color.CornflowerBlue, TextColor = Color.DodgerBlue},
-            new SystemEvent(){ Title = "Asteroid Strike", Description = "An medium asteroid has stuck!", LifeLevel = .015f, OZone = .02f, SurfaceTemp =.01f, WaterLevel = .025f, TitleColor = Color.CornflowerBlue, TextColor = Color.DodgerBlue },
-            new SystemEvent(){ Title = "Asteroid Strike", Description = "An large asteroid has stuck!", LifeLevel = .025f, OZone = .05f, SurfaceTemp = .05f, WaterLevel = .05f, TitleColor = Color.CornflowerBlue, TextColor = Color.DodgerBlue },
-            new SystemEvent(){ Title = "Asteroid Strike", Description = "An MASSIVE asteroid has stuck!", LifeLevel = -.1f, OZone = -.1f, SurfaceTemp = .1f, WaterLevel = -.05f, TitleColor = Color.CornflowerBlue, TextColor = Color.DodgerBlue },
-            new SystemEvent(){ Title = "Cosmic Rays", Description = "A near by star has exploded showering us in cosmic rays", LifeLevel = -.001f, TitleColor = Color.Magenta, TextColor = Color.Maroon },
-            new SystemEvent(){ Title = "Cosmic Rays", Description = "A near by star has exploded showering us in cosmic rays", LifeLevel = .001f, TitleColor = Color.Magenta, TextColor = Color.Maroon },
+            new SystemEvent(){ Title = "Ice Meteor Shower", Description = "A shower of rocks and ICE! +H2O", WaterLevel = .01f, TitleColor = Color.Silver, TextColor = Color.SteelBlue },
+            new SystemEvent(){ Title = "Ice Meteor Shower", Description = "A shower of rocks and ICE! +H2O", WaterLevel = .02f, TitleColor = Color.Silver, TextColor = Color.SteelBlue },
+            new SystemEvent(){ Title = "Solar Flare!", Description = "A coronal mass ejection has occurred -O3 +c ", OZone = -.01f, SurfaceTemp = .01f, TitleColor = Color.Gold, TextColor = Color.Goldenrod, beepSFX = "Audio/SFX/beep-10"  },
+            new SystemEvent(){ Title = "Asteroid Strike", Description = "An small asteroid has stuck! +Life +O3 +c +H2O", LifeLevel = .01f, OZone = .01f, SurfaceTemp=.01f, WaterLevel=.0125f, TitleColor = Color.CornflowerBlue, TextColor = Color.DodgerBlue},
+            new SystemEvent(){ Title = "Asteroid Strike", Description = "An medium asteroid has stuck! +Life +O3 +c +H2O", LifeLevel = .015f, OZone = .02f, SurfaceTemp =.01f, WaterLevel = .025f, TitleColor = Color.CornflowerBlue, TextColor = Color.DodgerBlue },
+            new SystemEvent(){ Title = "Asteroid Strike", Description = "An large asteroid has stuck! +Life +O3 +c +H2O", LifeLevel = .025f, OZone = .05f, SurfaceTemp = .05f, WaterLevel = .05f, TitleColor = Color.CornflowerBlue, TextColor = Color.DodgerBlue },
+            new SystemEvent(){ Title = "Asteroid Strike", Description = "An MASSIVE asteroid has stuck! -Life -O3 +c -H2O", LifeLevel = -.1f, OZone = -.1f, SurfaceTemp = .1f, WaterLevel = -.05f, TitleColor = Color.CornflowerBlue, TextColor = Color.DodgerBlue, beepSFX = "Audio/SFX/beep-10" },
+            new SystemEvent(){ Title = "Cosmic Rays", Description = "A near by star has exploded showering us in cosmic rays - Life", LifeLevel = -.001f, TitleColor = Color.Magenta, TextColor = Color.Maroon, beepSFX = "Audio/SFX/beep-10"},
+            new SystemEvent(){ Title = "Cosmic Rays", Description = "A near by star has exploded showering us in cosmic rays +Life", LifeLevel = .001f, TitleColor = Color.Magenta, TextColor = Color.Maroon, beepSFX = "Audio/SFX/beep-10" },
         };
 
         public Texture2D CreateBox(int width, int height, Rectangle thickenss, Color bgColor, Color edgeColor)
@@ -217,10 +280,13 @@ namespace Geopoiesis.Services
         public Color TitleColor { get; set; }
         public Color TextColor { get; set; }
 
+        public string beepSFX { get; set; }
+
         public SystemEvent()
         {
             TitleColor = Color.White;
             TextColor = Color.Silver;
+            beepSFX = null;
         }
     }
 }
