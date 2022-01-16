@@ -310,7 +310,7 @@ namespace Geopoiesis.Scenes
                     if (msManager.PositionRect.Intersects(DistMinus))
                     {
                         audioManager.PlaySFX("Audio/SFX/dtmf-5");
-                        geopoiesisService.DistanceFromStar = Math.Max(.1f, geopoiesisService.DistanceFromStar - .01f);
+                        geopoiesisService.DistanceFromStar = Math.Max(.1f, geopoiesisService.DistanceFromStar - .1f);
                     }
 
                     if (msManager.PositionRect.Intersects(QuitRect))
