@@ -186,7 +186,7 @@ namespace Geopoiesis.Services
                     if (WaterLevel > .1f && CurrentEpoch < Epoch.OceansForm)
                     {
                         CurrentEpoch = Epoch.OceansForm;
-                        FireAnEvent(new SystemEvent() { Title = "Oceans Formed!", Description = "Oceans have now formed on your world!", TitleColor = Color.SeaGreen, TextColor = Color.DarkSeaGreen });
+                        FireAnEvent(new SystemEvent() { Title = "Oceans Formed!", Description = "Oceans have now formed on your world!", TitleColor = Color.SeaGreen, TextColor = Color.DarkSeaGreen, beepSFX = "Audio/SFX/beep-10" });
                     }
 
                     if(CurrentEpoch > Epoch.OceansForm) // no life without water.
@@ -195,13 +195,13 @@ namespace Geopoiesis.Services
                     if (LifeLevel > .01f && CurrentEpoch < Epoch.Prokaryotes)
                     {
                         CurrentEpoch = Epoch.Prokaryotes;
-                        FireAnEvent(new SystemEvent() { Title = "Prokaryotes Formed!", Description = "Single-celled organisms, bacteria and cyanobacteria have begun to grow.", TitleColor = Color.SeaGreen, TextColor = Color.DarkSeaGreen });
+                        FireAnEvent(new SystemEvent() { Title = "Prokaryotes Formed!", Description = "Single-celled organisms, bacteria and cyanobacteria have begun to grow.", TitleColor = Color.SeaGreen, TextColor = Color.DarkSeaGreen, beepSFX = "Audio/SFX/beep-10" });
                     }
 
                     // Fire Any events.
                     if (loopCycle % 20 == 0)
                     {
-                        FireAnEvent(new SystemEvent() { Title="Passage Of Time", Description = "Time passes slowly...", TitleColor = Color.Lime , TextColor = Color.LimeGreen });
+                        FireAnEvent(new SystemEvent() { Title="Passage Of Time", Description = "Time passes slowly...", TitleColor = Color.Lime , TextColor = Color.LimeGreen, beepSFX = "Audio/SFX/beep-10" });
                     }
 
                     // Fire a random event!
