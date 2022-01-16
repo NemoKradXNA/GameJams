@@ -56,7 +56,7 @@ namespace Geopoiesis.Models
             {
                 CurrentScene.UnloadScene();
 
-                while (CurrentScene.State != SceneStateEnum.Closed)
+                while (CurrentScene.State != SceneStateEnum.Unloaded)
                     yield return new WaitForEndOfFrame(Game);
             }
 

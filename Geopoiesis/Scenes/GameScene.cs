@@ -36,7 +36,11 @@ namespace Geopoiesis.Scenes
         float _MinSeaDepth = .4f;
         float _MinShoreDepth = .42f;
         float _MinLand = .55f;
-        float _MinHill = .7f;
+        float _MinHill = .8f;
+
+        Color hudColor = Color.LimeGreen;
+        Color shadowColor = Color.DarkGreen;
+        Vector2 shaddowOffset = new Vector2(-2, 2);
 
         Dictionary<float, int> LODSettings = new Dictionary<float, int>()
         {
@@ -109,7 +113,7 @@ namespace Geopoiesis.Scenes
 
             base.Initialize();
 
-            State = SceneStateEnum.Open;
+            State = SceneStateEnum.Loaded;
 
             geopoiesisService.StartType = StartType.G;
 
@@ -240,17 +244,14 @@ namespace Geopoiesis.Scenes
                 if (moon.effect.Parameters["displacemntMag"] != null)
                     moon.effect.Parameters["displacemntMag"].SetValue(0.1f);
 
-                if (planet.effect.Parameters["_MinDeepSeaDepth"] != null)
-                    planet.effect.Parameters["_MinDeepSeaDepth"].SetValue(_MinDeepSeaDepth);
-
                 if (planet.effect.Parameters["_MinSeaDepth"] != null)
-                    planet.effect.Parameters["_MinSeaDepth"].SetValue(_MinSeaDepth);
+                    planet.effect.Parameters["_MinSeaDepth"].SetValue(geopoiesisService.WaterLevel);
 
                 if (planet.effect.Parameters["_MinShoreDepth"] != null)
-                    planet.effect.Parameters["_MinShoreDepth"].SetValue(_MinShoreDepth);
+                    planet.effect.Parameters["_MinShoreDepth"].SetValue(geopoiesisService.WaterLevel + .05f);
 
                 if (planet.effect.Parameters["_MinLand"] != null)
-                    planet.effect.Parameters["_MinLand"].SetValue(_MinLand);
+                    planet.effect.Parameters["_MinLand"].SetValue(geopoiesisService.LifeLevel);
 
                 if (planet.effect.Parameters["_MinHill"] != null)
                     planet.effect.Parameters["_MinHill"].SetValue(_MinHill);
@@ -270,6 +271,27 @@ namespace Geopoiesis.Scenes
             ld.Normalize();
 
             moon.LightDirection = ld;
+
+
+            
+            // Player input..
+            if (msManager.LeftClicked)
+            {
+                if (msManager.PositionRect.Intersects(VolcPlus))
+                    geopoiesisService.Volcanism = Math.Min(1, geopoiesisService.Volcanism + .01f);
+                if (msManager.PositionRect.Intersects(VolcMinus))
+                    geopoiesisService.Volcanism = Math.Max(0, geopoiesisService.Volcanism - .01f);
+
+                if (msManager.PositionRect.Intersects(QuakePlus))
+                    geopoiesisService.Quakes = Math.Min(1, geopoiesisService.Quakes + .01f);
+                if (msManager.PositionRect.Intersects(QuakeMinus))
+                    geopoiesisService.Quakes = Math.Max(0, geopoiesisService.Quakes - .01f);
+
+                if (msManager.PositionRect.Intersects(DistPlus))
+                    geopoiesisService.DistanceFromStar = geopoiesisService.DistanceFromStar + .1f;
+                if (msManager.PositionRect.Intersects(DistMinus))
+                    geopoiesisService.DistanceFromStar = Math.Max(.1f, geopoiesisService.DistanceFromStar - .01f);
+            }
 
 
             base.Update(gameTime);
@@ -334,7 +356,7 @@ namespace Geopoiesis.Scenes
 
             base.Draw(gameTime);
 
-            //_spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
+            //dpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
 
             //Vector2 textPos = new Vector2(8, 8);
             //DrawSring($"Camera Transform: {camera.Transform}", textPos, Color.Gold, testFont);
@@ -396,10 +418,8 @@ namespace Geopoiesis.Scenes
 
                 logBox = CreateBox(512, 780, new Rectangle(1, 1, 1, 1), new Color(0, 0, 0, a), new Color(1, 1, 1, .75f));
             }
-            Color hudColor = Color.LimeGreen;
-            Color shadowColor = Color.DarkGreen;
+            
             Vector2 screeCenter = new Vector2(Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height) * .5f;
-            Vector2 shaddowOffset = new Vector2(-2, 2);
 
             // HUD
 
@@ -466,7 +486,7 @@ namespace Geopoiesis.Scenes
             // Calc stat Value
             SetStatTexutre(geopoiesisService.DistanceFromStar/10f, Color.Gold, Color.White);
             _spriteBatch.Draw(statValue, new Rectangle((int)p.X + 64 + 1 + l, (int)p.Y + 1, 256 - 1, testFont.LineSpacing - 1), Color.White);
-            str = $"{geopoiesisService.DistanceFromStar,0:00} AU";
+            str = $"{geopoiesisService.DistanceFromStar,0:0.0} AU";
             pp = new Vector2(p.X + 64 + 128 + l, p.Y + testFont.LineSpacing * .5f);
             pp -= testFont.MeasureString(str) * .5f;
             _spriteBatch.DrawString(testFont, str, pp, hudColor);
@@ -554,12 +574,67 @@ namespace Geopoiesis.Scenes
                 p.Y += logFont.LineSpacing;
             }
 
-            if (LoggedEvents.Count > 21)
-                LoggedEvents.RemoveRange(0, 1);
             
-
             _spriteBatch.End();
 
+            //Controls.
+            _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
+
+            // Volcanism
+            p = new Vector2(256 + 8, 12 + testFont.LineSpacing*5);
+            buttonBox = CreateBox(32, 32, new Rectangle(2, 2, 2, 2), new Color(.2f, .5f, .2f, 1), hudColor);
+            VolcPlus = new Rectangle((int)p.X, (int)p.Y, buttonBox.Width, buttonBox.Height);
+            _spriteBatch.Draw(buttonBox, VolcPlus,Color.White);
+            str = "+";
+            p = (p + (new Vector2(buttonBox.Width,buttonBox.Height) * .5f)) - testFont.MeasureString(str) * .5f;
+            _spriteBatch.DrawString(testFont, str, p, hudColor);
+            str = $"Volcanism [{geopoiesisService.Volcanism * 100, 0:000}]";
+            p.X += 32 + (150 - (testFont.MeasureString(str).X * .5f));
+            _spriteBatch.DrawString(testFont, str, p, hudColor);
+            p.X = 621;// testFont.MeasureString(str).X + 16;
+            VolcMinus = new Rectangle((int)p.X, (int)p.Y, buttonBox.Width, buttonBox.Height);
+            _spriteBatch.Draw(buttonBox, VolcMinus, Color.White);
+            str = "-";
+            p = (p + (new Vector2(buttonBox.Width, buttonBox.Height) * .5f)) - testFont.MeasureString(str) * .5f;
+            _spriteBatch.DrawString(testFont, str, p, hudColor);
+
+            // Quakes
+            p = new Vector2(256 + 8, 18 + testFont.LineSpacing * 6);
+            buttonBox = CreateBox(32, 32, new Rectangle(2, 2, 2, 2), new Color(.2f, .5f, .2f, 1), hudColor);
+            QuakePlus = new Rectangle((int)p.X, (int)p.Y, buttonBox.Width, buttonBox.Height);
+            _spriteBatch.Draw(buttonBox, QuakePlus, Color.White);
+            str = "+";
+            p = (p + (new Vector2(buttonBox.Width, buttonBox.Height) * .5f)) - testFont.MeasureString(str) * .5f;
+            _spriteBatch.DrawString(testFont, str, p, hudColor);
+            str = $"Tectonic Shift [{geopoiesisService.Quakes * 100,0:000}]";
+            p.X += 32 + (150 - (testFont.MeasureString(str).X * .5f));
+            _spriteBatch.DrawString(testFont, str, p, hudColor);
+            p.X = 621;// testFont.MeasureString(str).X + 16;
+            QuakeMinus = new Rectangle((int)p.X, (int)p.Y, buttonBox.Width, buttonBox.Height);
+            _spriteBatch.Draw(buttonBox, QuakeMinus, Color.White);
+            str = "-";
+            p = (p + (new Vector2(buttonBox.Width, buttonBox.Height) * .5f)) - testFont.MeasureString(str) * .5f;
+            _spriteBatch.DrawString(testFont, str, p, hudColor);
+
+            // Distance from star
+            p = new Vector2(256 + 8, 24 + testFont.LineSpacing * 7);
+            buttonBox = CreateBox(32, 32, new Rectangle(2, 2, 2, 2), new Color(.2f, .5f, .2f, 1), hudColor);
+            DistPlus = new Rectangle((int)p.X, (int)p.Y, buttonBox.Width, buttonBox.Height);
+            _spriteBatch.Draw(buttonBox, DistPlus, Color.White);
+            str = "+";
+            p = (p + (new Vector2(buttonBox.Width, buttonBox.Height) * .5f)) - testFont.MeasureString(str) * .5f;
+            _spriteBatch.DrawString(testFont, str, p, hudColor);
+            str = $"Distance From Star [{geopoiesisService.DistanceFromStar, 0:0.0} AU]";
+            p.X += 32 + (150 - (testFont.MeasureString(str).X * .5f));
+            _spriteBatch.DrawString(testFont, str, p, hudColor);
+            p.X = 621;// testFont.MeasureString(str).X + 16;
+            DistMinus = new Rectangle((int)p.X, (int)p.Y, buttonBox.Width, buttonBox.Height);
+            _spriteBatch.Draw(buttonBox, DistMinus, Color.White);
+            str = "-";
+            p = (p + (new Vector2(buttonBox.Width, buttonBox.Height) * .5f)) - testFont.MeasureString(str) * .5f;
+            _spriteBatch.DrawString(testFont, str, p, hudColor);
+
+            _spriteBatch.End();
 
             GraphicsDevice.BlendState = BlendState.Opaque;
             GraphicsDevice.RasterizerState = currentRasterizerState;
@@ -571,9 +646,19 @@ namespace Geopoiesis.Scenes
         Texture2D starBox;
         Texture2D logBox;
         Texture2D pixel;
+        Texture2D buttonBox;
 
         Texture2D statBox;
         Texture2D statValue;
+
+        Rectangle VolcPlus;
+        Rectangle VolcMinus;
+
+        Rectangle QuakePlus;
+        Rectangle QuakeMinus;
+
+        Rectangle DistPlus;
+        Rectangle DistMinus;
 
         protected void SetStatTexutre(float v, Color min, Color max)
         {
@@ -596,28 +681,7 @@ namespace Geopoiesis.Scenes
 
         protected Texture2D CreateBox(int width, int height, Rectangle thickenss, Color bgColor, Color edgeColor)
         {
-            Texture2D boxTexture = new Texture2D(Game.GraphicsDevice, width, height);
-
-            Color[] c = new Color[width * height];
-
-            Color color = new Color(0, 0, 0, 0);
-
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    if (x < thickenss.X || x >= width - thickenss.Width || y <  thickenss.Height || y >= height - thickenss.Y)
-                        color = edgeColor;
-                    else
-                        color = bgColor;
-
-                    c[x + y * width] = color;
-                }
-            }
-
-            boxTexture.SetData(c);
-
-            return boxTexture;
+            return geopoiesisService.CreateBox(width, height, thickenss, bgColor, edgeColor);
         }
 
         protected void DrawSring(string msg, Vector2 position, Color color, SpriteFont font)
@@ -634,7 +698,7 @@ namespace Geopoiesis.Scenes
         public override  void UnloadScene()
         {
             base.UnloadScene();
-            State = SceneStateEnum.Closed;
+            State = SceneStateEnum.Unloaded;
         }
     }
 }

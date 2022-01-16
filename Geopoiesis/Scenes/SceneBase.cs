@@ -10,9 +10,11 @@ namespace Geopoiesis.Scenes
 {
     public abstract class SceneBase : DrawableGameComponent, IScene
     {
+        public ISceneManager sceneManager { get { return Game.Services.GetService<ISceneManager>(); } }
         protected ICoroutineService coroutineService { get { return Game.Services.GetService<ICoroutineService>(); } }
         protected ICameraService camera { get { return Game.Services.GetService<ICameraService>(); } }
         protected IKeyboardStateManager kbManager { get { return Game.Services.GetService<IInputStateHandler>().KeyboardManager; } }
+        protected IMouseStateManager msManager { get { return Game.Services.GetService<IInputStateHandler>().MouseManager; } }
         protected GeopoiesisService geopoiesisService { get { return Game.Services.GetService<GeopoiesisService>(); } }
 
         public string Name { get; set; }
@@ -20,6 +22,8 @@ namespace Geopoiesis.Scenes
         public SceneStateEnum State { get; set; }
 
         public List<IGameComponent> Components { get; set; }
+
+        
 
         public SceneBase(Game game, string name) : base(game)
         { 

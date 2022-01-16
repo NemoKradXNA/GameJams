@@ -2,6 +2,7 @@
 using Geopoiesis.Interfaces;
 using Geopoiesis.Managers.Coroutines;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -35,6 +36,9 @@ namespace Geopoiesis.Services
         public float LifeLevel = 0; // 0-1
         public float DistanceFromStar = 1; // in AU
         public float SurfaceTemp = -30; // Celsius.
+
+        public float Volcanism = 0; //0-1
+        public float Quakes = 0; //0-1
 
         public int Seed = 1971;
 
@@ -83,6 +87,12 @@ namespace Geopoiesis.Services
                         bt = 0;
                     else if (DistanceFromStar > 1)
                         bt += .0001f;
+                    else if (DistanceFromStar > 2)
+                        bt -= .00001f;
+                    else if (DistanceFromStar > 3)
+                        bt -= .0001f;
+                    else if (DistanceFromStar > 4)
+                        bt -= .001f;
 
                     SurfaceTemp += bt;
 
@@ -126,13 +136,13 @@ namespace Geopoiesis.Services
                     }
 
                     // Fire Any events.
-                    if (loopCycle % 10 == 0)
+                    if (loopCycle % 20 == 0)
                     {
                         FireAnEvent(new SystemEvent() { Title="Passage Of Time", Description = "Time passes slowly...", TitleColor = Color.Lime , TextColor = Color.LimeGreen });
                     }
 
                     // Fire a random event!
-                    if (loopCycle % rnd.Next(3, 10) == 0)
+                    if (loopCycle % rnd.Next(5, 20) == 0)
                     {
                         int evtIdx = rnd.Next(0, EvenstList.Count);
                         FireAnEvent(EvenstList[evtIdx]);
@@ -163,6 +173,32 @@ namespace Geopoiesis.Services
             new SystemEvent(){ Title = "Cosmic Rays", Description = "A near by star has exploded showering us in cosmic rays", LifeLevel = -.001f, TitleColor = Color.Magenta, TextColor = Color.Maroon },
             new SystemEvent(){ Title = "Cosmic Rays", Description = "A near by star has exploded showering us in cosmic rays", LifeLevel = .001f, TitleColor = Color.Magenta, TextColor = Color.Maroon },
         };
+
+        public Texture2D CreateBox(int width, int height, Rectangle thickenss, Color bgColor, Color edgeColor)
+        {
+            Texture2D boxTexture = new Texture2D(Game.GraphicsDevice, width, height);
+
+            Color[] c = new Color[width * height];
+
+            Color color = new Color(0, 0, 0, 0);
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    if (x < thickenss.X || x >= width - thickenss.Width || y < thickenss.Height || y >= height - thickenss.Y)
+                        color = edgeColor;
+                    else
+                        color = bgColor;
+
+                    c[x + y * width] = color;
+                }
+            }
+
+            boxTexture.SetData(c);
+
+            return boxTexture;
+        }
     }
 
     public class SystemEvent

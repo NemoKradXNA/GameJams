@@ -52,6 +52,7 @@ namespace Geopoiesis
         protected ICoroutineService coroutineService;
         protected IInputStateHandler inputHandlerService;
         protected IKeyboardStateManager kbManager;
+        protected IMouseStateManager msManager;
         protected ICameraService camera;
 
         protected GeopoiesisService geopoiesisService;
@@ -70,12 +71,8 @@ namespace Geopoiesis
             _graphics.GraphicsProfile = GraphicsProfile.HiDef;
 
 
-            Window.AllowUserResizing = true;
-            //Window.IsBorderless = false;
-            //_graphics.IsFullScreen = true;
-            _graphics.PreferredBackBufferHeight = 1080;
-            _graphics.PreferredBackBufferWidth = 1920;
-            _graphics.ApplyChanges();
+           
+           
         }
 
         protected override void Initialize()
@@ -84,7 +81,8 @@ namespace Geopoiesis
             coroutineService = new CoroutineService(this);
             geopoiesisService = new GeopoiesisService(this);
             kbManager = new KeyboardStateManager(this);
-            inputHandlerService = new InputHandlerService(this, kbManager);
+            msManager = new MouseStateManager(this);
+            inputHandlerService = new InputHandlerService(this, kbManager, msManager);
 
             camera = new CameraService(this, 0.1f, 20000f);
             camera.ClearColor = Color.Black;
@@ -95,9 +93,22 @@ namespace Geopoiesis
             initialRasterizerState = GraphicsDevice.RasterizerState;
             currentRasterizerState = initialRasterizerState;
 
+            sceneManager.AddScene(new MainMenuScene(this, "mainMenu"));
+
             sceneManager.AddScene(new GameScene(this, "mainGame"));
 
             base.Initialize();
+
+            //Window.IsBorderless = false;
+
+            _graphics.PreferredBackBufferHeight = 1080;
+            _graphics.PreferredBackBufferWidth = 1920;
+
+            //_graphics.IsFullScreen = true;
+            Window.AllowUserResizing = true;
+            _graphics.ApplyChanges();
+
+            sceneManager.LoadScene("mainMenu");
         }
 
         protected override void LoadContent()
@@ -110,8 +121,7 @@ namespace Geopoiesis
             if (kbManager.KeyPress(Keys.Escape))
                 Exit();
 
-            if (kbManager.KeyPress(Keys.Space))
-                sceneManager.LoadScene("mainGame");
+            
 
             inputHandlerService.PreUpdate(gameTime);
             base.Update(gameTime);
@@ -134,17 +144,6 @@ namespace Geopoiesis
 
             base.Draw(gameTime);
 
-            if (sceneManager.CurrentSceneState == Enums.SceneStateEnum.Unknown)
-            {
-                string str = "Press Spacebar...";
-                SpriteFont font = Content.Load<SpriteFont>("SpriteFont/font");
-                Vector2 p = new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2);
-                p = p - font.MeasureString(str) * .5f;
-
-                _spriteBatch.Begin();
-                _spriteBatch.DrawString(font, str, p, Color.Gold);
-                _spriteBatch.End();
-            }
             
 
             GraphicsDevice.BlendState = BlendState.Opaque;

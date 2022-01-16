@@ -8,6 +8,7 @@ namespace Geopoiesis.Interfaces
 {
     public interface IScene : IGameComponent
     {
+        ISceneManager sceneManager { get; }
         string Name { get; set; }
         IScene LastScene { get; set; }
 

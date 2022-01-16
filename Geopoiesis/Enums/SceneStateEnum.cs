@@ -7,9 +7,9 @@ namespace Geopoiesis.Enums
     public enum SceneStateEnum : int
     {
         Unknown,
-        Opening,
-        Open,
-        Closing,
-        Closed
+        Loading,
+        Loaded,
+        Unloading,
+        Unloaded
     }
 }
