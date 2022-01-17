@@ -18,19 +18,23 @@ namespace Geopoiesis.Models.Planet
         public float Radius { get; set; }
         public float NoiseMod { get; set; }
         public int CubeSize { get; set; }
-        public float DisplaceMesh { get; set; }
 
         public Texture2D faceHeightMap { get; set; }
         public Texture2D faceNormalMap { get; set; }
+        public Texture2D faceSplatMap { get; set; }
         public MeshData meshData { get; set; }
 
         protected Game _game;
 
         protected Random rnd;
 
+        public int Seed { get; set; }
+
         public PlanetFace(Game game) 
-        { 
-            Normal = Vector3.Backward; Dimension = 20;
+        {
+            Seed = 1;
+            Normal = Vector3.Backward; 
+            Dimension = 20;
 
             _game = game;
             rnd = new Random();
@@ -48,9 +52,8 @@ namespace Geopoiesis.Models.Planet
 
 
 
-        public PlanetFace(Game game, Vector3 rootPosition, Vector3 normal, int dim, float radius, float noiseMod, int cubeSize, Texture2D faceMap = null, float displace = 0) : this(game)
+        public PlanetFace(Game game, Vector3 rootPosition, Vector3 normal, int dim, float radius, float noiseMod, int cubeSize, Texture2D faceMap = null, int seed= 1971) : this(game)
         {
-            DisplaceMesh = displace;
             faceHeightMap = faceMap;
             CubeSize = cubeSize;
             NoiseMod = noiseMod;
@@ -58,6 +61,7 @@ namespace Geopoiesis.Models.Planet
             Normal = normal;
             Dimension = dim;
             Radius = radius;
+            Seed = seed;
         }
 
 
@@ -86,20 +90,12 @@ namespace Geopoiesis.Models.Planet
             return Quaternion.Identity;
         }
 
-        List<string> Debug; // Need to write a console logger service.
-        protected void WriteToDebug(string msg)
+        public IEnumerator BuildMesh()
         {
-            Debug.Add(string.Format("[{0:dd-MMM-yyyy HH:mm:ss}] +{1}", DateTime.Now, msg));
-        }
-
-        public IEnumerator BuildMesh(List<string> debug)
-        {
-            Debug = debug;
-
             Quaternion rotation = RotateToFace(Normal);
 
             Vector3 cubeNormal = new Vector3(Normal.X * -1, Normal.Y * -1, Normal.Z);
-            
+
             Quaternion cubeRot = RotateToFace(cubeNormal);
 
             meshData = new MeshData();
@@ -108,22 +104,24 @@ namespace Geopoiesis.Models.Planet
             float ch = 0;
             Color[] col;
             Color[] nc;
+            Color[] sc;
 
             float vh;
 
 
             //if (faceHeightMap == null)
             {
-                WriteToDebug("Building face mesh data...");
+                //WriteToDebug("Building face mesh data...");
                 faceHeightMap = new Texture2D(_game.GraphicsDevice, CubeSize, CubeSize, false, SurfaceFormat.Color);
-
                 faceNormalMap = new Texture2D(_game.GraphicsDevice, CubeSize, CubeSize, false, SurfaceFormat.Color);
+                faceSplatMap = new Texture2D(_game.GraphicsDevice, CubeSize, CubeSize, false, SurfaceFormat.Color);
 
                 ch = faceHeightMap.Width * .5f;
                 col = new Color[faceHeightMap.Width * faceHeightMap.Height];
                 vh = h - 1;
 
                 nc = new Color[faceNormalMap.Width * faceNormalMap.Height];
+                sc = new Color[faceSplatMap.Width * faceSplatMap.Height];
 
                 float randomOffset = rnd.Next();
 
@@ -162,52 +160,108 @@ namespace Geopoiesis.Models.Planet
                                 py = (faceHeightMap.Height - 1) - py;
                         }
 
-                        float p = Get3DPerlinValue(cubeV * NoiseMod);
+                        Vector3 nV = cubeV + (Vector3.One * Seed);
+                        float p = Get3DPerlinValue(nV * NoiseMod);
 
                         // Move p from -1 - 1 to 0 - 1
                         p = (p + 1) * .5f;
 
                         col[px + py * faceHeightMap.Width] = new Color(p, p, p, 1);
+                    }
+                }
+
+                for (int x = faceHeightMap.Width / -2; x < faceHeightMap.Width / 2; x++)
+                {
+                    for (int y = faceHeightMap.Height / -2; y < faceHeightMap.Height / 2; y++)
+                    {
+                        Vector3 v = new Vector3(x, ch - 1, y) + (Vector3.One * .5f);
+                        v.Normalize();
+                        Vector3 cubeV = Vector3.Transform(v, cubeRot) + RootPosition;
+
+                        int px = (int)MathHelper.Lerp(0, faceHeightMap.Width, (x + ch) / faceHeightMap.Width);
+                        int py = (int)MathHelper.Lerp(0, faceHeightMap.Height, (y + ch) / faceHeightMap.Height);
+
+                        if (Normal.Z == -1 || Normal.Y != 0)
+                        {
+                            py = (faceHeightMap.Height - 1) - py;
+                            px = (faceHeightMap.Width - 1) - px;
+                        }
+
+                        if (Normal.X != 0)
+                        {
+                            int t = py;
+                            py = px;
+                            px = t;
+
+                            if (Normal.X == 1)
+                                px = (faceHeightMap.Width - 1) - px;
+                            else
+                                py = (faceHeightMap.Height - 1) - py;
+                        }
 
                         // Calc normal map
                         Vector3 pos = cubeV;
-                        Vector3 lN = new Vector3(x + 1, ch - 1, y) + (Vector3.One * .5f);
+
+                        float nh = col[Math.Min(faceHeightMap.Width - 1, px + 1) + py * faceHeightMap.Width].R / 255f;
+
+                        Vector3 lN = new Vector3(x + 1, ch - 1, y) + (Vector3.One * .5f);                        
                         lN.Normalize();
                         lN = Vector3.Transform(lN, cubeRot) + RootPosition;
 
-
-                        Vector3 bN = new Vector3(x, ch - 1, y - 1) + (Vector3.One * .5f);
+                        nh = col[px + Math.Max(faceHeightMap.Height - 1, py - 1) * faceHeightMap.Width].R / 255f;
+                        Vector3 bN = new Vector3(x, ch - 1, y - 1) + (Vector3.One * .5f);                        
                         bN.Normalize();
                         bN = Vector3.Transform(bN, cubeRot) + RootPosition;
 
 
-                        lN.Y = Get3DPerlinValue(lN) * 10;
-                        bN.Y = Get3DPerlinValue(bN) * 10;
+                        //lN.Y = Get3DPerlinValue(lN) * 10;
+                        //bN.Y = Get3DPerlinValue(bN) * 10;
+
+                        //lN.Y += col[Math.Min(faceHeightMap.Width - 1, px + 1) + py * faceHeightMap.Width].R / 255f;
+                        //bN.Y += col[px + Math.Max(faceHeightMap.Height - 1, py - 1) * faceHeightMap.Width].R / 255f;
 
                         Vector3 side1 = (lN - pos);
                         Vector3 side2 = (bN - pos);
-                        Vector3 normal = Vector3.Cross(side1, side2);
+                        Vector3 normal = Vector3.Cross(side2, side1);
                         normal.Normalize();
-
                         normal = (normal + Vector3.One) * .5f;
-                        //normal = (cubeRot * normal);
 
-                        //normal = new Vector3(normal.x, normal.y * Normal.y, normal.z * -1);
+                        //normal = Vector3.Transform(normal, cubeRot) + RootPosition;
 
-                        nc[px + py * faceNormalMap.Width] = new Color(normal.X, normal.Y, normal.Z, 1);
+                        nc[px + py * faceNormalMap.Width] = new Color(normal.X, normal.Y , normal.Z, 1);
 
+
+                        // Calculate splat map values.
+                        float r, g, b, a;
+                        float p = col[px + py * faceHeightMap.Width].R / 255f;
+                        r = g = b = a = 0;
+                        if (p < .50f)
+                            r = 1;
+                        if (p >= .50f && p < .7f)
+                            g = 1;
+                        if (p >= .7f && p < .9f)
+                            b = 1;
+                        if (p >= .9f)
+                            a = 1;
+
+                        if (Math.Abs(Vector3.Dot(Vector3.Up, normal)) > .6f)
+                            r = 1;
+
+                        //if (Math.Abs(Vector3.Dot(Vector3.Up, normal)) <= .01f)
+                        //    b = 1;
+
+                        sc[px + py * faceSplatMap.Width] = new Color(r, g, b, a);
                     }
                 }
 
-                WriteToDebug("Height and normal map map generated.");
                 faceHeightMap.SetData(col);
-
                 faceNormalMap.SetData(nc);
+                faceSplatMap.SetData(sc);
             }
 
             vh = h - 1;
 
-            WriteToDebug("Building mesh data map...");
+            //WriteToDebug("Building mesh data map...");
 
             for (float x = -h; x < h; x++)
             {
@@ -240,20 +294,12 @@ namespace Geopoiesis.Models.Planet
 
                     v += Vector3.Up * vh;
 
-
-                    //float hm = (col[px + py * faceHeightMap.Width].R * 2) - 1;
-                    float hm = ((col[px + py * faceHeightMap.Width].R) - 1)/256f;
-
-
-                    hm *= DisplaceMesh;// ? 10 : 0;
-
                     v = Vector3.Transform(v, rotation);
                     v.Normalize();
                     meshData.Normals.Add(v);
 
-                    v = v * (Radius + hm);
-
-
+                    
+                    v = v * (Radius);
 
                     //v += RootPosition;
                     meshData.Vertices.Add(v);
@@ -270,7 +316,7 @@ namespace Geopoiesis.Models.Planet
 
             //faceNormalMap.SetData(nc);
 
-            WriteToDebug("Building index map...");
+            //WriteToDebug("Building index map...");
             // Build triangles. 
             for (int x = 0; x < Dimension - 1; x++)
             {
@@ -289,7 +335,7 @@ namespace Geopoiesis.Models.Planet
 
             yield return new WaitForEndOfFrame(_game);
 
-            WriteToDebug("Face done.");
+            //WriteToDebug("Face done.");
         }
     }
 }

@@ -65,6 +65,8 @@ vOut VertexShaderFunction(vIn input)
     vOut output;
 
     float h = texCUBElod(heightMapSampler, float4(input.normal,1)).r;
+    
+    //h = (h * 2) -1;
     input.pos.xyz += input.normal * h * displacemntMag;
 
     output.pos = mul(input.pos, wvp);

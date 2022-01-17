@@ -9,130 +9,68 @@ using System.Text;
 
 namespace Geopoiesis.Models.Planet
 {
-    public class PlanetGeometry : GeometryBase
+    
+    //https://3dtextures.me/2021/05/28/rock-042/
+    public class PlanetGeometry : MorphableSphere
     {
-        ICoroutineService coroutineService { get { return Game.Services.GetService<ICoroutineService>(); } }
-        public TextureCube CubeHeightMap { get; set; }
-        public TextureCube CubeSplatMap { get; set; }
-        public List<Texture2D> FaceTextures { get; set; }
-
-        public List<Texture2D> NoiseMaps { get; set; }
 
         public List<string> Debug = new List<string>();
 
-        List<Vector3> FaceNormals = new List<Vector3>() { Vector3.Backward, Vector3.Up, Vector3.Left, Vector3.Right, Vector3.Forward, Vector3.Down };
+        protected List<Texture2D> textures = null;
 
-        protected List<IPlanetFace> Faces = new List<IPlanetFace>() { null, null, null, null, null, null };
 
-        public int FaceDimensions = 32;
-        public float Radius = 2;
-        public float NoiseMod = 4.8f;
-        public int CubeSize = 16;
-        public float DisplaceMesh = 0f;
-
-        float _lastDisplaceMesh;
-
-        public PlanetGeometry(Game game, string effectAsset) : base(game, effectAsset)
+        public PlanetGeometry(Game game, string effectAsset) : base(game, effectAsset, 2,2,1.8f,256)
         {
-            coroutineService.StartCoroutine(GenerateFaces());
         }
         protected void WriteToDebug(string msg) // Should really be a "console" logging service...
         {
             Debug.Add(string.Format("[{0:dd-MMM-yyyy HH:mm:ss}] - {1}", DateTime.Now, msg));
         }
-        public virtual IEnumerator GenerateFaces()
-        {
-            WriteToDebug("GenerateFaces...");
-
-            CubeHeightMap = new TextureCube(Game.GraphicsDevice, CubeSize, false, SurfaceFormat.Color);
-            CubeSplatMap = new TextureCube(Game.GraphicsDevice, CubeSize, false, SurfaceFormat.Color);
-
-            if (FaceTextures == null)
-                FaceTextures = new List<Texture2D>();
-
-            FaceTextures.Clear();
-
-            meshData = new MeshData();
-            WriteToDebug("Initializing Cubemaps...");
-
-            yield return new WaitForEndOfFrame(Game);
-
-            if (NoiseMaps == null || NoiseMaps.Count == 0)
-                NoiseMaps = new List<Texture2D>() { null, null, null, null, null, null };
-
-            WriteToDebug("Initializing NoiseMaps...");
-
-            for (int idx = 0; idx < 6; idx++)
-            {
-                Vector3 n = FaceNormals[idx];
-                Texture2D FaceMap = null;
-
-                WriteToDebug($"Generating Face [{n}]");
-
-                if (Faces[idx] == null)
-                    Faces[idx] = new PlanetFace(Game, Transform.Position, n, FaceDimensions, Radius, NoiseMod, CubeSize, FaceMap, DisplaceMesh);
-
-                WriteToDebug($"Building Face [{n}] mesh data...");
-                yield return coroutineService.StartCoroutine(Faces[idx].BuildMesh(Debug));
-
-                WriteToDebug("Combining mesh data and maps");
-                meshData.Combine(Faces[idx].meshData);
-
-                FaceTextures.Add(Faces[idx].faceHeightMap);
-                NoiseMaps[idx] = Faces[idx].faceHeightMap;
-
-
-                WriteToDebug("Generating cubemaps");
-                Color[] p = new Color[CubeSize* CubeSize];
-                Faces[idx].faceHeightMap.GetData(p);
-
-                Color[] np = new Color[CubeSize* CubeSize];
-                Faces[idx].faceNormalMap.GetData(np);
-
-                if (n == Vector3.Left)
-                {
-                    CubeHeightMap.SetData(CubeMapFace.NegativeX, p);
-                    CubeSplatMap.SetData(CubeMapFace.NegativeX, np);
-                }
-                if (n == Vector3.Right)
-                {
-                    CubeHeightMap.SetData(CubeMapFace.PositiveX, p);
-                    CubeSplatMap.SetData(CubeMapFace.PositiveX, np);
-                }
-
-                if (n == Vector3.Up)
-                {
-                    CubeHeightMap.SetData(CubeMapFace.PositiveY, p);
-                    CubeSplatMap.SetData(CubeMapFace.PositiveY, np);
-                }
-                if (n == Vector3.Down)
-                {
-                    CubeHeightMap.SetData(CubeMapFace.NegativeY, p);
-                    CubeSplatMap.SetData(CubeMapFace.NegativeY, np);
-                }
-
-                if (n == Vector3.Forward)
-                {
-                    CubeHeightMap.SetData(CubeMapFace.PositiveZ, p);
-                    CubeSplatMap.SetData(CubeMapFace.PositiveZ, np);
-                }
-                if (n == Vector3.Backward)
-                {
-                    CubeHeightMap.SetData(CubeMapFace.NegativeZ, p);
-                    CubeSplatMap.SetData(CubeMapFace.NegativeZ, np);
-                }
-            }
-
-            WriteToDebug($"Faces Generated.");
-
-            CalculateTangents();
-            SetVertexBuffer();
-        }
+           
 
         public override void Draw(GameTime gameTime)
         {
+            
             if (effect.Parameters["heightTexture"] != null)
                 effect.Parameters["heightTexture"].SetValue(CubeHeightMap);
+
+            if (effect.Parameters["splatTexture"] != null)
+                effect.Parameters["splatTexture"].SetValue(CubeSplatMap);
+
+            if (effect.Parameters["normalTexture"] != null)
+                effect.Parameters["normalTexture"].SetValue(CubeNormalMap);
+
+            if (effect.Parameters["lightDirection"] != null)
+                effect.Parameters["lightDirection"].SetValue(LightDirection);
+
+
+            if (textures == null)
+            {
+                textures = new List<Texture2D>();
+                for (int t = 0; t < 4; t++)
+                    textures.Add(new Texture2D(Game.GraphicsDevice, 1, 1));
+
+                Color[] c = new Color[] { new Color(.2f, .2f, .8f, 1f) };
+                textures[0].SetData(c);
+
+                c = new Color[] { new Color(.4f, .4f, .3f, 1f) };
+                textures[1].SetData(c);
+
+                c = new Color[] { new Color(.8f, .4f, .3f, 1f) };
+                textures[2].SetData(c);
+
+                c = new Color[] { new Color(1f, 1f, 1f, 1f) };
+                textures[3].SetData(c);
+            }
+
+            if (effect.Parameters["sandTexture"] != null)
+                effect.Parameters["sandTexture"].SetValue(textures[0]);
+            if (effect.Parameters["grassTexture"] != null)
+                effect.Parameters["grassTexture"].SetValue(textures[1]);
+            if (effect.Parameters["rockTexture"] != null)
+                effect.Parameters["rockTexture"].SetValue(textures[2]);
+            if (effect.Parameters["snowTexture"] != null)
+                effect.Parameters["snowTexture"].SetValue(textures[3]);
 
             base.Draw(gameTime);
         }

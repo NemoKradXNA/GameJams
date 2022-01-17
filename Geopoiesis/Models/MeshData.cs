@@ -26,6 +26,7 @@ namespace Geopoiesis.Models
             Vertices.AddRange(data.Vertices);
             TextCoords.AddRange(data.TextCoords);
             Colors.AddRange(data.Colors);
+            Tangents.AddRange(data.Tangents);
         }
     }
 }
