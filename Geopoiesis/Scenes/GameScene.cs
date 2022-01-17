@@ -174,14 +174,14 @@ namespace Geopoiesis.Scenes
                 //if (kbManager.KeyDown(Keys.D))
                 //    camera.Transform.Translate(Vector3.Right * translateSpeed);
 
-                //if (kbManager.KeyDown(Keys.Down))
-                //    camera.Transform.Rotate(Vector3.Left, rotateSpeed);
-                //if (kbManager.KeyDown(Keys.Up))
-                //    camera.Transform.Rotate(Vector3.Right, rotateSpeed);
-                //if (kbManager.KeyDown(Keys.Right))
-                //    camera.Transform.Rotate(Vector3.Down, rotateSpeed);
-                //if (kbManager.KeyDown(Keys.Left))
-                //    camera.Transform.Rotate(Vector3.Up, rotateSpeed);
+                if (kbManager.KeyDown(Keys.Down))
+                    camera.Transform.Rotate(Vector3.Left, rotateSpeed);
+                if (kbManager.KeyDown(Keys.Up))
+                    camera.Transform.Rotate(Vector3.Right, rotateSpeed);
+                if (kbManager.KeyDown(Keys.Right))
+                    camera.Transform.Rotate(Vector3.Down, rotateSpeed);
+                if (kbManager.KeyDown(Keys.Left))
+                    camera.Transform.Rotate(Vector3.Up, rotateSpeed);
 
                 planet.Transform.Rotate(Vector3.Up, .0025f);
                 moonAnchor.Rotate((Vector3.Up * .25f) + (Vector3.Forward * .1f), -.005f);
@@ -192,25 +192,25 @@ namespace Geopoiesis.Scenes
                 //    camera.RenderWireFrame = !camera.RenderWireFrame;
 
                 float dmod = .01f;
-                if (kbManager.KeyDown(Keys.Q))
-                    DisplacementMag = MathHelper.Min(1, DisplacementMag + dmod);
-                if (kbManager.KeyDown(Keys.E))
-                    DisplacementMag = MathHelper.Max(0, DisplacementMag - dmod);
+                //if (kbManager.KeyDown(Keys.Q))
+                //    DisplacementMag = MathHelper.Min(1, DisplacementMag + dmod);
+                //if (kbManager.KeyDown(Keys.E))
+                //    DisplacementMag = MathHelper.Max(0, DisplacementMag - dmod);
 
-                if (kbManager.KeyDown(Keys.R))
-                    geopoiesisService.WaterLevel = MathHelper.Min(1, geopoiesisService.WaterLevel + dmod);
-                if (kbManager.KeyDown(Keys.T))
-                    geopoiesisService.WaterLevel = MathHelper.Max(0, geopoiesisService.WaterLevel - dmod);
+                //if (kbManager.KeyDown(Keys.R))
+                //    geopoiesisService.WaterLevel = MathHelper.Min(1, geopoiesisService.WaterLevel + dmod);
+                //if (kbManager.KeyDown(Keys.T))
+                //    geopoiesisService.WaterLevel = MathHelper.Max(0, geopoiesisService.WaterLevel - dmod);
 
-                if (kbManager.KeyDown(Keys.F))
-                    geopoiesisService.OZone = MathHelper.Min(1, geopoiesisService.OZone + dmod);
-                if (kbManager.KeyDown(Keys.G))
-                    geopoiesisService.OZone = MathHelper.Max(0, geopoiesisService.OZone - dmod);
+                //if (kbManager.KeyDown(Keys.F))
+                //    geopoiesisService.OZone = MathHelper.Min(1, geopoiesisService.OZone + dmod);
+                //if (kbManager.KeyDown(Keys.G))
+                //    geopoiesisService.OZone = MathHelper.Max(0, geopoiesisService.OZone - dmod);
 
-                if (kbManager.KeyDown(Keys.Y))
-                    geopoiesisService.LifeLevel = MathHelper.Min(1, geopoiesisService.LifeLevel + dmod);
-                if (kbManager.KeyDown(Keys.U))
-                    geopoiesisService.LifeLevel = MathHelper.Max(0, geopoiesisService.LifeLevel - dmod);
+                //if (kbManager.KeyDown(Keys.Y))
+                //    geopoiesisService.LifeLevel = MathHelper.Min(1, geopoiesisService.LifeLevel + dmod);
+                //if (kbManager.KeyDown(Keys.U))
+                //    geopoiesisService.LifeLevel = MathHelper.Max(0, geopoiesisService.LifeLevel - dmod);
 
                 //if (kbManager.KeyDown(Keys.J))
                 //    _MinLand = MathHelper.Min(1, _MinLand + dmod);

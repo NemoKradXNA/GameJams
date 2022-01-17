@@ -45,6 +45,10 @@ namespace Geopoiesis.Scenes
         SpriteFont font;
         SpriteFont subFont;
         Random rnd;
+
+
+        protected string Version = "1.0.0.0";
+
         public MainMenuScene(Game game, string name) : base(game, name) { }
 
         public override void Initialize()
@@ -208,6 +212,10 @@ namespace Geopoiesis.Scenes
             p.Y += font.LineSpacing / 1.75f;
             p.X -= font.MeasureString(str).X / 2;
             _spriteBatch.DrawString(font, str, p, textColor);
+
+            str = $"Version: {Version}";
+            Vector2 m = subFont.MeasureString(str);
+            _spriteBatch.DrawString(subFont, str, new Vector2(Game.GraphicsDevice.Viewport.Width - (m.X + 64), Game.GraphicsDevice.Viewport.Height - (m.Y + 8)), Color.White);
 
             _spriteBatch.End();
         }
