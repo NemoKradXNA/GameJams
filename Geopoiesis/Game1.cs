@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 
 /// <summary>
 /// geopoiesis
@@ -83,6 +84,8 @@ namespace Geopoiesis
 
         protected override void Initialize()
         {
+            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en");
+
             noiseService = new KeijiroPerlinService(this);
             coroutineService = new CoroutineService(this);
             geopoiesisService = new GeopoiesisService(this);

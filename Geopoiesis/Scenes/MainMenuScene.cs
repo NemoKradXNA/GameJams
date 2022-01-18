@@ -47,7 +47,7 @@ namespace Geopoiesis.Scenes
         Random rnd;
 
 
-        protected string Version = "1.0.0.0";
+        protected string Version = "1.0.0.1";
 
         public MainMenuScene(Game game, string name) : base(game, name) { }
 
