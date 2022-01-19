@@ -4,6 +4,7 @@ using Geopoiesis.Managers.Coroutines;
 using Geopoiesis.Models;
 using Geopoiesis.Models.Planet;
 using Geopoiesis.Services;
+using Geopoiesis.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -54,6 +55,31 @@ namespace Geopoiesis.Scenes
 
 
         Vector3 ld = new Vector3(-1, .25f, .25f);
+
+        SpriteFont gameFont;
+        //Texture2D hudBorder;
+        //Texture2D starBox;
+        Texture2D logBox;
+        //Texture2D pixel;
+        Texture2D buttonBox;
+        Texture2D quitBox;
+
+        Texture2D statBox;
+        Texture2D statValue;
+
+        Rectangle VolcPlus;
+        Rectangle VolcMinus;
+
+        Rectangle QuakePlus;
+        Rectangle QuakeMinus;
+
+        Rectangle DistPlus;
+        Rectangle DistMinus;
+
+        Rectangle QuitRect;
+
+        UIImage imgHudBorder;
+        UIStarBox starBox;
 
         public GameScene(Game game, string name) : base(game, name) { }
 
@@ -111,11 +137,37 @@ namespace Geopoiesis.Scenes
             coroutineService.StartCoroutine(WaitForPlanetBuild());
             coroutineService.StartCoroutine(StartGame());
 
+            geopoiesisService.StartType = StartType.G;
+
+            font = Game.Content.Load<SpriteFont>("SpriteFont/font");
+            logFont = Game.Content.Load<SpriteFont>("SpriteFont/logFont");
+
+            Point screenSize = new Point(Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height);
+            Rectangle border1Pixel = new Rectangle(1, 1, 1, 1);
+            float a = .75f;
+            Color BorderColor = new Color(1, 1, 1, a);
+            Color BGBlackColor = new Color(0, 0, 0, a);
+
+            imgHudBorder = new UIImage(Game, Point.Zero, screenSize);
+            imgHudBorder.Texture = CreateBox(imgHudBorder.Size.X, imgHudBorder.Size.Y, border1Pixel, Color.Transparent, BorderColor);
+            imgHudBorder.Tint = hudColor;
+            Components.Add(imgHudBorder);
+
+
+            starBox = new UIStarBox(Game, Point.Zero, new Point(256));
+            starBox.Texture = CreateBox(starBox.Size.X, starBox.Size.Y, border1Pixel, BGBlackColor, BorderColor);
+            starBox.BarTexture = CreateBox(starBox.Size.X, 1, border1Pixel, Color.Transparent, BorderColor);
+            starBox.StarTexture = Game.Content.Load<Texture2D>($"Textures/Stars/{geopoiesisService.StartType}");
+            starBox.Tint = hudColor;
+            starBox.Text = $"{geopoiesisService.StartType} - Class Star";
+            starBox.Font = font;
+            Components.Add(starBox);
+
             base.Initialize();
 
             State = SceneStateEnum.Loaded;
 
-            geopoiesisService.StartType = StartType.G;
+            
 
             geopoiesisService.OnSystemEventFired -= EventFired;
             geopoiesisService.OnSystemEventFired += EventFired;
@@ -139,8 +191,6 @@ namespace Geopoiesis.Scenes
         {
             base.LoadContent();
             _spriteBatch = new SpriteBatch(Game.GraphicsDevice);
-            font = Game.Content.Load<SpriteFont>("SpriteFont/font");
-            logFont = Game.Content.Load<SpriteFont>("SpriteFont/logFont");
         }
 
         protected override void UnloadContent()
@@ -446,13 +496,13 @@ namespace Geopoiesis.Scenes
 
             //_spriteBatch.End();
             
-            if (hudBorder == null)
+            if (gameFont == null)
             {
                 gameFont = Game.Content.Load<SpriteFont>("SpriteFont/GameFont");
                 float a = .75f;
-                hudBorder = CreateBox(Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height, new Rectangle(1,1,1,1), Color.Transparent, new Color(1, 1, 1, a));
-                starBox = CreateBox(256, 256, new Rectangle(1, 1, 1, 1), new Color(0, 0, 0, a), new Color(1, 1, 1, .75f));
-                pixel = CreateBox(1, 1, new Rectangle(1, 1, 1, 1), Color.Transparent, new Color(1, 1, 1, .75f));
+                //hudBorder = CreateBox(Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height, new Rectangle(1,1,1,1), Color.Transparent, new Color(1, 1, 1, a));
+                //starBox = CreateBox(256, 256, new Rectangle(1, 1, 1, 1), new Color(0, 0, 0, a), new Color(1, 1, 1, .75f));
+                //pixel = CreateBox(1, 1, new Rectangle(1, 1, 1, 1), Color.Transparent, new Color(1, 1, 1, .75f));
                 statBox = CreateBox(256, font.LineSpacing,  new Rectangle(1,1,1,1), new Color(0, 0, 0, a), new Color(1, 1, 1, .75f));
 
                 logBox = CreateBox(512, 780, new Rectangle(1, 1, 1, 1), new Color(0, 0, 0, a), new Color(1, 1, 1, .75f));
@@ -466,15 +516,15 @@ namespace Geopoiesis.Scenes
             string str;
             _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
 
-            _spriteBatch.Draw(hudBorder, new Rectangle(0, 0, hudBorder.Width, hudBorder.Height), hudColor);
-            _spriteBatch.Draw(starBox, new Rectangle(0, 0, 256, 256), hudColor);
-            _spriteBatch.Draw(Game.Content.Load<Texture2D>($"Textures/Stars/{geopoiesisService.StartType}"), new Rectangle(64, 42, 120, 120), Color.White);
-            _spriteBatch.Draw(pixel, new Rectangle(0, 200, 256, 1), hudColor );
+            //_spriteBatch.Draw(hudBorder, new Rectangle(0, 0, hudBorder.Width, hudBorder.Height), hudColor);
+            //_spriteBatch.Draw(starBox, new Rectangle(0, 0, 256, 256), hudColor);
+            //_spriteBatch.Draw(Game.Content.Load<Texture2D>($"Textures/Stars/{geopoiesisService.StartType}"), new Rectangle(64, 42, 120, 120), Color.White);
+            //_spriteBatch.Draw(pixel, new Rectangle(0, 200, 256, 1), hudColor );
 
-            str = $"{geopoiesisService.StartType} - Class Star";
-            p = new Vector2(128, 256 - (font.LineSpacing * 1f));
-            p -= font.MeasureString(str) * .5f;
-            _spriteBatch.DrawString(font, str, p, hudColor);
+            //str = $"{geopoiesisService.StartType} - Class Star";
+            //p = new Vector2(128, 256 - (font.LineSpacing * 1f));
+            //p -= font.MeasureString(str) * .5f;
+            //_spriteBatch.DrawString(font, str, p, hudColor);
 
             int l = 32;
             str = "H2O:";
@@ -694,27 +744,7 @@ namespace Geopoiesis.Scenes
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
         }
 
-        SpriteFont gameFont;
-        Texture2D hudBorder;
-        Texture2D starBox;
-        Texture2D logBox;
-        Texture2D pixel;
-        Texture2D buttonBox;
-        Texture2D quitBox;
-
-        Texture2D statBox;
-        Texture2D statValue;
-
-        Rectangle VolcPlus;
-        Rectangle VolcMinus;
-
-        Rectangle QuakePlus;
-        Rectangle QuakeMinus;
-
-        Rectangle DistPlus;
-        Rectangle DistMinus;
-
-        Rectangle QuitRect;
+        
 
         protected void SetStatTexutre(float v, Color min, Color max)
         {

@@ -60,7 +60,6 @@ namespace Geopoiesis.Scenes
             gameInProgress = File.Exists("save.json");
 
 
-
             for (int p = 0; p < 256; p++)
             {
                 int x, y, w, h, s;
@@ -86,8 +85,6 @@ namespace Geopoiesis.Scenes
 
             pixel = new Texture2D(Game.GraphicsDevice, 1, 1);
             pixel.SetData(new Color[] { new Color(1, 1, 1, .75f) });
-
-
 
             audioManager.PlaySong("Audio/Music/Creepy-Hollow", .5f);
 
@@ -131,7 +128,7 @@ namespace Geopoiesis.Scenes
             Components.Add(btnContinue);
 
             btnQuit = new UIButton(Game, new Point((centerScreen.X) - buttonBox.Width / 2, 512 + 128), new Point(buttonBox.Width, buttonBox.Height));
-            btnQuit.Text = "Continue";
+            btnQuit.Text = "Quit";
             btnQuit.BackgroundTexture = buttonBox;
             btnQuit.Tint = Color.White;
             btnQuit.Font = font;
