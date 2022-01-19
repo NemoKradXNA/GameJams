@@ -141,6 +141,7 @@ namespace Geopoiesis.Models
                     }
                 }
 
+                
                 lodMeshData.Insert(0, thisMeshData);
                 LodSizes.Insert(0, FaceDimensions);
                 FaceDimensions *= 2;

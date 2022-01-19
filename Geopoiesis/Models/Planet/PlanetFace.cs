@@ -74,7 +74,7 @@ namespace Geopoiesis.Models.Planet
                             + (.125f * noiseService.Noise(cubeV * 8));
         }
 
-        protected Quaternion RotateToFace(Vector3 face)
+        public static Quaternion RotateToFace(Vector3 face)
         {
             if (face == Vector3.Backward)
                 return Quaternion.CreateFromAxisAngle(Vector3.Left, MathHelper.PiOver2);
@@ -170,90 +170,6 @@ namespace Geopoiesis.Models.Planet
                     }
                 }
 
-                for (int x = faceHeightMap.Width / -2; x < faceHeightMap.Width / 2; x++)
-                {
-                    for (int y = faceHeightMap.Height / -2; y < faceHeightMap.Height / 2; y++)
-                    {
-                        Vector3 v = new Vector3(x, ch - 1, y) + (Vector3.One * .5f);
-                        v.Normalize();
-                        Vector3 cubeV = Vector3.Transform(v, cubeRot) + RootPosition;
-
-                        int px = (int)MathHelper.Lerp(0, faceHeightMap.Width, (x + ch) / faceHeightMap.Width);
-                        int py = (int)MathHelper.Lerp(0, faceHeightMap.Height, (y + ch) / faceHeightMap.Height);
-
-                        if (Normal.Z == -1 || Normal.Y != 0)
-                        {
-                            py = (faceHeightMap.Height - 1) - py;
-                            px = (faceHeightMap.Width - 1) - px;
-                        }
-
-                        if (Normal.X != 0)
-                        {
-                            int t = py;
-                            py = px;
-                            px = t;
-
-                            if (Normal.X == 1)
-                                px = (faceHeightMap.Width - 1) - px;
-                            else
-                                py = (faceHeightMap.Height - 1) - py;
-                        }
-
-                        // Calc normal map
-                        Vector3 pos = cubeV;
-
-                        float nh = col[Math.Min(faceHeightMap.Width - 1, px + 1) + py * faceHeightMap.Width].R / 255f;
-
-                        Vector3 lN = new Vector3(x + 1, ch - 1, y) + (Vector3.One * .5f);                        
-                        lN.Normalize();
-                        lN = Vector3.Transform(lN, cubeRot) + RootPosition;
-
-                        nh = col[px + Math.Max(faceHeightMap.Height - 1, py - 1) * faceHeightMap.Width].R / 255f;
-                        Vector3 bN = new Vector3(x, ch - 1, y - 1) + (Vector3.One * .5f);                        
-                        bN.Normalize();
-                        bN = Vector3.Transform(bN, cubeRot) + RootPosition;
-
-
-                        //lN.Y = Get3DPerlinValue(lN) * 10;
-                        //bN.Y = Get3DPerlinValue(bN) * 10;
-
-                        //lN.Y += col[Math.Min(faceHeightMap.Width - 1, px + 1) + py * faceHeightMap.Width].R / 255f;
-                        //bN.Y += col[px + Math.Max(faceHeightMap.Height - 1, py - 1) * faceHeightMap.Width].R / 255f;
-
-                        Vector3 side1 = (lN - pos);
-                        Vector3 side2 = (bN - pos);
-                        Vector3 normal = Vector3.Cross(side2, side1);
-                        normal.Normalize();
-                        normal = (normal + Vector3.One) * .5f;
-
-                        //normal = Vector3.Transform(normal, cubeRot) + RootPosition;
-
-                        nc[px + py * faceNormalMap.Width] = new Color(normal.X, normal.Y , normal.Z, 1);
-
-
-                        // Calculate splat map values.
-                        float r, g, b, a;
-                        float p = col[px + py * faceHeightMap.Width].R / 255f;
-                        r = g = b = a = 0;
-                        if (p < .50f)
-                            r = 1;
-                        if (p >= .50f && p < .7f)
-                            g = 1;
-                        if (p >= .7f && p < .9f)
-                            b = 1;
-                        if (p >= .9f)
-                            a = 1;
-
-                        if (Math.Abs(Vector3.Dot(Vector3.Up, normal)) > .6f)
-                            r = 1;
-
-                        //if (Math.Abs(Vector3.Dot(Vector3.Up, normal)) <= .01f)
-                        //    b = 1;
-
-                        sc[px + py * faceSplatMap.Width] = new Color(r, g, b, a);
-                    }
-                }
-
                 faceHeightMap.SetData(col);
                 faceNormalMap.SetData(nc);
                 faceSplatMap.SetData(sc);
@@ -269,28 +185,28 @@ namespace Geopoiesis.Models.Planet
                 {
                     Vector3 v = new Vector3(x, 0, y) + (Vector3.One * .5f);
 
-                    int px = (int)MathHelper.Lerp(faceHeightMap.Width - 1, 0, (x + h) / Dimension);
-                    int py = (int)MathHelper.Lerp(faceHeightMap.Height - 1, 0, (y + h) / Dimension);
+                    //int px = (int)MathHelper.Lerp(faceHeightMap.Width - 1, 0, (x + h) / Dimension);
+                    //int py = (int)MathHelper.Lerp(faceHeightMap.Height - 1, 0, (y + h) / Dimension);
 
 
-                    if (Normal.Z == 1 || Normal.Y == -1)
-                    {
-                        py = (faceHeightMap.Height - 1) - py;
-                        px = (faceHeightMap.Width - 1) - px;
-                    }
+                    //if (Normal.Z == 1 || Normal.Y == -1)
+                    //{
+                    //    py = (faceHeightMap.Height - 1) - py;
+                    //    px = (faceHeightMap.Width - 1) - px;
+                    //}
 
-                    if (Normal.X != 0 || Normal.Y == 1)
-                    {
-                        int t = py;
-                        py = px;
-                        px = t;
+                    //if (Normal.X != 0 || Normal.Y == 1)
+                    //{
+                    //    int t = py;
+                    //    py = px;
+                    //    px = t;
 
-                        if (Normal.X == 1)
-                            py = (faceHeightMap.Height - 1) - py;
-                        else
-                            px = (faceHeightMap.Width - 1) - px;
+                    //    if (Normal.X == 1)
+                    //        py = (faceHeightMap.Height - 1) - py;
+                    //    else
+                    //        px = (faceHeightMap.Width - 1) - px;
 
-                    }
+                    //}
 
                     v += Vector3.Up * vh;
 

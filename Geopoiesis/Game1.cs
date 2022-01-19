@@ -2,8 +2,8 @@
 using Geopoiesis.Managers.Coroutines;
 using Geopoiesis.Models;
 using Geopoiesis.Models.Planet;
-using Geopoiesis.Scenes;
 using Geopoiesis.Services;
+using Geopoiesis.Scenes;
 using Geopoiesis.Services.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -76,7 +76,7 @@ namespace Geopoiesis
             _graphics.PreferredBackBufferHeight = 1080;
             _graphics.PreferredBackBufferWidth = 1920;
 
-            _graphics.IsFullScreen = true;
+            //_graphics.IsFullScreen = true;
             Window.AllowUserResizing = true;
             Window.AllowAltF4 = true;
             _graphics.ApplyChanges();
@@ -107,6 +107,8 @@ namespace Geopoiesis
 
             sceneManager.AddScene(new GameScene(this, "mainGame"));
 
+            sceneManager.AddScene(new PlanetTestScene(this, "testing"));
+
             base.Initialize();
         }
 
@@ -115,7 +117,8 @@ namespace Geopoiesis
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
 
-            sceneManager.LoadScene("mainMenu");
+            //sceneManager.LoadScene("mainMenu");
+            sceneManager.LoadScene("testing");
         }
 
         protected override void Update(GameTime gameTime)

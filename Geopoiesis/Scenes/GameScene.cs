@@ -20,9 +20,9 @@ namespace Geopoiesis.Scenes
         
 
         SpriteBatch _spriteBatch;
-        SpriteFont testFont;
+        SpriteFont font;
         SpriteFont logFont;
-        SpriteFont debugFont;
+
         PlanetGeometry planet;
         ITransform moonAnchor;
         MorphableSphere moon;
@@ -139,9 +139,8 @@ namespace Geopoiesis.Scenes
         {
             base.LoadContent();
             _spriteBatch = new SpriteBatch(Game.GraphicsDevice);
-            testFont = Game.Content.Load<SpriteFont>("SpriteFont/font");
+            font = Game.Content.Load<SpriteFont>("SpriteFont/font");
             logFont = Game.Content.Load<SpriteFont>("SpriteFont/logFont");
-            debugFont = Game.Content.Load<SpriteFont>("SpriteFont/debugfont");
         }
 
         protected override void UnloadContent()
@@ -454,7 +453,7 @@ namespace Geopoiesis.Scenes
                 hudBorder = CreateBox(Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height, new Rectangle(1,1,1,1), Color.Transparent, new Color(1, 1, 1, a));
                 starBox = CreateBox(256, 256, new Rectangle(1, 1, 1, 1), new Color(0, 0, 0, a), new Color(1, 1, 1, .75f));
                 pixel = CreateBox(1, 1, new Rectangle(1, 1, 1, 1), Color.Transparent, new Color(1, 1, 1, .75f));
-                statBox = CreateBox(256, testFont.LineSpacing,  new Rectangle(1,1,1,1), new Color(0, 0, 0, a), new Color(1, 1, 1, .75f));
+                statBox = CreateBox(256, font.LineSpacing,  new Rectangle(1,1,1,1), new Color(0, 0, 0, a), new Color(1, 1, 1, .75f));
 
                 logBox = CreateBox(512, 780, new Rectangle(1, 1, 1, 1), new Color(0, 0, 0, a), new Color(1, 1, 1, .75f));
             }
@@ -473,89 +472,89 @@ namespace Geopoiesis.Scenes
             _spriteBatch.Draw(pixel, new Rectangle(0, 200, 256, 1), hudColor );
 
             str = $"{geopoiesisService.StartType} - Class Star";
-            p = new Vector2(128, 256 - (testFont.LineSpacing * 1f));
-            p -= testFont.MeasureString(str) * .5f;
-            _spriteBatch.DrawString(testFont, str, p, hudColor);
+            p = new Vector2(128, 256 - (font.LineSpacing * 1f));
+            p -= font.MeasureString(str) * .5f;
+            _spriteBatch.DrawString(font, str, p, hudColor);
 
             int l = 32;
             str = "H2O:";
             p = new Vector2(256 + 8 , 8);
-            _spriteBatch.DrawString(testFont, str, p, hudColor);
-            _spriteBatch.Draw(statBox, new Rectangle((int)p.X + 64 + l, (int)p.Y, 256, testFont.LineSpacing), hudColor);
+            _spriteBatch.DrawString(font, str, p, hudColor);
+            _spriteBatch.Draw(statBox, new Rectangle((int)p.X + 64 + l, (int)p.Y, 256, font.LineSpacing), hudColor);
 
             // Calc stat Value
             SetStatTexutre(geopoiesisService.WaterLevel,Color.DarkBlue, Color.LightBlue);
-            _spriteBatch.Draw(statValue, new Rectangle((int)p.X + 64 + 1 + l, (int)p.Y + 1, 256-1, testFont.LineSpacing-1), Color.White);
+            _spriteBatch.Draw(statValue, new Rectangle((int)p.X + 64 + 1 + l, (int)p.Y + 1, 256-1, font.LineSpacing-1), Color.White);
             str = $"{geopoiesisService.WaterLevel * 100, 0:000}";
-            Vector2 pp = new Vector2(p.X + 64 + 128 + l, p.Y + testFont.LineSpacing *.5f);
-            pp -= testFont.MeasureString(str) * .5f;
-            _spriteBatch.DrawString(testFont, str, pp, hudColor);
+            Vector2 pp = new Vector2(p.X + 64 + 128 + l, p.Y + font.LineSpacing *.5f);
+            pp -= font.MeasureString(str) * .5f;
+            _spriteBatch.DrawString(font, str, pp, hudColor);
 
             str = "O3:";
-            p.Y += testFont.LineSpacing;
-            _spriteBatch.DrawString(testFont, str, p, hudColor);
-            _spriteBatch.Draw(statBox, new Rectangle((int)p.X + 64 + l, (int)p.Y, 256, testFont.LineSpacing), hudColor);
+            p.Y += font.LineSpacing;
+            _spriteBatch.DrawString(font, str, p, hudColor);
+            _spriteBatch.Draw(statBox, new Rectangle((int)p.X + 64 + l, (int)p.Y, 256, font.LineSpacing), hudColor);
 
             // Calc stat Value
             SetStatTexutre(geopoiesisService.OZone, Color.DarkSlateGray, Color.LightSkyBlue);
-            _spriteBatch.Draw(statValue, new Rectangle((int)p.X + 64 + 1 + l, (int)p.Y + 1, 256 - 1, testFont.LineSpacing - 1), Color.White);
+            _spriteBatch.Draw(statValue, new Rectangle((int)p.X + 64 + 1 + l, (int)p.Y + 1, 256 - 1, font.LineSpacing - 1), Color.White);
             str = $"{geopoiesisService.OZone * 100,0:000}";
-            pp = new Vector2(p.X + 64 + 128 + l, p.Y + testFont.LineSpacing * .5f);
-            pp -= testFont.MeasureString(str) * .5f;
-            _spriteBatch.DrawString(testFont, str, pp, hudColor);
+            pp = new Vector2(p.X + 64 + 128 + l, p.Y + font.LineSpacing * .5f);
+            pp -= font.MeasureString(str) * .5f;
+            _spriteBatch.DrawString(font, str, pp, hudColor);
 
 
             str = "Life:";
-            p.Y += testFont.LineSpacing;
-            _spriteBatch.DrawString(testFont, str, p, hudColor);
-            _spriteBatch.Draw(statBox, new Rectangle((int)p.X + 64 + l, (int)p.Y, 256, testFont.LineSpacing), hudColor);
+            p.Y += font.LineSpacing;
+            _spriteBatch.DrawString(font, str, p, hudColor);
+            _spriteBatch.Draw(statBox, new Rectangle((int)p.X + 64 + l, (int)p.Y, 256, font.LineSpacing), hudColor);
 
             // Calc stat Value
             SetStatTexutre(geopoiesisService.LifeLevel, Color.Firebrick, Color.ForestGreen);
-            _spriteBatch.Draw(statValue, new Rectangle((int)p.X + 64 + 1 + l, (int)p.Y + 1, 256 - 1, testFont.LineSpacing - 1), Color.White);
+            _spriteBatch.Draw(statValue, new Rectangle((int)p.X + 64 + 1 + l, (int)p.Y + 1, 256 - 1, font.LineSpacing - 1), Color.White);
             str = $"{geopoiesisService.LifeLevel * 100,0:000}";
-            pp = new Vector2(p.X + 64 + 128 + l, p.Y + testFont.LineSpacing * .5f);
-            pp -= testFont.MeasureString(str) * .5f;
-            _spriteBatch.DrawString(testFont, str, pp, hudColor);
+            pp = new Vector2(p.X + 64 + 128 + l, p.Y + font.LineSpacing * .5f);
+            pp -= font.MeasureString(str) * .5f;
+            _spriteBatch.DrawString(font, str, pp, hudColor);
 
             str = "AU:";
-            p.Y += testFont.LineSpacing;
-            _spriteBatch.DrawString(testFont, str, p, hudColor);
-            _spriteBatch.Draw(statBox, new Rectangle((int)p.X + 64 + l, (int)p.Y, 256, testFont.LineSpacing), hudColor);
+            p.Y += font.LineSpacing;
+            _spriteBatch.DrawString(font, str, p, hudColor);
+            _spriteBatch.Draw(statBox, new Rectangle((int)p.X + 64 + l, (int)p.Y, 256, font.LineSpacing), hudColor);
 
             // Calc stat Value
             SetStatTexutre(geopoiesisService.DistanceFromStar/10f, Color.Gold, Color.White);
-            _spriteBatch.Draw(statValue, new Rectangle((int)p.X + 64 + 1 + l, (int)p.Y + 1, 256 - 1, testFont.LineSpacing - 1), Color.White);
+            _spriteBatch.Draw(statValue, new Rectangle((int)p.X + 64 + 1 + l, (int)p.Y + 1, 256 - 1, font.LineSpacing - 1), Color.White);
             str = $"{geopoiesisService.DistanceFromStar,0:0.0} AU";
-            pp = new Vector2(p.X + 64 + 128 + l, p.Y + testFont.LineSpacing * .5f);
-            pp -= testFont.MeasureString(str) * .5f;
-            _spriteBatch.DrawString(testFont, str, pp, hudColor);
+            pp = new Vector2(p.X + 64 + 128 + l, p.Y + font.LineSpacing * .5f);
+            pp -= font.MeasureString(str) * .5f;
+            _spriteBatch.DrawString(font, str, pp, hudColor);
 
             str = "Temp:";
-            p.Y += testFont.LineSpacing;
-            _spriteBatch.DrawString(testFont, str, p, hudColor);
-            _spriteBatch.Draw(statBox, new Rectangle((int)p.X + 64 + l, (int)p.Y, 256, testFont.LineSpacing), hudColor);
+            p.Y += font.LineSpacing;
+            _spriteBatch.DrawString(font, str, p, hudColor);
+            _spriteBatch.Draw(statBox, new Rectangle((int)p.X + 64 + l, (int)p.Y, 256, font.LineSpacing), hudColor);
 
             // Calc stat Value
             SetStatTexutre(geopoiesisService.SurfaceTemp / 10f, Color.Gold, Color.White);
-            _spriteBatch.Draw(statValue, new Rectangle((int)p.X + 64 + 1 + l, (int)p.Y + 1, 256 - 1, testFont.LineSpacing - 1), Color.White);
+            _spriteBatch.Draw(statValue, new Rectangle((int)p.X + 64 + 1 + l, (int)p.Y + 1, 256 - 1, font.LineSpacing - 1), Color.White);
             str = $"{geopoiesisService.SurfaceTemp,0:00} c";
-            pp = new Vector2(p.X + 64 + 128 + l, p.Y + testFont.LineSpacing * .5f);
-            pp -= testFont.MeasureString(str) * .5f;
-            _spriteBatch.DrawString(testFont, str, pp, hudColor);
+            pp = new Vector2(p.X + 64 + 128 + l, p.Y + font.LineSpacing * .5f);
+            pp -= font.MeasureString(str) * .5f;
+            _spriteBatch.DrawString(font, str, pp, hudColor);
 
             // Epoch and years..
             str = $"{$"[Epoch: {geopoiesisService.CurrentEpoch}]", 0:10}";
             p = screeCenter;
-            p -= testFont.MeasureString(str) * .5f;
-            p.Y = testFont.LineSpacing;
-            _spriteBatch.DrawString(testFont, str, p, hudColor);
+            p -= font.MeasureString(str) * .5f;
+            p.Y = font.LineSpacing;
+            _spriteBatch.DrawString(font, str, p, hudColor);
 
             str = $"{$"{geopoiesisService.Years,0:###,###,###,0} years", 0:-100}";
             p = new Vector2(Game.GraphicsDevice.Viewport.Width-64,0);
-            p -= testFont.MeasureString(str);
-            p.Y = testFont.LineSpacing;
-            _spriteBatch.DrawString(testFont, str, p, hudColor);
+            p -= font.MeasureString(str);
+            p.Y = font.LineSpacing;
+            _spriteBatch.DrawString(font, str, p, hudColor);
 
 
             
@@ -595,7 +594,7 @@ namespace Geopoiesis.Scenes
             // Draw Event Logger
             Rectangle eventLogRect = new Rectangle(0, 300, logBox.Width, logBox.Height);
             str = "Events:-";
-            _spriteBatch.DrawString(testFont, str, new Vector2(8, 300 - testFont.LineSpacing), hudColor);
+            _spriteBatch.DrawString(font, str, new Vector2(8, 300 - font.LineSpacing), hudColor);
             _spriteBatch.Draw(logBox, eventLogRect, hudColor);
 
             _spriteBatch.End();
@@ -621,58 +620,58 @@ namespace Geopoiesis.Scenes
             _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
 
             // Volcanism
-            p = new Vector2(256 + 8, 12 + testFont.LineSpacing*5);
+            p = new Vector2(256 + 8, 12 + font.LineSpacing*5);
             buttonBox = CreateBox(32, 32, new Rectangle(2, 2, 2, 2), new Color(.2f, .5f, .2f, 1), hudColor);
             VolcPlus = new Rectangle((int)p.X, (int)p.Y, buttonBox.Width, buttonBox.Height);
             _spriteBatch.Draw(buttonBox, VolcPlus,Color.White);
             str = "+";
-            p = (p + (new Vector2(buttonBox.Width,buttonBox.Height) * .5f)) - testFont.MeasureString(str) * .5f;
-            _spriteBatch.DrawString(testFont, str, p, hudColor);
+            p = (p + (new Vector2(buttonBox.Width,buttonBox.Height) * .5f)) - font.MeasureString(str) * .5f;
+            _spriteBatch.DrawString(font, str, p, hudColor);
             str = $"Volcanism [{geopoiesisService.Volcanism * 100, 0:000}]";
-            p.X += 32 + (150 - (testFont.MeasureString(str).X * .5f));
-            _spriteBatch.DrawString(testFont, str, p, hudColor);
+            p.X += 32 + (150 - (font.MeasureString(str).X * .5f));
+            _spriteBatch.DrawString(font, str, p, hudColor);
             p.X = 621;// testFont.MeasureString(str).X + 16;
             VolcMinus = new Rectangle((int)p.X, (int)p.Y, buttonBox.Width, buttonBox.Height);
             _spriteBatch.Draw(buttonBox, VolcMinus, Color.White);
             str = "-";
-            p = (p + (new Vector2(buttonBox.Width, buttonBox.Height) * .5f)) - testFont.MeasureString(str) * .5f;
-            _spriteBatch.DrawString(testFont, str, p, hudColor);
+            p = (p + (new Vector2(buttonBox.Width, buttonBox.Height) * .5f)) - font.MeasureString(str) * .5f;
+            _spriteBatch.DrawString(font, str, p, hudColor);
 
             // Quakes
-            p = new Vector2(256 + 8, 18 + testFont.LineSpacing * 6);
+            p = new Vector2(256 + 8, 18 + font.LineSpacing * 6);
             buttonBox = CreateBox(32, 32, new Rectangle(2, 2, 2, 2), new Color(.2f, .5f, .2f, 1), hudColor);
             QuakePlus = new Rectangle((int)p.X, (int)p.Y, buttonBox.Width, buttonBox.Height);
             _spriteBatch.Draw(buttonBox, QuakePlus, Color.White);
             str = "+";
-            p = (p + (new Vector2(buttonBox.Width, buttonBox.Height) * .5f)) - testFont.MeasureString(str) * .5f;
-            _spriteBatch.DrawString(testFont, str, p, hudColor);
+            p = (p + (new Vector2(buttonBox.Width, buttonBox.Height) * .5f)) - font.MeasureString(str) * .5f;
+            _spriteBatch.DrawString(font, str, p, hudColor);
             str = $"Tectonic Shift [{geopoiesisService.Quakes * 100,0:000}]";
-            p.X += 32 + (150 - (testFont.MeasureString(str).X * .5f));
-            _spriteBatch.DrawString(testFont, str, p, hudColor);
+            p.X += 32 + (150 - (font.MeasureString(str).X * .5f));
+            _spriteBatch.DrawString(font, str, p, hudColor);
             p.X = 621;// testFont.MeasureString(str).X + 16;
             QuakeMinus = new Rectangle((int)p.X, (int)p.Y, buttonBox.Width, buttonBox.Height);
             _spriteBatch.Draw(buttonBox, QuakeMinus, Color.White);
             str = "-";
-            p = (p + (new Vector2(buttonBox.Width, buttonBox.Height) * .5f)) - testFont.MeasureString(str) * .5f;
-            _spriteBatch.DrawString(testFont, str, p, hudColor);
+            p = (p + (new Vector2(buttonBox.Width, buttonBox.Height) * .5f)) - font.MeasureString(str) * .5f;
+            _spriteBatch.DrawString(font, str, p, hudColor);
 
             // Distance from star
-            p = new Vector2(256 + 8, 24 + testFont.LineSpacing * 7);
+            p = new Vector2(256 + 8, 24 + font.LineSpacing * 7);
             buttonBox = CreateBox(32, 32, new Rectangle(2, 2, 2, 2), new Color(.2f, .5f, .2f, 1), hudColor);
             DistPlus = new Rectangle((int)p.X, (int)p.Y, buttonBox.Width, buttonBox.Height);
             _spriteBatch.Draw(buttonBox, DistPlus, Color.White);
             str = "+";
-            p = (p + (new Vector2(buttonBox.Width, buttonBox.Height) * .5f)) - testFont.MeasureString(str) * .5f;
-            _spriteBatch.DrawString(testFont, str, p, hudColor);
+            p = (p + (new Vector2(buttonBox.Width, buttonBox.Height) * .5f)) - font.MeasureString(str) * .5f;
+            _spriteBatch.DrawString(font, str, p, hudColor);
             str = $"Distance From Star [{geopoiesisService.DistanceFromStar, 0:0.0} AU]";
-            p.X += 32 + (150 - (testFont.MeasureString(str).X * .5f));
-            _spriteBatch.DrawString(testFont, str, p, hudColor);
+            p.X += 32 + (150 - (font.MeasureString(str).X * .5f));
+            _spriteBatch.DrawString(font, str, p, hudColor);
             p.X = 621;// testFont.MeasureString(str).X + 16;
             DistMinus = new Rectangle((int)p.X, (int)p.Y, buttonBox.Width, buttonBox.Height);
             _spriteBatch.Draw(buttonBox, DistMinus, Color.White);
             str = "-";
-            p = (p + (new Vector2(buttonBox.Width, buttonBox.Height) * .5f)) - testFont.MeasureString(str) * .5f;
-            _spriteBatch.DrawString(testFont, str, p, hudColor);
+            p = (p + (new Vector2(buttonBox.Width, buttonBox.Height) * .5f)) - font.MeasureString(str) * .5f;
+            _spriteBatch.DrawString(font, str, p, hudColor);
 
 
             quitBox = CreateBox(150,64, new Rectangle(2, 2, 2, 2), new Color(.1f, .5f, .1f, .75f), hudColor);
@@ -682,10 +681,10 @@ namespace Geopoiesis.Scenes
             p = new Vector2(QuitRect.X, QuitRect.Y);
 
             str = "Quit & Save";
-            p.X += QuitRect.Width / 2 - testFont.MeasureString(str).X / 2;
-            p.Y += testFont.LineSpacing * .75f;
+            p.X += QuitRect.Width / 2 - font.MeasureString(str).X / 2;
+            p.Y += font.LineSpacing * .75f;
             
-            _spriteBatch.DrawString(testFont, str, p, hudColor);
+            _spriteBatch.DrawString(font, str, p, hudColor);
 
 
             _spriteBatch.End();

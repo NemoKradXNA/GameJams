@@ -18,6 +18,7 @@ namespace Geopoiesis.Models
         public List<ITransform> Particles = new List<ITransform>();
         public Dictionary<ITransform, VertexPositionColorNormalTextureTangent[]> vertexArray = new Dictionary<ITransform, VertexPositionColorNormalTextureTangent[]>();
         public Dictionary<ITransform, Texture2D> ParticleTextures = new Dictionary<ITransform, Texture2D>();
+        public Dictionary<ITransform, bool> Active = new Dictionary<ITransform, bool>();
 
         int[] index = new int[] { 0, 1, 2, 2, 3, 0, };    
 
@@ -33,11 +34,15 @@ namespace Geopoiesis.Models
             base.Initialize();
         }
 
-        public void AddParticle(Vector3 position, Vector3 scale, Texture2D texture, Color color)
+        public ITransform AddParticle(Vector3 position, Vector3 scale, Texture2D texture, Color color, bool active = true, bool bound = true)
         {
             
 
-            ITransform transform = new Transform(Transform) { Position = position, Scale = scale };
+            ITransform transform = new Transform() { Position = position, Scale = scale };
+
+            if (bound)
+                transform.Parent = Transform;
+
             Particles.Add(transform);
             VertexPositionColorNormalTextureTangent[] vb = new VertexPositionColorNormalTextureTangent[]{
                 new VertexPositionColorNormalTextureTangent(Vector3.Zero, Vector3.Forward, Vector3.Zero, new Vector2(1,1), color),
@@ -52,6 +57,9 @@ namespace Geopoiesis.Models
                 texture = Game.Content.Load<Texture2D>("Textures/Particles/flare3");
 
             ParticleTextures.Add(transform, texture);
+            Active.Add(transform, active);
+
+            return transform;
         }
 
         public override void Draw(GameTime gameTime)

@@ -122,6 +122,12 @@
 /processorParam:DebugMode=Auto
 /build:Shaders/Sun.fx
 
+#begin Shaders/Test.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Shaders/Test.fx
+
 #begin SpriteFont/debugfont.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
@@ -257,6 +263,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/Particles/flare5.png
+
+#begin Textures/Particles/smoke0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Particles/smoke0.png
 
 #begin Textures/ramp1.jpg
 /importer:TextureImporter
