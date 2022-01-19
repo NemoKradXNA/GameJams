@@ -1,6 +1,8 @@
 ﻿using Geopoiesis.Enums;
+using Geopoiesis.Interfaces;
 using Geopoiesis.Managers.Coroutines;
 using Geopoiesis.Models;
+using Geopoiesis.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -22,19 +24,9 @@ namespace Geopoiesis.Scenes
 
         Texture2D pixel;
 
-        Rectangle newGameRec;
-        Rectangle continueRec;
-        Rectangle quitRec;
-
-        Color newGameTint = Color.White;
-        Color continueTint = Color.White;
-        Color quitTint = Color.White;
-
         Color bgColor = new Color(.2f, .2f, .5f, .1f);
         Color edgeColor = Color.DodgerBlue ;
         Color textColor = Color.White;
-
-        Color buttonTint = Color.Aqua;
 
         bool gameInProgress = false;
 
@@ -45,7 +37,12 @@ namespace Geopoiesis.Scenes
         SpriteFont font;
         SpriteFont subFont;
         Random rnd;
-
+        UIImage imgTitle;
+        UILabel lblSubTitle;
+        UIButton btnNewGame;
+        UIButton btnContinue;
+        UIButton btnQuit;
+        UILabel lblVersion;
 
         protected string Version = "1.0.0.1";
 
@@ -53,8 +50,6 @@ namespace Geopoiesis.Scenes
 
         public override void Initialize()
         {
-            base.Initialize();
-
             _spriteBatch = new SpriteBatch(Game.GraphicsDevice);
             font = Game.Content.Load<SpriteFont>("SpriteFont/font");
             subFont = Game.Content.Load<SpriteFont>("SpriteFont/logFont");
@@ -64,7 +59,7 @@ namespace Geopoiesis.Scenes
 
             gameInProgress = File.Exists("save.json");
 
-            
+
 
             for (int p = 0; p < 256; p++)
             {
@@ -82,10 +77,10 @@ namespace Geopoiesis.Scenes
                 g = (float)rnd.NextDouble() + s / 16f;
                 b = (float)rnd.NextDouble() + s / 16f;
                 a = (float)rnd.NextDouble() + .0125f;
-                
+
 
                 particles.Add(new Rectangle(x, y, w, h));
-                pColor.Add(new Color(r,g,b,a));
+                pColor.Add(new Color(r, g, b, a));
                 pSpeed.Add(s);
             }
 
@@ -95,6 +90,66 @@ namespace Geopoiesis.Scenes
 
 
             audioManager.PlaySong("Audio/Music/Creepy-Hollow", .5f);
+
+            buttonBox = geopoiesisService.CreateBox(512, 64, new Rectangle(1, 1, 1, 1), bgColor, edgeColor);
+
+            Point centerScreen = new Point(Game.GraphicsDevice.Viewport.Width/2, Game.GraphicsDevice.Viewport.Height/2);
+            
+            imgTitle = new UIImage(Game, new Point(centerScreen.X - 512, 128), new Point(1024, 256));
+            imgTitle.Texture = Game.Content.Load<Texture2D>("Textures/Logo1");
+            imgTitle.Tint = Color.White;
+            Components.Add(imgTitle);
+
+            lblSubTitle = new UILabel(Game);
+            lblSubTitle.Text = "Terraforming - \n\" transform (a planet) so as to resemble the earth, especially so that it can support human life.\"";
+            lblSubTitle.Font = subFont;
+            lblSubTitle.Tint = Color.DarkGoldenrod;
+            Vector2 size = lblSubTitle.Font.MeasureString(lblSubTitle.Text);
+            lblSubTitle.Size = new Point((int)size.X,(int) size.Y);
+            lblSubTitle.Position = new Point(centerScreen.X - (lblSubTitle.Size.X / 2), 320);
+            Components.Add(lblSubTitle);
+
+            btnNewGame = new UIButton(Game, new Point((centerScreen.X) - buttonBox.Width / 2, 512), new Point(buttonBox.Width, buttonBox.Height));
+            btnNewGame.Text = "New Game";
+            btnNewGame.BackgroundTexture = buttonBox;
+            btnNewGame.Tint = Color.White;
+            btnNewGame.Font = font;
+            btnNewGame.TextColor = textColor;
+            btnNewGame.HighlightColor = Color.Aqua;
+            btnNewGame.OnMouseClick += ButtonClicked;
+            Components.Add(btnNewGame);
+
+            btnContinue = new UIButton(Game, new Point((centerScreen.X) - buttonBox.Width / 2, 512 + 128), new Point(buttonBox.Width, buttonBox.Height));
+            btnContinue.Text = "Continue";
+            btnContinue.BackgroundTexture = buttonBox;
+            btnContinue.Tint = Color.White;
+            btnContinue.Font = font;
+            btnContinue.TextColor = textColor;
+            btnContinue.HighlightColor = Color.Aqua;
+            btnContinue.OnMouseClick += ButtonClicked;
+            btnContinue.Visible = false;
+            Components.Add(btnContinue);
+
+            btnQuit = new UIButton(Game, new Point((centerScreen.X) - buttonBox.Width / 2, 512 + 128), new Point(buttonBox.Width, buttonBox.Height));
+            btnQuit.Text = "Continue";
+            btnQuit.BackgroundTexture = buttonBox;
+            btnQuit.Tint = Color.White;
+            btnQuit.Font = font;
+            btnQuit.TextColor = textColor;
+            btnQuit.HighlightColor = Color.Aqua;
+            btnQuit.OnMouseClick += ButtonClicked;
+            Components.Add(btnQuit);
+
+            lblVersion = new UILabel(Game);
+            lblVersion.Text = $"Version: {Version}";
+            lblVersion.Font = subFont;
+            lblVersion.Tint = Color.White;
+            size = lblSubTitle.Font.MeasureString(lblVersion.Text);
+            lblVersion.Size = new Point((int)size.X, (int)size.Y);
+            lblVersion.Position = new Point(Game.GraphicsDevice.Viewport.Width - (lblVersion.Size.X + 64), Game.GraphicsDevice.Viewport.Height - (lblVersion.Size.Y + 12));
+            Components.Add(lblVersion);
+
+            base.Initialize();            
         }
 
         public override void Update(GameTime gameTime)
@@ -110,58 +165,33 @@ namespace Geopoiesis.Scenes
 
             }
 
-            if (msManager.PositionRect.Intersects(newGameRec))
+            if (gameInProgress && !btnContinue.Visible)
             {
-                
-                newGameTint = buttonTint;
-                if (msManager.LeftClicked)
-                {
-                    audioManager.PlaySFX("Audio/SFX/beep-07");
-                    sceneManager.LoadScene("mainGame");
-                }
+                btnContinue.Visible = true;
+                btnQuit.Position += new Point(0, 128);
             }
-            else
-                newGameTint = Color.White;
 
-            if (msManager.PositionRect.Intersects(continueRec))
-            {
-                continueTint = buttonTint;
-                if (msManager.LeftClicked)
-                {
-                    audioManager.PlaySFX("Audio/SFX/beep-07");
-                    geopoiesisService.LoadGame();
-                    sceneManager.LoadScene("mainGame");
-                }
-                
-            }
-            else
-                continueTint = Color.White;
+        }
 
-            if (msManager.PositionRect.Intersects(quitRec))
+        protected void ButtonClicked(IUIBase sender, IMouseStateManager mouseState)
+        {
+            audioManager.PlaySFX("Audio/SFX/beep-07");
+            if (sender == btnNewGame)
+                sceneManager.LoadScene("mainGame");
+            else if (sender == btnContinue)
             {
-                quitTint = buttonTint;
-                if (msManager.LeftClicked)
-                {
-                    audioManager.PlaySFX("Audio/SFX/beep-07");
-                    Game.Exit();
-                }
+                geopoiesisService.LoadGame();
+                sceneManager.LoadScene("mainGame");
             }
-            else
-                quitTint = Color.White;
+            else if(sender == btnQuit)
+                Game.Exit();
         }
 
         public override void Draw(GameTime gameTime)
         {
-            base.Draw(gameTime);
-
-            if (buttonBox == null)
-                buttonBox = geopoiesisService.CreateBox(512, 64, new Rectangle(1, 1, 1, 1), bgColor, edgeColor);
-
             _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
 
             _spriteBatch.Draw(bg, new Rectangle(0, 0, Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height), Color.White);
-
-
             // particles
             for (int pa = 0; pa < particles.Count; pa++)
             {
@@ -170,54 +200,8 @@ namespace Geopoiesis.Scenes
 
                 _spriteBatch.Draw(pixel, pos, color);
             }
-
-
-            _spriteBatch.Draw(Game.Content.Load<Texture2D>("Textures/Logo1"),new Rectangle(Game.GraphicsDevice.Viewport.Width/2 - 512 ,128,1024,256), Color.White);
-            string str = "Terraforming - \n\" transform (a planet) so as to resemble the earth, especially so that it can support human life.\"";
-            _spriteBatch.DrawString(subFont, str, new Vector2(Game.GraphicsDevice.Viewport.Width / 2 - (subFont.MeasureString(str).X/2), 320), Color.DarkGoldenrod);
-
-            Vector2 p = new Vector2(Game.GraphicsDevice.Viewport.Width/2,512);
-
-            // Title Image
-
-            str = "New Game";
-            newGameRec = new Rectangle((int)p.X- buttonBox.Width/2, (int)p.Y, buttonBox.Width, buttonBox.Height);
-            _spriteBatch.Draw(buttonBox, newGameRec, newGameTint);
-            p.Y += font.LineSpacing/1.75f;
-            p.X -= font.MeasureString(str).X / 2;
-            _spriteBatch.DrawString(font, str, p, textColor);
-
-
-            p = new Vector2(Game.GraphicsDevice.Viewport.Width / 2, 512);
-            p.Y += 128;
-            // If there is a game in progress
-            if (gameInProgress)
-            {
-                
-
-                str = "Continue";
-                continueRec = new Rectangle((int)p.X - buttonBox.Width / 2, (int)p.Y, buttonBox.Width, buttonBox.Height);
-                _spriteBatch.Draw(buttonBox, continueRec, continueTint);
-                p.Y += font.LineSpacing / 1.75f;
-                p.X -= font.MeasureString(str).X / 2;
-                _spriteBatch.DrawString(font, str, p, textColor);
-
-                p = new Vector2(Game.GraphicsDevice.Viewport.Width / 2, 512);
-                p.Y += 256;
-            }           
-
-            str = "Quit";
-            quitRec = new Rectangle((int)p.X - buttonBox.Width / 2, (int)p.Y, buttonBox.Width, buttonBox.Height);
-            _spriteBatch.Draw(buttonBox, quitRec, quitTint);
-            p.Y += font.LineSpacing / 1.75f;
-            p.X -= font.MeasureString(str).X / 2;
-            _spriteBatch.DrawString(font, str, p, textColor);
-
-            str = $"Version: {Version}";
-            Vector2 m = subFont.MeasureString(str);
-            _spriteBatch.DrawString(subFont, str, new Vector2(Game.GraphicsDevice.Viewport.Width - (m.X + 64), Game.GraphicsDevice.Viewport.Height - (m.Y + 8)), Color.White);
-
             _spriteBatch.End();
+            base.Draw(gameTime);
         }
 
         public override void LoadScene()
@@ -228,6 +212,7 @@ namespace Geopoiesis.Scenes
         public override void UnloadScene()
         {
             base.UnloadScene();
+            btnNewGame.OnMouseClick -= ButtonClicked;
             State = SceneStateEnum.Unloaded;
         }
     }

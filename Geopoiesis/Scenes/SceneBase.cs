@@ -53,7 +53,7 @@ namespace Geopoiesis.Scenes
 
             foreach (IGameComponent component in Components)
             {
-                if (component is IUpdateable)
+                if (component is IUpdateable && ((IUpdateable)component).Enabled)
                     ((IUpdateable)component).Update(gameTime);
             }
         }
@@ -62,7 +62,7 @@ namespace Geopoiesis.Scenes
         {
             foreach (IGameComponent component in Components)
             {
-                if (component is IDrawable)
+                if (component is IDrawable && ((IDrawable)component).Visible)
                     ((IDrawable)component).Draw(gameTime);
             }
 
