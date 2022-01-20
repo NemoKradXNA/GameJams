@@ -29,7 +29,7 @@ namespace Geopoiesis.Services
 
         public int Seed { get; set; }
 
-        public int Years { get; set; }
+        public long Years { get; set; }
 
         public List<SystemEvent> LoggedEvents { get; set; }
 
@@ -60,10 +60,10 @@ namespace Geopoiesis.Services
         public Epoch CurrentEpoch = Epoch.PlanetForming;
 
         public float OrbitalDistance = float.MaxValue;
-        public int Years = 0;
-        public int YearsFullSpeed = 5000000;
-        public int SlowestYears = 500000;
-        public int CurrentTimeFlow;
+        public long Years = 0;
+        public long YearsFullSpeed = 5000000;
+        public long SlowestYears = 500000;
+        public long CurrentTimeFlow;
 
         public bool InGame = false; // Needs this to be part of the scene manager really..
         public bool IsPaused = false;
@@ -96,10 +96,30 @@ namespace Geopoiesis.Services
             coroutineService.StartCoroutine(TheMarchOfTime());
         }
 
-        public void SaveGame()
+        public void SaveGame(bool stopTheMarchOfTime = true)
         {
+            if (stopTheMarchOfTime)
+                coroutineService.StopCoroutine(TheMarchOfTime());
+
             SaveGame thisGame = new SaveGame(this);
             File.WriteAllText("save.json",JsonConvert.SerializeObject(thisGame));
+
+            
+        }
+
+        public void reSet()
+        {
+            IsPaused = false;
+            OZone = 0;
+            WaterLevel = 0;
+            LifeLevel = 0;
+            DistanceFromStar = 1;
+            SurfaceTemp = -30;
+            Volcanism = 0;
+            Quakes = 0;
+            Seed = 1971;
+            Years = 0;
+            LoggedEvents = new List<SystemEvent>();
         }
 
         public void LoadGame()
@@ -139,9 +159,13 @@ namespace Geopoiesis.Services
 
 
                     // Water will form over time
-                    WaterLevel += (Years / 100000000) * .0001f;
+                    WaterLevel = Math.Max(0, WaterLevel + (Years / 100000000) * .0001f);
 
                     float bt = 0;
+                    if (DistanceFromStar < .125f)
+                        bt += .1f;
+                    if (DistanceFromStar < .25f)
+                        bt += .01f;
                     if (DistanceFromStar < .5f)
                         bt += .001f;
                     else if (DistanceFromStar < 1)
@@ -160,9 +184,9 @@ namespace Geopoiesis.Services
                     SurfaceTemp += bt;
 
                     if (SurfaceTemp > 60)
-                        WaterLevel -= .0001f;
+                        WaterLevel = Math.Min(0, WaterLevel-.0001f);
 
-                    OZone = Math.Min(1, OZone +  WaterLevel * .001f);
+                    OZone = Math.Max(0, Math.Min(1, OZone +  WaterLevel * .001f));
 
                     float lm = 1;
                     // Based on stats grow what we have....
@@ -183,7 +207,7 @@ namespace Geopoiesis.Services
 
 
                     // Set Epoch
-                    if (WaterLevel > .1f && CurrentEpoch < Epoch.OceansForm)
+                    if (WaterLevel > .25f && CurrentEpoch < Epoch.OceansForm)
                     {
                         CurrentEpoch = Epoch.OceansForm;
                         FireAnEvent(new SystemEvent() { Title = "Oceans Formed!", Description = "Oceans have now formed on your world!", TitleColor = Color.SeaGreen, TextColor = Color.DarkSeaGreen, beepSFX = "Audio/SFX/beep-10" });
@@ -275,7 +299,7 @@ namespace Geopoiesis.Services
         public float DistanceFromStar { get; set; }
         public float SurfaceTemp { get; set; }
         
-        public int YearArrives { get; set; }
+        public long YearArrives { get; set; }
 
         public Color TitleColor { get; set; }
         public Color TextColor { get; set; }

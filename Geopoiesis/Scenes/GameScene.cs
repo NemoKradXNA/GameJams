@@ -80,6 +80,13 @@ namespace Geopoiesis.Scenes
 
         UIImage imgHudBorder;
         UIStarBox starBox;
+        UIStatBox statH2O;
+        UIStatBox statO3;
+        UIStatBox statLife;
+        UIStatBox statAU;
+        UIStatBox statTemp;
+        UILabel lblEpoch;
+        UILabel lblTime;
 
         public GameScene(Game game, string name) : base(game, name) { }
 
@@ -143,6 +150,7 @@ namespace Geopoiesis.Scenes
             logFont = Game.Content.Load<SpriteFont>("SpriteFont/logFont");
 
             Point screenSize = new Point(Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height);
+            Point screenCenter = new Point(Game.GraphicsDevice.Viewport.Width / 2, Game.GraphicsDevice.Viewport.Height / 2);
             Rectangle border1Pixel = new Rectangle(1, 1, 1, 1);
             float a = .75f;
             Color BorderColor = new Color(1, 1, 1, a);
@@ -153,7 +161,6 @@ namespace Geopoiesis.Scenes
             imgHudBorder.Tint = hudColor;
             Components.Add(imgHudBorder);
 
-
             starBox = new UIStarBox(Game, Point.Zero, new Point(256));
             starBox.Texture = CreateBox(starBox.Size.X, starBox.Size.Y, border1Pixel, BGBlackColor, BorderColor);
             starBox.BarTexture = CreateBox(starBox.Size.X, 1, border1Pixel, Color.Transparent, BorderColor);
@@ -162,6 +169,80 @@ namespace Geopoiesis.Scenes
             starBox.Text = $"{geopoiesisService.StartType} - Class Star";
             starBox.Font = font;
             Components.Add(starBox);
+
+           
+            statH2O = new UIStatBox(Game, new Point(264, 8), new Point(288, font.LineSpacing));
+            statH2O.Tint = hudColor;
+            statH2O.Texture = CreateBox(statH2O.Size.X, statH2O.Size.Y, new Rectangle(1, 1, 1, 1), new Color(0, 0, 0, a), new Color(1, 1, 1, .75f));
+            statH2O.Font = font;
+            statH2O.Text = "H2O:";
+            statH2O.ColorHigh = Color.LightBlue;
+            statH2O.ColorLow = Color.DarkBlue;
+
+            Components.Add(statH2O);
+
+            statO3 = new UIStatBox(Game, new Point(264, 8 + font.LineSpacing), new Point(288, font.LineSpacing));
+            statO3.Tint = hudColor;
+            statO3.Texture = CreateBox(statH2O.Size.X, statH2O.Size.Y, new Rectangle(1, 1, 1, 1), new Color(0, 0, 0, a), new Color(1, 1, 1, .75f));
+            statO3.Font = font;
+            statO3.Text = "O3:";
+            statO3.ColorHigh = Color.LightSkyBlue;
+            statO3.ColorLow = Color.DarkSlateGray;
+
+            Components.Add(statO3);
+
+            statLife = new UIStatBox(Game, new Point(264, 8 + (font.LineSpacing * 2)), new Point(288, font.LineSpacing));
+            statLife.Tint = hudColor;
+            statLife.Texture = CreateBox(statH2O.Size.X, statH2O.Size.Y, new Rectangle(1, 1, 1, 1), new Color(0, 0, 0, a), new Color(1, 1, 1, .75f));
+            statLife.Font = font;
+            statLife.Text = "Life:";
+            statLife.ColorHigh = Color.ForestGreen;
+            statLife.ColorLow = Color.Firebrick;
+
+            Components.Add(statLife);
+
+            statAU = new UIStatBox(Game, new Point(264, 8 + (font.LineSpacing * 3)), new Point(288, font.LineSpacing));
+            statAU.Tint = hudColor;
+            statAU.Texture = CreateBox(statH2O.Size.X, statH2O.Size.Y, new Rectangle(1, 1, 1, 1), new Color(0, 0, 0, a), new Color(1, 1, 1, .75f));
+            statAU.Font = font;
+            statAU.Text = "AU:";
+            statAU.ColorHigh = Color.White;
+            statAU.ColorLow = Color.Gold;
+            statAU.MaxValue = 10;
+            statAU.Format = "{0,0:0.0} AU";
+
+            Components.Add(statAU);
+
+            statTemp = new UIStatBox(Game, new Point(264, 8 + (font.LineSpacing * 4)), new Point(288, font.LineSpacing));
+            statTemp.Tint = hudColor;
+            statTemp.Texture = CreateBox(statH2O.Size.X, statH2O.Size.Y, new Rectangle(1, 1, 1, 1), new Color(0, 0, 0, a), new Color(1, 1, 1, .75f));
+            statTemp.Font = font;
+            statTemp.Text = "Temp:";
+            statTemp.ColorHigh = Color.Red;
+            statTemp.ColorLow = Color.Azure;
+            statTemp.Format = "{0,0:00.00} c";
+            statTemp.MaxValue = 10;
+
+            Components.Add(statTemp);
+
+            lblEpoch = new UILabel(Game);
+            lblEpoch.Tint = hudColor;
+            lblEpoch.Position = screenCenter;
+            lblEpoch.Font = font;
+
+            Components.Add(lblEpoch);
+            //str = $"{$"{geopoiesisService.Years,0:###,###,###,0} years",0:-100}";
+            //p = new Vector2(Game.GraphicsDevice.Viewport.Width - 64, 0);
+            //p -= font.MeasureString(str);
+            //p.Y = font.LineSpacing;
+            //_spriteBatch.DrawString(font, str, p, hudColor);
+            lblTime = new UILabel(Game);
+            lblTime.Tint = hudColor;
+            lblTime.Position = screenCenter;
+            lblTime.Font = font;
+
+            Components.Add(lblTime);
+
 
             base.Initialize();
 
@@ -377,9 +458,19 @@ namespace Geopoiesis.Scenes
                 audioManager.PlaySFX("Audio/SFX/dtmf-5");
             }
 
+            statH2O.Value = geopoiesisService.WaterLevel * 100;
+            statO3.Value = geopoiesisService.OZone * 100;
+            statLife.Value = geopoiesisService.LifeLevel * 100;
+            statAU.Value = geopoiesisService.DistanceFromStar;
+            statTemp.Value = geopoiesisService.SurfaceTemp;
 
+            lblEpoch.Text = $"{$"[Epoch: {geopoiesisService.CurrentEpoch}]",0:10}";
+            lblEpoch.Position = new Point((Game.GraphicsDevice.Viewport.Width/2)  , 28);
 
-                base.Update(gameTime);
+            lblTime.Text = $"{$"{geopoiesisService.Years,0:###,###,###,0} years",0:-100}";
+            lblTime.Position = new Point((Game.GraphicsDevice.Viewport.Width - 64) - (int)lblTime.Measure.X/2, 28);
+
+            base.Update(gameTime);
         }
 
         IEnumerator WaitForPlanetBuild()
@@ -445,57 +536,6 @@ namespace Geopoiesis.Scenes
 
             base.Draw(gameTime);
 
-            //dpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
-
-            //Vector2 textPos = new Vector2(8, 8);
-            //DrawSring($"Camera Transform: {camera.Transform}", textPos, Color.Gold, testFont);
-            //textPos.Y += testFont.LineSpacing;
-
-            //if (planet != null)
-            //{
-            //    textPos.Y += testFont.LineSpacing;
-            //    foreach (string line in planet.Debug)
-            //    {
-            //        DrawSring(line, textPos, Color.Silver, debugFont);
-            //        textPos.Y += debugFont.LineSpacing;
-            //    }
-            //}
-
-            //textPos = new Vector2(GraphicsDevice.PresentationParameters.BackBufferWidth - 600, 8 + testFont.LineSpacing);
-
-            //DrawSring($"F1 Toggle Wire Frame", textPos, Color.Gold, testFont);
-            //textPos.Y += testFont.LineSpacing;
-            //DrawSring($"WASD = Translate Camera", textPos, Color.Gold, testFont);
-            //textPos.Y += testFont.LineSpacing;
-            //DrawSring($"Q/E = Displacement [{DisplacementMag}]", textPos, Color.Gold, testFont);
-            //textPos.Y += testFont.LineSpacing;
-            //DrawSring($"R/T = _MinDeepSeaDepth [{_MinDeepSeaDepth}]", textPos, Color.Gold, testFont);
-            //textPos.Y += testFont.LineSpacing;
-            //DrawSring($"F/G = _MinSeaDepth [{_MinSeaDepth}]", textPos, Color.Gold, testFont);
-            //textPos.Y += testFont.LineSpacing;
-            //DrawSring($"Y/U = _MinShoreDepth [{_MinShoreDepth}]", textPos, Color.Gold, testFont);
-            //textPos.Y += testFont.LineSpacing;
-            //DrawSring($"J/K = _MinLand [{_MinLand}]", textPos, Color.Gold, testFont);
-            //textPos.Y += testFont.LineSpacing;
-            //DrawSring($"I/O = _MinHill [{_MinHill}]", textPos, Color.Gold, testFont);
-            //textPos.Y += testFont.LineSpacing;
-            //if (planet.Generated)
-            //{
-            //    DrawSring($"F2/F3 = LOD [{planet.LodLevel + 1}] ({planet.LodSizes[planet.LodLevel]})", textPos, Color.Gold, testFont);
-            //    textPos.Y += testFont.LineSpacing;
-            //}
-
-            //DrawSring($"Time: [{geopoiesisService.Years,0:###,###,###,0} years]", textPos, Color.Gold, testFont);
-            //textPos.Y += testFont.LineSpacing;
-            //DrawSring($"Epoch: [{geopoiesisService.CurrentEpoch}]", textPos, Color.Gold, testFont);
-            //textPos.Y += testFont.LineSpacing;
-
-
-            // Render planet cube map.
-
-
-            //_spriteBatch.End();
-            
             if (gameFont == null)
             {
                 gameFont = Game.Content.Load<SpriteFont>("SpriteFont/GameFont");
@@ -516,98 +556,18 @@ namespace Geopoiesis.Scenes
             string str;
             _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
 
-            //_spriteBatch.Draw(hudBorder, new Rectangle(0, 0, hudBorder.Width, hudBorder.Height), hudColor);
-            //_spriteBatch.Draw(starBox, new Rectangle(0, 0, 256, 256), hudColor);
-            //_spriteBatch.Draw(Game.Content.Load<Texture2D>($"Textures/Stars/{geopoiesisService.StartType}"), new Rectangle(64, 42, 120, 120), Color.White);
-            //_spriteBatch.Draw(pixel, new Rectangle(0, 200, 256, 1), hudColor );
-
-            //str = $"{geopoiesisService.StartType} - Class Star";
-            //p = new Vector2(128, 256 - (font.LineSpacing * 1f));
-            //p -= font.MeasureString(str) * .5f;
-            //_spriteBatch.DrawString(font, str, p, hudColor);
+            
 
             int l = 32;
-            str = "H2O:";
-            p = new Vector2(256 + 8 , 8);
-            _spriteBatch.DrawString(font, str, p, hudColor);
-            _spriteBatch.Draw(statBox, new Rectangle((int)p.X + 64 + l, (int)p.Y, 256, font.LineSpacing), hudColor);
-
-            // Calc stat Value
-            SetStatTexutre(geopoiesisService.WaterLevel,Color.DarkBlue, Color.LightBlue);
-            _spriteBatch.Draw(statValue, new Rectangle((int)p.X + 64 + 1 + l, (int)p.Y + 1, 256-1, font.LineSpacing-1), Color.White);
-            str = $"{geopoiesisService.WaterLevel * 100, 0:000}";
-            Vector2 pp = new Vector2(p.X + 64 + 128 + l, p.Y + font.LineSpacing *.5f);
-            pp -= font.MeasureString(str) * .5f;
-            _spriteBatch.DrawString(font, str, pp, hudColor);
-
-            str = "O3:";
-            p.Y += font.LineSpacing;
-            _spriteBatch.DrawString(font, str, p, hudColor);
-            _spriteBatch.Draw(statBox, new Rectangle((int)p.X + 64 + l, (int)p.Y, 256, font.LineSpacing), hudColor);
-
-            // Calc stat Value
-            SetStatTexutre(geopoiesisService.OZone, Color.DarkSlateGray, Color.LightSkyBlue);
-            _spriteBatch.Draw(statValue, new Rectangle((int)p.X + 64 + 1 + l, (int)p.Y + 1, 256 - 1, font.LineSpacing - 1), Color.White);
-            str = $"{geopoiesisService.OZone * 100,0:000}";
-            pp = new Vector2(p.X + 64 + 128 + l, p.Y + font.LineSpacing * .5f);
-            pp -= font.MeasureString(str) * .5f;
-            _spriteBatch.DrawString(font, str, pp, hudColor);
-
-
-            str = "Life:";
-            p.Y += font.LineSpacing;
-            _spriteBatch.DrawString(font, str, p, hudColor);
-            _spriteBatch.Draw(statBox, new Rectangle((int)p.X + 64 + l, (int)p.Y, 256, font.LineSpacing), hudColor);
-
-            // Calc stat Value
-            SetStatTexutre(geopoiesisService.LifeLevel, Color.Firebrick, Color.ForestGreen);
-            _spriteBatch.Draw(statValue, new Rectangle((int)p.X + 64 + 1 + l, (int)p.Y + 1, 256 - 1, font.LineSpacing - 1), Color.White);
-            str = $"{geopoiesisService.LifeLevel * 100,0:000}";
-            pp = new Vector2(p.X + 64 + 128 + l, p.Y + font.LineSpacing * .5f);
-            pp -= font.MeasureString(str) * .5f;
-            _spriteBatch.DrawString(font, str, pp, hudColor);
-
-            str = "AU:";
-            p.Y += font.LineSpacing;
-            _spriteBatch.DrawString(font, str, p, hudColor);
-            _spriteBatch.Draw(statBox, new Rectangle((int)p.X + 64 + l, (int)p.Y, 256, font.LineSpacing), hudColor);
-
-            // Calc stat Value
-            SetStatTexutre(geopoiesisService.DistanceFromStar/10f, Color.Gold, Color.White);
-            _spriteBatch.Draw(statValue, new Rectangle((int)p.X + 64 + 1 + l, (int)p.Y + 1, 256 - 1, font.LineSpacing - 1), Color.White);
-            str = $"{geopoiesisService.DistanceFromStar,0:0.0} AU";
-            pp = new Vector2(p.X + 64 + 128 + l, p.Y + font.LineSpacing * .5f);
-            pp -= font.MeasureString(str) * .5f;
-            _spriteBatch.DrawString(font, str, pp, hudColor);
-
-            str = "Temp:";
-            p.Y += font.LineSpacing;
-            _spriteBatch.DrawString(font, str, p, hudColor);
-            _spriteBatch.Draw(statBox, new Rectangle((int)p.X + 64 + l, (int)p.Y, 256, font.LineSpacing), hudColor);
-
-            // Calc stat Value
-            SetStatTexutre(geopoiesisService.SurfaceTemp / 10f, Color.Gold, Color.White);
-            _spriteBatch.Draw(statValue, new Rectangle((int)p.X + 64 + 1 + l, (int)p.Y + 1, 256 - 1, font.LineSpacing - 1), Color.White);
-            str = $"{geopoiesisService.SurfaceTemp,0:00} c";
-            pp = new Vector2(p.X + 64 + 128 + l, p.Y + font.LineSpacing * .5f);
-            pp -= font.MeasureString(str) * .5f;
-            _spriteBatch.DrawString(font, str, pp, hudColor);
-
-            // Epoch and years..
-            str = $"{$"[Epoch: {geopoiesisService.CurrentEpoch}]", 0:10}";
-            p = screeCenter;
-            p -= font.MeasureString(str) * .5f;
-            p.Y = font.LineSpacing;
-            _spriteBatch.DrawString(font, str, p, hudColor);
-
-            str = $"{$"{geopoiesisService.Years,0:###,###,###,0} years", 0:-100}";
-            p = new Vector2(Game.GraphicsDevice.Viewport.Width-64,0);
-            p -= font.MeasureString(str);
-            p.Y = font.LineSpacing;
-            _spriteBatch.DrawString(font, str, p, hudColor);
-
-
             
+            p = new Vector2(256 + 8 , 8);
+           
+            Vector2 pp;
+            
+            p.Y += font.LineSpacing;
+          
+
+                      
             
             p = screeCenter;
             if (!planet.Generated)
@@ -670,7 +630,7 @@ namespace Geopoiesis.Scenes
             _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
 
             // Volcanism
-            p = new Vector2(256 + 8, 12 + font.LineSpacing*5);
+            p = new Vector2(256 + 8, 16 + font.LineSpacing*5);
             buttonBox = CreateBox(32, 32, new Rectangle(2, 2, 2, 2), new Color(.2f, .5f, .2f, 1), hudColor);
             VolcPlus = new Rectangle((int)p.X, (int)p.Y, buttonBox.Width, buttonBox.Height);
             _spriteBatch.Draw(buttonBox, VolcPlus,Color.White);
@@ -688,7 +648,7 @@ namespace Geopoiesis.Scenes
             _spriteBatch.DrawString(font, str, p, hudColor);
 
             // Quakes
-            p = new Vector2(256 + 8, 18 + font.LineSpacing * 6);
+            p = new Vector2(256 + 8, 22 + font.LineSpacing * 6);
             buttonBox = CreateBox(32, 32, new Rectangle(2, 2, 2, 2), new Color(.2f, .5f, .2f, 1), hudColor);
             QuakePlus = new Rectangle((int)p.X, (int)p.Y, buttonBox.Width, buttonBox.Height);
             _spriteBatch.Draw(buttonBox, QuakePlus, Color.White);
@@ -706,7 +666,7 @@ namespace Geopoiesis.Scenes
             _spriteBatch.DrawString(font, str, p, hudColor);
 
             // Distance from star
-            p = new Vector2(256 + 8, 24 + font.LineSpacing * 7);
+            p = new Vector2(256 + 8, 28 + font.LineSpacing * 7);
             buttonBox = CreateBox(32, 32, new Rectangle(2, 2, 2, 2), new Color(.2f, .5f, .2f, 1), hudColor);
             DistPlus = new Rectangle((int)p.X, (int)p.Y, buttonBox.Width, buttonBox.Height);
             _spriteBatch.Draw(buttonBox, DistPlus, Color.White);

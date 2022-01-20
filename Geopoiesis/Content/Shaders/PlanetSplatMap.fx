@@ -39,8 +39,8 @@ samplerCUBE heightMapSampler = sampler_state
     Texture = (heightTexture);
     MinFilter = Linear;
     MagFilter = Linear;
-    AddressU = Clamp;
-    AddressV = Clamp;
+    AddressU = WRap;
+    AddressV = Wrap;
 };
 
 texture splatTexture;

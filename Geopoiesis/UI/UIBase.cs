@@ -1,9 +1,6 @@
 ﻿using Geopoiesis.Interfaces;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Geopoiesis.UI
 {
@@ -34,6 +31,7 @@ namespace Geopoiesis.UI
         {
             Position = position;
             Size = size;
+            Tint = Color.White;
         }
 
         public override void Initialize()
@@ -44,6 +42,7 @@ namespace Geopoiesis.UI
 
     }
 
+    
 
     public delegate void UIMouseEvent(IUIBase sender, IMouseStateManager mouseState);
 }

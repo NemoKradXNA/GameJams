@@ -174,13 +174,16 @@ namespace Geopoiesis.Scenes
         {
             audioManager.PlaySFX("Audio/SFX/beep-07");
             if (sender == btnNewGame)
+            {
+                geopoiesisService.reSet();
                 sceneManager.LoadScene("mainGame");
+            }
             else if (sender == btnContinue)
             {
                 geopoiesisService.LoadGame();
                 sceneManager.LoadScene("mainGame");
             }
-            else if(sender == btnQuit)
+            else if (sender == btnQuit)
                 Game.Exit();
         }
 
