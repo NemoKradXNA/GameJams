@@ -231,18 +231,13 @@ namespace Geopoiesis.Scenes
             lblEpoch.Font = font;
 
             Components.Add(lblEpoch);
-            //str = $"{$"{geopoiesisService.Years,0:###,###,###,0} years",0:-100}";
-            //p = new Vector2(Game.GraphicsDevice.Viewport.Width - 64, 0);
-            //p -= font.MeasureString(str);
-            //p.Y = font.LineSpacing;
-            //_spriteBatch.DrawString(font, str, p, hudColor);
+
             lblTime = new UILabel(Game);
             lblTime.Tint = hudColor;
             lblTime.Position = screenCenter;
             lblTime.Font = font;
 
             Components.Add(lblTime);
-
 
             base.Initialize();
 
@@ -315,49 +310,10 @@ namespace Geopoiesis.Scenes
 
                 planet.Transform.Rotate(Vector3.Up, .0025f);
                 moonAnchor.Rotate((Vector3.Up * .25f) + (Vector3.Forward * .1f), -.005f);
-                //moon.Transform.Rotate(Vector3.Up + Vector3.Right, .0025f);
+               
                 atmos.Transform.Scale = (Vector3.One * 4.25f) + (Vector3.One * (planet.Radius * .8f) * DisplacementMag);
 
-                //if (kbManager.KeyPress(Keys.F1))
-                //    camera.RenderWireFrame = !camera.RenderWireFrame;
-
-                float dmod = .01f;
-                //if (kbManager.KeyDown(Keys.Q))
-                //    DisplacementMag = MathHelper.Min(1, DisplacementMag + dmod);
-                //if (kbManager.KeyDown(Keys.E))
-                //    DisplacementMag = MathHelper.Max(0, DisplacementMag - dmod);
-
-                //if (kbManager.KeyDown(Keys.R))
-                //    geopoiesisService.WaterLevel = MathHelper.Min(1, geopoiesisService.WaterLevel + dmod);
-                //if (kbManager.KeyDown(Keys.T))
-                //    geopoiesisService.WaterLevel = MathHelper.Max(0, geopoiesisService.WaterLevel - dmod);
-
-                //if (kbManager.KeyDown(Keys.F))
-                //    geopoiesisService.OZone = MathHelper.Min(1, geopoiesisService.OZone + dmod);
-                //if (kbManager.KeyDown(Keys.G))
-                //    geopoiesisService.OZone = MathHelper.Max(0, geopoiesisService.OZone - dmod);
-
-                //if (kbManager.KeyDown(Keys.Y))
-                //    geopoiesisService.LifeLevel = MathHelper.Min(1, geopoiesisService.LifeLevel + dmod);
-                //if (kbManager.KeyDown(Keys.U))
-                //    geopoiesisService.LifeLevel = MathHelper.Max(0, geopoiesisService.LifeLevel - dmod);
-
-                //if (kbManager.KeyDown(Keys.J))
-                //    _MinLand = MathHelper.Min(1, _MinLand + dmod);
-                //if (kbManager.KeyDown(Keys.K))
-                //    _MinLand = MathHelper.Max(0, _MinLand - dmod);
-
-                //if (kbManager.KeyDown(Keys.I))
-                //    _MinHill = MathHelper.Min(1, _MinHill + dmod);
-                //if (kbManager.KeyDown(Keys.O))
-                //    _MinHill = MathHelper.Max(0, _MinHill - dmod);
-
-                //if (kbManager.KeyPress(Keys.F2))
-                //    planet.SetLODLevel(planet.LodLevel + 1);
-                //if (kbManager.KeyPress(Keys.F3))
-                //    planet.SetLODLevel(planet.LodLevel - 1);
-
-
+               
                 if (planet.effect != null)
                 {
 
