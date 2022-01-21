@@ -9,6 +9,7 @@ namespace Geopoiesis.Enums
     {
         PlanetForming,// -1
         PlanetFormed, // 0
+        OceansForming, // 
         OceansForm, // Took ~500 million years on earth.
         Prokaryotes, // Took 1 billion years to arrive on earth
         Photosynthesis, // 1.6

@@ -11,6 +11,9 @@ namespace Geopoiesis.UI
         public SpriteFont Font { get; set; }
         public string Text { get; set; }
 
+        public Vector2 ShadowOffset { get; set; }
+        public Color ShadowColor { get; set; }
+
         public Vector2 Measure
         {
             get
@@ -25,10 +28,11 @@ namespace Geopoiesis.UI
         {
             get
             {
-                Vector2 tp = new Vector2(Position.X, Position.Y);
+                Vector2 tp = Position.ToVector2();
+                Vector2 m = Font.MeasureString(Text) * .5f;
 
-                tp.Y += Font.LineSpacing / 1.75f;
-                tp.X += (Size.X / 2) - (Measure.X * .5f);
+                tp.Y += (Size.Y / 2) - m.Y;
+                tp.X += (Size.X / 2) - m.X;
 
                 return tp;
             }
@@ -47,7 +51,11 @@ namespace Geopoiesis.UI
 
             // Draw BG
             if (!string.IsNullOrEmpty(Text))
+            {
+                if(ShadowOffset != Vector2.Zero)
+                    _spriteBatch.DrawString(Font, Text, TextPosition + ShadowOffset, ShadowColor);
                 _spriteBatch.DrawString(Font, Text, TextPosition, Tint);
+            }
             _spriteBatch.End();
         }
     }

@@ -159,7 +159,7 @@ namespace Geopoiesis.Services
 
 
                     // Water will form over time
-                    WaterLevel = Math.Max(0, WaterLevel + (Years / 100000000) * .0001f);
+                    WaterLevel += (Years / 100000000) * .0001f;
 
                     float bt = 0;
                     if (DistanceFromStar < .125f)
@@ -184,7 +184,9 @@ namespace Geopoiesis.Services
                     SurfaceTemp += bt;
 
                     if (SurfaceTemp > 60)
-                        WaterLevel = Math.Min(0, WaterLevel-.0001f);
+                         WaterLevel -= .0001f;
+
+                    WaterLevel = Math.Max(1,Math.Min(0, WaterLevel));
 
                     OZone = Math.Max(0, Math.Min(1, OZone +  WaterLevel * .001f));
 
@@ -207,6 +209,12 @@ namespace Geopoiesis.Services
 
 
                     // Set Epoch
+                    if (WaterLevel > .1f && CurrentEpoch < Epoch.OceansForming)
+                    {
+                        CurrentEpoch = Epoch.OceansForming;
+                        FireAnEvent(new SystemEvent() { Title = "Oceans Formed!", Description = "Oceans have now formed on your world!", TitleColor = Color.SeaGreen, TextColor = Color.DarkSeaGreen, beepSFX = "Audio/SFX/beep-10" });
+                    }
+
                     if (WaterLevel > .25f && CurrentEpoch < Epoch.OceansForm)
                     {
                         CurrentEpoch = Epoch.OceansForm;
