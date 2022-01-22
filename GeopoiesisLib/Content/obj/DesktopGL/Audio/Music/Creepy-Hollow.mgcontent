@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SourceFile>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Audio/Music/Creepy-Hollow.mp3</SourceFile>
+  <SourceTime>2022-01-18T17:42:11.5652129+00:00</SourceTime>
+  <DestFile>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/bin/DesktopGL/Audio/Music/Creepy-Hollow.xnb</DestFile>
+  <DestTime>2022-01-22T15:20:25.8857824+00:00</DestTime>
+  <Importer>Mp3Importer</Importer>
+  <ImporterTime>2020-08-10T16:17:54+01:00</ImporterTime>
+  <Processor>SongProcessor</Processor>
+  <ProcessorTime>2020-08-10T16:17:54+01:00</ProcessorTime>
+  <Parameters>
+    <Key>Quality</Key>
+    <Value>Best</Value>
+  </Parameters>
+  <Dependencies />
+  <BuildAsset />
+  <BuildOutput>
+    <string>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/bin/DesktopGL/Audio/Music/Creepy-Hollow.ogg</string>
+  </BuildOutput>
+</PipelineBuildEvent>

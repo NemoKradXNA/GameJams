@@ -48,7 +48,6 @@ namespace Geopoiesis
     public class Game1 : Game
     {
         private GraphicsDeviceManager _graphics;
-        private SpriteBatch _spriteBatch;
 
         protected INoiseService noiseService;
         protected ICoroutineService coroutineService;
@@ -64,21 +63,22 @@ namespace Geopoiesis
         protected RasterizerState currentRasterizerState;
 
         protected BasicSceneManager sceneManager;
-        
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
 
+            //_graphics.IsFullScreen = true;
+            Window.AllowUserResizing = true;
+            Window.AllowAltF4 = true;
             _graphics.GraphicsProfile = GraphicsProfile.HiDef;
 
             _graphics.PreferredBackBufferHeight = 1080;
             _graphics.PreferredBackBufferWidth = 1920;
 
-            //_graphics.IsFullScreen = true;
-            Window.AllowUserResizing = true;
-            Window.AllowAltF4 = true;
+
             _graphics.ApplyChanges();
         }
 
@@ -114,7 +114,7 @@ namespace Geopoiesis
 
         protected override void LoadContent()
         {
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            //_spriteBatch = new SpriteBatch(GraphicsDevice);
 
 
             sceneManager.LoadScene("mainMenu");
