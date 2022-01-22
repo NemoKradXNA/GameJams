@@ -19,7 +19,7 @@ namespace Geopoiesis.Models.Planet
         protected List<Texture2D> textures = null;
 
 
-        public PlanetGeometry(Game game, string effectAsset, float noise, int startLod = 3) : base(game, effectAsset, 2, 2, noise, 256, 1971, startLod)
+        public PlanetGeometry(Game game, string effectAsset, float noise, int mapSize, int startLod = 3) : base(game, effectAsset, 2, 2, noise, mapSize, 1971, startLod)
         {
         }
         protected void WriteToDebug(string msg) // Should really be a "console" logging service...
@@ -59,7 +59,7 @@ namespace Geopoiesis.Models.Planet
                 c = new Color[] { new Color(.8f, .4f, .3f, 1f) };
                 textures[2].SetData(c);
 
-                c = new Color[] { new Color(1f, 1f, 1f, 1f) };
+                c = new Color[] { new Color(.8f, .8f, 1f, 1f) };
                 textures[3].SetData(c);
             }
 

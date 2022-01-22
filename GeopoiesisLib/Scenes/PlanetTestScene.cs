@@ -38,7 +38,7 @@ namespace Geopoiesis.Scenes
             SkyBox skyBox = new SkyBox(Game, "Shaders/SkyBox");
             Components.Add(skyBox);
 
-            planet = new PlanetGeometry(Game, "Shaders/Test", 1.8f);
+            planet = new PlanetGeometry(Game, "Shaders/Test", 1.8f, 256);
             planet.Transform.Position = new Vector3(0, 0, 0);
             Components.Add(planet);
 

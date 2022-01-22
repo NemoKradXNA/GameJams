@@ -39,7 +39,7 @@
 
 #begin Audio/SFX/dtmf-5.mp3
 /importer:Mp3Importer
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Audio/SFX/dtmf-5.mp3
 

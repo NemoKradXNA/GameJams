@@ -31,7 +31,7 @@ namespace Geopoiesis.Scenes
         Cube cube;
 
         protected float DisplacementMag = .15f;
-        float _MinHill = .8f;
+        float NormalMag = .055f;
 
         Color hudColor = Color.LimeGreen;
         Color shadowColor = Color.DarkGreen;
@@ -85,18 +85,18 @@ namespace Geopoiesis.Scenes
             SkyBox skyBox = new SkyBox(Game, "Shaders/SkyBox");
             Components.Add(skyBox);
 
-            planet = new PlanetGeometry(Game, "Shaders/PlanetSplatMap", 1f);
+            planet = new PlanetGeometry(Game, "Shaders/PlanetSplatMap", 1f, 512);
             planet.Transform.Position = new Vector3(0, 0, 0);
             moonAnchor = new Transform();
             moonAnchor.Position = planet.Transform.Position;
             Components.Add(planet);
 
-            moon = new MorphableSphere(Game, "Shaders/Moon", 2, 1, 1.25f, 128, geopoiesisService.Seed * 2, 5, 7);
+            moon = new MorphableSphere(Game, "Shaders/Moon", 2, 1, 1.25f, 32, geopoiesisService.Seed * 2, 5, 7);
             moon.Transform.Parent = moonAnchor;
             moon.Transform.Position = (Vector3.Left + (Vector3.Up * .25f)) * 32;
             Components.Add(moon);
 
-            sun = new MorphableSphere(Game, "Shaders/Sun", 2, 10, 16, 16, 1971, 3, 7);
+            sun = new MorphableSphere(Game, "Shaders/Sun", 2, 10, 16, 1, 1971, 3, 7);
             sun.Transform.Position = new Vector3(-1, 0, 0) * 100;
             Components.Add(sun);
 
@@ -387,7 +387,9 @@ namespace Geopoiesis.Scenes
         {
             if(evt.beepSFX != null)
                 audioManager.PlaySFX(evt.beepSFX);
+
             SystemEvent clone = JsonConvert.DeserializeObject<SystemEvent>(JsonConvert.SerializeObject(evt));
+            
             clone.YearArrives = geopoiesisService.Years;
             geopoiesisService.LoggedEvents.Add(clone);
         }
@@ -419,14 +421,14 @@ namespace Geopoiesis.Scenes
                 rotateSpeed *= (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                 // Test moving the camera about.
-                //if (kbManager.KeyDown(Keys.W))
-                //    camera.Transform.Translate(Vector3.Forward * translateSpeed);
-                //if (kbManager.KeyDown(Keys.S))
-                //    camera.Transform.Translate(Vector3.Backward * translateSpeed);
-                //if (kbManager.KeyDown(Keys.A))
-                //    camera.Transform.Translate(Vector3.Left * translateSpeed);
-                //if (kbManager.KeyDown(Keys.D))
-                //    camera.Transform.Translate(Vector3.Right * translateSpeed);
+                if (kbManager.KeyDown(Keys.W))
+                    camera.Transform.Translate(Vector3.Forward * translateSpeed);
+                if (kbManager.KeyDown(Keys.S))
+                    camera.Transform.Translate(Vector3.Backward * translateSpeed);
+                if (kbManager.KeyDown(Keys.A))
+                    camera.Transform.Translate(Vector3.Left * translateSpeed);
+                if (kbManager.KeyDown(Keys.D))
+                    camera.Transform.Translate(Vector3.Right * translateSpeed);
 
                 if (kbManager.KeyDown(Keys.Down))
                     camera.Transform.Rotate(Vector3.Left, rotateSpeed);
@@ -448,6 +450,11 @@ namespace Geopoiesis.Scenes
                 if(kbManager.KeyDown(Keys.E))
                     DisplacementMag = Math.Max(0, DisplacementMag - .01f);
 
+                if (kbManager.KeyDown(Keys.D1))
+                    NormalMag = Math.Min(1, NormalMag + .01f);
+                if (kbManager.KeyDown(Keys.D2))
+                    NormalMag = Math.Max(0, NormalMag - .01f);
+
                 if (planet.effect != null)
                 {
 
@@ -458,7 +465,10 @@ namespace Geopoiesis.Scenes
                         planet.effect.Parameters["temp"].SetValue(geopoiesisService.SurfaceTemp);
 
                     if (planet.effect.Parameters["_Ice"] != null)
-                        planet.effect.Parameters["_Ice"].SetValue(Color.Azure.ToVector4());
+                        planet.effect.Parameters["_Ice"].SetValue(new Vector4(1,1,1,1));
+
+                    if (planet.effect.Parameters["normalMag"] != null)
+                        planet.effect.Parameters["normalMag"].SetValue(NormalMag);
 
                     if (planet.effect.Parameters["res"] != null)
                         planet.effect.Parameters["res"].SetValue(new Vector2(Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height));
@@ -477,7 +487,7 @@ namespace Geopoiesis.Scenes
                         moon.effect.Parameters["displacemntMag"].SetValue(0.1f);
 
                     if (planet.effect.Parameters["_MinSeaDepth"] != null)
-                        planet.effect.Parameters["_MinSeaDepth"].SetValue(geopoiesisService.WaterLevel);
+                        planet.effect.Parameters["_MinSeaDepth"].SetValue(Math.Min(.5f, geopoiesisService.WaterLevel));
 
                     if (planet.effect.Parameters["_MinShoreDepth"] != null)
                         planet.effect.Parameters["_MinShoreDepth"].SetValue(geopoiesisService.WaterLevel + .05f);

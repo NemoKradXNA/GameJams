@@ -32,6 +32,7 @@ float4 _Hills = float4(.42f, .15f, .05f, 1);
 float4 _Ice = float4(.8, .8, 1, 1);
 float temp = 0;
 
+float normalMag = .05;
 float2 res;
 
 texture heightTexture;
@@ -148,7 +149,7 @@ PixelShaderOutput PixelShaderFunction(vOut input) : Color
 
     //float3 n = texCUBE(normalMapSampler, input.normal);
     
-    float3 n = 2.0 * (getNormalMap(heightMapSampler, input.normal * 3, res, 1).rgb * .5 + .5) - 1.0;
+    float3 n = 2.0 * (getNormalMap(heightMapSampler, input.normal, res, normalMag).rgb * .5 + .5) - 1.0;
     n = mul(n, input.tangent);
     
     n = normalize(input.normal2 + n);
@@ -164,11 +165,10 @@ PixelShaderOutput PixelShaderFunction(vOut input) : Color
     
     float ice = temp / 100.0;
 
-    float4 sand = lerp(tex2D(sandSampler, input.texCoords * 3), _Ice, (1 - ice) * (1 - r));
-    sand.a = 1;
-    float4 grass = tex2D(grassSampler, input.texCoords * 3);
-    float4 rock = tex2D(rockSampler, input.texCoords * 3);
-    float4 snow = tex2D(snowSampler, input.texCoords * 3);
+    float4 sand = tex2D(sandSampler, input.texCoords );
+    float4 grass = tex2D(grassSampler, input.texCoords);
+    float4 rock = tex2D(rockSampler, input.texCoords);
+    float4 snow = tex2D(snowSampler, input.texCoords );
 
     if (r <= _MinSeaDepth)
         splat.r = .5f;
@@ -189,7 +189,7 @@ PixelShaderOutput PixelShaderFunction(vOut input) : Color
     col[2] = rock;
     col[3] = snow;
     
-    output.Color = mul(splat, col) * NdL;
+    output.Color = lerp(mul(splat, col), _Ice * r, (1 - ice) * r) * NdL;
     
     //output.Color = float4(input.noff, 1);
     

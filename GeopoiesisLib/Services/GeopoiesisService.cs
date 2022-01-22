@@ -159,7 +159,7 @@ namespace Geopoiesis.Services
 
 
                     // Water will form over time
-                    WaterLevel += (Years / 100000000) * .0001f;
+                    //WaterLevel += .0001f;
 
                     float bt = 0;
                     if (DistanceFromStar < .125f)
@@ -186,7 +186,7 @@ namespace Geopoiesis.Services
                     if (SurfaceTemp > 60)
                          WaterLevel -= .0001f;
 
-                    WaterLevel = Math.Min(1,Math.Min(0, WaterLevel));
+                    WaterLevel = Math.Min(1,Math.Max(0, WaterLevel));
 
                     OZone = Math.Max(0, Math.Min(1, OZone +  WaterLevel * .001f));
 
@@ -215,7 +215,7 @@ namespace Geopoiesis.Services
                         FireAnEvent(new SystemEvent() { Title = "Oceans Formed!", Description = "Oceans have now formed on your world!", TitleColor = Color.SeaGreen, TextColor = Color.DarkSeaGreen, beepSFX = "Audio/SFX/beep-10" });
                     }
 
-                    if (WaterLevel > .25f && CurrentEpoch < Epoch.OceansForm)
+                    if (WaterLevel > .25f && CurrentEpoch == Epoch.OceansForming)
                     {
                         CurrentEpoch = Epoch.OceansForm;
                         FireAnEvent(new SystemEvent() { Title = "Oceans Formed!", Description = "Oceans have now formed on your world!", TitleColor = Color.SeaGreen, TextColor = Color.DarkSeaGreen, beepSFX = "Audio/SFX/beep-10" });
@@ -224,7 +224,7 @@ namespace Geopoiesis.Services
                     if(CurrentEpoch > Epoch.OceansForm) // no life without water.
                         LifeLevel += lm;
 
-                    if (LifeLevel > .01f && CurrentEpoch < Epoch.Prokaryotes)
+                    if (LifeLevel > .01f && CurrentEpoch == Epoch.OceansForm)
                     {
                         CurrentEpoch = Epoch.Prokaryotes;
                         FireAnEvent(new SystemEvent() { Title = "Prokaryotes Formed!", Description = "Single-celled organisms, bacteria and cyanobacteria have begun to grow.", TitleColor = Color.SeaGreen, TextColor = Color.DarkSeaGreen, beepSFX = "Audio/SFX/beep-10" });
@@ -250,6 +250,13 @@ namespace Geopoiesis.Services
 
         public void FireAnEvent(SystemEvent evt)
         {
+            // Apply any changes.
+
+            OZone = Math.Min(1, Math.Max(0, OZone + evt.OZone));
+            WaterLevel = Math.Min(1, Math.Max(0, WaterLevel + evt.WaterLevel));
+            LifeLevel = Math.Min(1, Math.Max(0, LifeLevel + evt.LifeLevel));
+            SurfaceTemp += evt.SurfaceTemp;
+
             if (OnSystemEventFired != null)
                 OnSystemEventFired(evt);
         }
