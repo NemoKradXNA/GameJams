@@ -457,6 +457,8 @@ namespace Geopoiesis.Scenes
 
                 if (planet.effect != null)
                 {
+                    if(planet.effect.Parameters["EyePosition"] != null)
+                        planet.effect.Parameters["EyePosition"].SetValue(camera.Transform.Position);
 
                     if (atmos.effect.Parameters["atmos"] != null)
                         atmos.effect.Parameters["atmos"].SetValue(geopoiesisService.OZone);
@@ -490,7 +492,7 @@ namespace Geopoiesis.Scenes
                         planet.effect.Parameters["_MinSeaDepth"].SetValue(Math.Min(.5f, geopoiesisService.WaterLevel));
 
                     if (planet.effect.Parameters["_MinShoreDepth"] != null)
-                        planet.effect.Parameters["_MinShoreDepth"].SetValue(geopoiesisService.WaterLevel + .05f);
+                        planet.effect.Parameters["_MinShoreDepth"].SetValue(Math.Min(.5f, geopoiesisService.WaterLevel) + .05f);
 
                     if (planet.effect.Parameters["_MinLand"] != null)
                         planet.effect.Parameters["_MinLand"].SetValue(geopoiesisService.LifeLevel);

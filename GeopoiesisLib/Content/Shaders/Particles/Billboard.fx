@@ -51,7 +51,6 @@ struct vOut
     float4 pos : SV_POSITION;
     float2 texCoords : TEXCOORD0;
     float3 normal : NORMAL0;
-    float3 normal2 : NORMAL1;
     float3x3 tangent : TANGENT0;
     float4 color : COLOR0;
 };

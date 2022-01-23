@@ -38,7 +38,7 @@ samplerCUBE heightMapSampler = sampler_state
 
 vOut VertexShaderFunction(vIn input)
 {
-    vOut output;
+    vOut output = (vOut)0;
 
     float h = 0;
     
@@ -54,7 +54,7 @@ vOut VertexShaderFunction(vIn input)
     output.texCoords = input.texCoords;  
    
     float3 n = normalize(mul(input.pos.xyz, (float3x3) world));
-    output.normal2 = 0;
+    
     output.tangent[0] = normalize(mul(input.tangent, (float3x3) world));
     output.tangent[1] = normalize(mul(cross(input.tangent, n), (float3x3) world));
     output.tangent[2] = normalize(n);

@@ -35,13 +35,17 @@ float temp = 0;
 float normalMag = .05;
 float2 res;
 
+float4 specularColor : Specular = float4(1, 1, 1, 1);
+float specularIntensity : Scalar = .5;
+float3 EyePosition : CameraPosition;
+
 texture heightTexture;
 
 samplerCUBE heightMapSampler = sampler_state
 {
     Texture = (heightTexture);
-    MinFilter = ANISOTROPIC;
-    MagFilter = ANISOTROPIC;
+    MinFilter = Linear;
+    MagFilter = Linear;
     AddressU = Wrap;
     AddressV = Wrap;
     AddressW = Wrap;
@@ -117,7 +121,7 @@ sampler2D snowSampler = sampler_state
 
 vOut VertexShaderFunction(vIn input)
 {
-    vOut output;
+    vOut output = (vOut)0;
 
     float h = getHeight(heightMapSampler,input.normal).r;
     
@@ -128,31 +132,28 @@ vOut VertexShaderFunction(vIn input)
     output.normal = input.normal;
     
     float3 n = normalize(mul(input.pos.xyz, (float3x3) world));
-    
-    output.normal2 = n;
-    
+        
     output.texCoords = input.texCoords;  
     
-    output.tangent[0] = normalize(mul(input.tangent, (float3x3)world));
-    output.tangent[1] = normalize(mul(cross(input.tangent, input.normal), (float3x3) world));
-    output.tangent[2] = normalize(n);
-    
     output.color = input.color;
+
+    output.CamView = EyePosition - mul(input.pos.xyz, (float3x3)world);
     
     return output;
 }
+
 
 PixelShaderOutput PixelShaderFunction(vOut input) : Color
 {
     PixelShaderOutput output = (PixelShaderOutput) 0;
     
 
-    //float3 n = texCUBE(normalMapSampler, input.normal);
-    
     float3 n = 2.0 * (getNormalMap(heightMapSampler, input.normal, res, normalMag).rgb * .5 + .5) - 1.0;
-    n = mul(n, input.tangent);
-    
-    n = normalize(input.normal2 + n);
+    float3x3 tangentMat = input.tangent;
+
+    tangentMat = getTangentMat(input.normal, res, world);
+
+    n = mul(n, tangentMat);
     
     float3 lightVector = normalize(-lightDirection);    
     float NdL = saturate(dot(-n, lightVector)) + ambientPower;
@@ -181,15 +182,23 @@ PixelShaderOutput PixelShaderFunction(vOut input) : Color
     else
         splat.a = 1;
     
-   
+    float3 Half = normalize(-lightVector + normalize(input.CamView));
+    float3 norm = normalize(mul(input.normal, (float3x3)world));
+    float specular = pow(saturate(dot(norm, Half)), 25);
     
     float4x4 col = 0;
     col[0] = sand;
     col[1] = grass;
     col[2] = rock;
     col[3] = snow;
+
+    float4x4 spec = 0;
+    spec[0] = (specularColor * specularIntensity) * specular;
+    spec[1] = 0;
+    spec[2] = 0;
+    spec[3] = 0;
     
-    output.Color = lerp(mul(splat, col), _Ice * r, (1 - ice) * r) * NdL;
+    output.Color = (lerp(mul(splat, col), _Ice * r, (1 - ice) * r) * NdL) + mul(splat,spec);
     
     //output.Color = float4(input.noff, 1);
     

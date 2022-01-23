@@ -30,9 +30,8 @@ samplerCUBE heightMapSampler = sampler_state
 
 vOut VertexShaderFunction(vIn input)
 {
-    vOut output;
+    vOut output = (vOut)0;
     
-    output.normal2 = 0;
     output.pos = mul(input.pos, wvp);
     output.normal = input.normal;
     output.texCoords = input.texCoords;  
