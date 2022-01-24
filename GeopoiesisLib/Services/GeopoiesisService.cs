@@ -163,23 +163,23 @@ namespace Geopoiesis.Services
 
                     float bt = 0;
                     if (DistanceFromStar < .125f)
-                        bt += .1f;
+                        bt += 1f;
                     if (DistanceFromStar < .25f)
-                        bt += .01f;
+                        bt += .5f;
                     if (DistanceFromStar < .5f)
-                        bt += .001f;
+                        bt += .25f;
                     else if (DistanceFromStar < 1)
-                        bt += .0001f;
+                        bt += .125f;
                     else if (DistanceFromStar == 1)
                         bt = 0;
                     else if (DistanceFromStar > 1)
-                        bt += .0001f;
+                        bt += .25f;
                     else if (DistanceFromStar > 2)
-                        bt -= .00001f;
+                        bt -= .5f;
                     else if (DistanceFromStar > 3)
-                        bt -= .0001f;
+                        bt -= 1f;
                     else if (DistanceFromStar > 4)
-                        bt -= .001f;
+                        bt -= 2f;
 
                     SurfaceTemp += bt;
 
@@ -187,6 +187,8 @@ namespace Geopoiesis.Services
                          WaterLevel -= .0001f;
 
                     WaterLevel = Math.Min(1,Math.Max(0, WaterLevel));
+
+                    OZone += Volcanism * .1f;
 
                     OZone = Math.Max(0, Math.Min(1, OZone +  WaterLevel * .001f));
 
@@ -205,8 +207,17 @@ namespace Geopoiesis.Services
                     else if (SurfaceTemp < 50)
                         lm += .001f;
 
+                    lm += Quakes * .01f;
+
                     lm *= OZone;
 
+                    LifeLevel += lm;
+
+                    // If conditions are right life will grow exponentially....
+                    //if (loopCycle % 20 == 0)
+                    //{
+                    //    LifeLevel = Math.Min(.5f, LifeLevel * 2);
+                    //}
 
                     // Set Epoch
                     if (WaterLevel > .1f && CurrentEpoch < Epoch.OceansForming)
@@ -237,7 +248,7 @@ namespace Geopoiesis.Services
                     }
 
                     // Fire a random event!
-                    if (loopCycle % rnd.Next(5, 20) == 0)
+                    if (loopCycle % rnd.Next(10, 20) == 0)
                     {
                         int evtIdx = rnd.Next(0, EvenstList.Count);
                         FireAnEvent(EvenstList[evtIdx]);
@@ -265,13 +276,13 @@ namespace Geopoiesis.Services
 
         public List<SystemEvent> EvenstList = new List<SystemEvent>()
         {
-            new SystemEvent(){ Title = "Ice Meteor Shower", Description = "A shower of rocks and ICE! +H2O", WaterLevel = .01f, TitleColor = Color.Silver, TextColor = Color.SteelBlue },
-            new SystemEvent(){ Title = "Ice Meteor Shower", Description = "A shower of rocks and ICE! +H2O", WaterLevel = .02f, TitleColor = Color.Silver, TextColor = Color.SteelBlue },
-            new SystemEvent(){ Title = "Solar Flare!", Description = "A coronal mass ejection has occurred -O3 +c ", OZone = -.01f, SurfaceTemp = .01f, TitleColor = Color.Gold, TextColor = Color.Goldenrod, beepSFX = "Audio/SFX/beep-10"  },
+            new SystemEvent(){ Title = "Ice Meteor Shower", Description = "A shower of rocks and ICE! +H2O", WaterLevel = .001f, TitleColor = Color.Silver, TextColor = Color.SteelBlue },
+            new SystemEvent(){ Title = "Ice Meteor Shower", Description = "A shower of rocks and ICE! +H2O", WaterLevel = .002f, TitleColor = Color.Silver, TextColor = Color.SteelBlue },
+            new SystemEvent(){ Title = "Solar Flare!", Description = "A coronal mass ejection has occurred -O3 +c ", OZone = -.001f, SurfaceTemp = 5.25f, TitleColor = Color.Gold, TextColor = Color.Goldenrod, beepSFX = "Audio/SFX/beep-10"  },
             new SystemEvent(){ Title = "Asteroid Strike", Description = "An small asteroid has stuck! +Life +O3 +c +H2O", LifeLevel = .01f, OZone = .01f, SurfaceTemp=.01f, WaterLevel=.0125f, TitleColor = Color.CornflowerBlue, TextColor = Color.DodgerBlue},
-            new SystemEvent(){ Title = "Asteroid Strike", Description = "An medium asteroid has stuck! +Life +O3 +c +H2O", LifeLevel = .015f, OZone = .02f, SurfaceTemp =.01f, WaterLevel = .025f, TitleColor = Color.CornflowerBlue, TextColor = Color.DodgerBlue },
-            new SystemEvent(){ Title = "Asteroid Strike", Description = "An large asteroid has stuck! +Life +O3 +c +H2O", LifeLevel = .025f, OZone = .05f, SurfaceTemp = .05f, WaterLevel = .05f, TitleColor = Color.CornflowerBlue, TextColor = Color.DodgerBlue },
-            new SystemEvent(){ Title = "Asteroid Strike", Description = "An MASSIVE asteroid has stuck! -Life -O3 +c -H2O", LifeLevel = -.1f, OZone = -.1f, SurfaceTemp = .1f, WaterLevel = -.05f, TitleColor = Color.CornflowerBlue, TextColor = Color.DodgerBlue, beepSFX = "Audio/SFX/beep-10" },
+            new SystemEvent(){ Title = "Asteroid Strike", Description = "An medium asteroid has stuck! +Life +O3 +c +H2O", LifeLevel = .015f, OZone = .02f, SurfaceTemp =.01f, WaterLevel = .0025f, TitleColor = Color.CornflowerBlue, TextColor = Color.DodgerBlue },
+            new SystemEvent(){ Title = "Asteroid Strike", Description = "An large asteroid has stuck! +Life +O3 +c +H2O", LifeLevel = .025f, OZone = .05f, SurfaceTemp = .05f, WaterLevel = .005f, TitleColor = Color.CornflowerBlue, TextColor = Color.DodgerBlue },
+            new SystemEvent(){ Title = "Asteroid Strike", Description = "An MASSIVE asteroid has stuck! -Life -O3 +c -H2O", LifeLevel = -.1f, OZone = -.1f, SurfaceTemp = .1f, WaterLevel = -.005f, TitleColor = Color.CornflowerBlue, TextColor = Color.DodgerBlue, beepSFX = "Audio/SFX/beep-10" },
             new SystemEvent(){ Title = "Cosmic Rays", Description = "A near by star has exploded showering us in cosmic rays - Life", LifeLevel = -.001f, TitleColor = Color.Magenta, TextColor = Color.Maroon, beepSFX = "Audio/SFX/beep-10"},
             new SystemEvent(){ Title = "Cosmic Rays", Description = "A near by star has exploded showering us in cosmic rays +Life", LifeLevel = .001f, TitleColor = Color.Magenta, TextColor = Color.Maroon, beepSFX = "Audio/SFX/beep-10" },
         };

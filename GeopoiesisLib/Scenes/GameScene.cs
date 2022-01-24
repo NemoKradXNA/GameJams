@@ -467,7 +467,7 @@ namespace Geopoiesis.Scenes
                         planet.effect.Parameters["temp"].SetValue(geopoiesisService.SurfaceTemp);
 
                     if (planet.effect.Parameters["_Ice"] != null)
-                        planet.effect.Parameters["_Ice"].SetValue(new Vector4(1,1,1,1));
+                        planet.effect.Parameters["_Ice"].SetValue(new Vector4(.75f,.75f,1,1));
 
                     if (planet.effect.Parameters["normalMag"] != null)
                         planet.effect.Parameters["normalMag"].SetValue(NormalMag);

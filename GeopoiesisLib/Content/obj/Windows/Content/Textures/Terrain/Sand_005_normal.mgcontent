@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Terrain/Sand_005_normal.jpg</SourceFile>
-  <SourceTime>2022-01-23T13:26:31.9093414+00:00</SourceTime>
-  <DestFile>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/bin/Windows/Content/Textures/Terrain/Sand_005_normal.xnb</DestFile>
-  <DestTime>2022-01-23T13:26:52.3929242+00:00</DestTime>
+  <SourceFile>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Terrain/Sand_005_normal.jpg</SourceFile>
+  <SourceTime>2022-01-18T17:42:11.8473444+00:00</SourceTime>
+  <DestFile>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/bin/Windows/Content/Textures/Terrain/Sand_005_normal.xnb</DestFile>
+  <DestTime>2022-01-23T16:02:56.2153062+00:00</DestTime>
   <Importer>TextureImporter</Importer>
-  <ImporterTime>2020-08-10T17:17:54+01:00</ImporterTime>
+  <ImporterTime>2020-08-10T16:17:54+01:00</ImporterTime>
   <Processor>TextureProcessor</Processor>
-  <ProcessorTime>2020-08-10T17:17:54+01:00</ProcessorTime>
+  <ProcessorTime>2020-08-10T16:17:54+01:00</ProcessorTime>
   <Parameters>
     <Key>ColorKeyColor</Key>
     <Value>255,0,255,255</Value>
