@@ -22,7 +22,21 @@ namespace Geopoiesis.Scenes
 
         public string Name { get; set; }
         public IScene LastScene { get; set; }
-        public SceneStateEnum State { get; set; }
+
+        SceneStateEnum _state;
+        public SceneStateEnum State
+        {
+            get { return _state; }
+            set
+            {
+                _state = value;
+                if (_state == SceneStateEnum.Unloaded)
+                {
+                    Components.Clear();
+                    Game.Components.Remove(this);
+                }
+            }
+        }
 
         public List<IGameComponent> Components { get; set; }        
 
@@ -43,12 +57,13 @@ namespace Geopoiesis.Scenes
         protected override void UnloadContent()
         {
             base.UnloadContent();
-
-            Components.Clear();
         }
 
         public override void Update(GameTime gameTime)
         {
+            if (State == SceneStateEnum.Unloaded)
+                return;
+
             base.Update(gameTime);
 
             foreach (IGameComponent component in Components)
@@ -60,6 +75,9 @@ namespace Geopoiesis.Scenes
 
         public override void Draw(GameTime gameTime)
         {
+            if (State == SceneStateEnum.Unloaded)
+                return;
+
             foreach (IGameComponent component in Components)
             {
                 if (component is IDrawable && ((IDrawable)component).Visible)
@@ -79,7 +97,7 @@ namespace Geopoiesis.Scenes
         {
             // Unload our shit!
             UnloadContent();
-            Game.Components.Remove(this);
+            
         }
     }
 }

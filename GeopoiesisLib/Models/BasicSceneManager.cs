@@ -54,6 +54,7 @@ namespace Geopoiesis.Models
         {
             if (CurrentScene != null)
             {
+                CurrentScene.State = SceneStateEnum.Unloading;
                 CurrentScene.UnloadScene();
 
                 while (CurrentScene.State != SceneStateEnum.Unloaded)
@@ -61,6 +62,7 @@ namespace Geopoiesis.Models
             }
 
             CurrentScene = scene;
+            CurrentScene.State = SceneStateEnum.Loading;
             scene.LoadScene();
         }
     }

@@ -666,6 +666,7 @@ namespace Geopoiesis.Scenes
 
         public override void LoadScene()
         {
+            audioManager.MusicVolume = 1;
             base.LoadScene();
         }
 

@@ -23,6 +23,8 @@ namespace Geopoiesis.Scenes
         Texture2D bg;
 
         Texture2D pixel;
+        Texture2D fader;
+        Color fadeColor = Color.Black;
 
         Color bgColor = new Color(.2f, .2f, .5f, .1f);
         Color edgeColor = Color.DodgerBlue ;
@@ -45,6 +47,8 @@ namespace Geopoiesis.Scenes
         UILabel lblVersion;
 
         protected string Version = "1.0.0.1";
+
+        bool exiting;
 
         public MainMenuScene(Game game, string name) : base(game, name) { }
 
@@ -85,6 +89,9 @@ namespace Geopoiesis.Scenes
 
             pixel = new Texture2D(Game.GraphicsDevice, 1, 1);
             pixel.SetData(new Color[] { new Color(1, 1, 1, .75f) });
+
+            fader = new Texture2D(Game.GraphicsDevice, 1, 1);
+            fader.SetData(new Color[] { Color.White });
 
             audioManager.PlaySong("Audio/Music/Creepy-Hollow", .5f);
 
@@ -172,19 +179,26 @@ namespace Geopoiesis.Scenes
 
         protected void ButtonClicked(IUIBase sender, IMouseStateManager mouseState)
         {
+            if (State != SceneStateEnum.Loaded)
+                return;
+
+            btnContinue.OnMouseClick -= ButtonClicked;
+            btnNewGame.OnMouseClick -= ButtonClicked;
+            btnQuit.OnMouseClick -= ButtonClicked;
+
             audioManager.PlaySFX("Audio/SFX/beep-07");
             if (sender == btnNewGame)
             {
-                geopoiesisService.reSet();
-                sceneManager.LoadScene("mainGame");
+                LoadNewGame();
             }
             else if (sender == btnContinue)
             {
-                geopoiesisService.LoadGame();
-                sceneManager.LoadScene("mainGame");
+                ContinueGame();
             }
             else if (sender == btnQuit)
-                Game.Exit();
+            {
+                ExitGame();
+            }
         }
 
         public override void Draw(GameTime gameTime)
@@ -200,20 +214,92 @@ namespace Geopoiesis.Scenes
 
                 _spriteBatch.Draw(pixel, pos, color);
             }
+
             _spriteBatch.End();
             base.Draw(gameTime);
+
+            _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
+
+            if (State != SceneStateEnum.Loaded)
+                _spriteBatch.Draw(fader, new Rectangle(0, 0, Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height), fadeColor);
+            
+            _spriteBatch.End();
+        }
+
+        bool ExitGame()
+        {
+            exiting = true;
+            State = SceneStateEnum.Unloading;
+            UnloadScene();
+            return true;
+        }
+
+        bool LoadNewGame()
+        {
+            geopoiesisService.reSet();
+            sceneManager.LoadScene("mainGame");
+
+            return true;
+        }
+
+        bool ContinueGame()
+        {            
+
+            geopoiesisService.LoadGame();
+            sceneManager.LoadScene("mainGame");
+
+            return true;
         }
 
         public override void LoadScene()
         {
             base.LoadScene();
-            State = SceneStateEnum.Loaded;
+            coroutineService.StartCoroutine(FadeIn());
         }
         public override void UnloadScene()
         {
             base.UnloadScene();
             btnNewGame.OnMouseClick -= ButtonClicked;
+            coroutineService.StartCoroutine(FadeOut());
+        }
+
+        IEnumerator FadeIn()
+        {
+            byte a = 255;
+            byte fadeSpeed = 1;
+            fadeColor = new Color(fadeColor.R, fadeColor.G, fadeColor.B, a);
+
+            while (a > 0)
+            {
+                yield return new WaitForEndOfFrame(Game);
+                a = (byte)Math.Max(0, a - fadeSpeed);
+                fadeColor = new Color(fadeColor.R, fadeColor.G, fadeColor.B, a);
+
+                audioManager.MusicVolume = 1f-(a / 255f);
+            }
+
+            State = SceneStateEnum.Loaded;
+        }
+
+        IEnumerator FadeOut()
+        {
+            byte a = 0;
+            byte fadeSpeed = 1;
+            fadeColor = new Color(fadeColor.R, fadeColor.G, fadeColor.B, a);
+
+            while (a < 255)
+            {
+                yield return new WaitForEndOfFrame(Game);
+                a = (byte)Math.Min(255, a + fadeSpeed);
+                fadeColor = new Color(fadeColor.R, fadeColor.G, fadeColor.B, a);
+
+                audioManager.MusicVolume = 1f - (a / 255f);
+            }
+
             State = SceneStateEnum.Unloaded;
+
+            if (exiting)
+                Game.Exit();
         }
     }
 }
