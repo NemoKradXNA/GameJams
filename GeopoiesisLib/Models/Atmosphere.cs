@@ -72,10 +72,12 @@ namespace Geopoiesis.Models
             effect.Parameters["world"].SetValue(meshWorld);
             effect.Parameters["wvp"].SetValue(meshWorld * Camera.View * Camera.Projection);
 
-            effect.Parameters["EyePosition"].SetValue(Camera.Transform.Position);
-            effect.Parameters["lightDirection"].SetValue(LightDirection);
-            effect.Parameters["lightColor"].SetValue(Color.Azure.ToVector3());
-            
+            if (effect.Parameters["EyePosition"] != null)
+            {
+                effect.Parameters["EyePosition"].SetValue(Camera.Transform.Position);
+                effect.Parameters["lightDirection"].SetValue(LightDirection);
+                effect.Parameters["lightColor"].SetValue(Color.Azure.ToVector3());
+            }
         }
 
         public override void Draw(GameTime gameTime)
@@ -93,13 +95,14 @@ namespace Geopoiesis.Models
 
                 for (int mp = 0; mp < mesh.Meshes[m].MeshParts.Count; mp++)
                 {
-                    // See if we can get a named material
-                    SetEffectParamters();
-
+                    
                     int pCnt = effect.CurrentTechnique.Passes.Count;
 
                     for (int p = 0; p < pCnt; p++)
                     {
+                        // See if we can get a named material
+                        SetEffectParamters();
+
                         effect.CurrentTechnique.Passes[p].Apply();
 
                         Game.GraphicsDevice.SetVertexBuffer(mesh.Meshes[m].MeshParts[mp].VertexBuffer);

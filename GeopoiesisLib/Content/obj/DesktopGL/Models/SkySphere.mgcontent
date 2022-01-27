@@ -3,7 +3,7 @@
   <SourceFile>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Models/SkySphere.fbx</SourceFile>
   <SourceTime>2022-01-18T17:42:11.5872122+00:00</SourceTime>
   <DestFile>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/bin/DesktopGL/Models/SkySphere.xnb</DestFile>
-  <DestTime>2022-01-22T15:20:31.7165594+00:00</DestTime>
+  <DestTime>2022-01-27T20:59:57.4732288+00:00</DestTime>
   <Importer>FbxImporter</Importer>
   <ImporterTime>2020-08-10T16:17:54+01:00</ImporterTime>
   <Processor>ModelProcessor</Processor>
@@ -54,7 +54,7 @@
   </Parameters>
   <Parameters>
     <Key>Scale</Key>
-    <Value>1</Value>
+    <Value>0.01</Value>
   </Parameters>
   <Parameters>
     <Key>SwapWindingOrder</Key>

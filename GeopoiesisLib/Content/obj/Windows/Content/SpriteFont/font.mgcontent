@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/SpriteFont/font.spritefont</SourceFile>
-  <SourceTime>2022-01-23T13:26:31.5752357+00:00</SourceTime>
-  <DestFile>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/bin/Windows/Content/SpriteFont/font.xnb</DestFile>
-  <DestTime>2022-01-25T12:01:47.3445197+00:00</DestTime>
+  <SourceFile>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/SpriteFont/font.spritefont</SourceFile>
+  <SourceTime>2022-01-06T18:17:18+00:00</SourceTime>
+  <DestFile>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/bin/Windows/Content/SpriteFont/font.xnb</DestFile>
+  <DestTime>2022-01-27T19:31:25.8172945+00:00</DestTime>
   <Importer>FontDescriptionImporter</Importer>
-  <ImporterTime>2020-08-10T17:17:54+01:00</ImporterTime>
+  <ImporterTime>2020-08-10T16:17:54+01:00</ImporterTime>
   <Processor>FontDescriptionProcessor</Processor>
-  <ProcessorTime>2020-08-10T17:17:54+01:00</ProcessorTime>
+  <ProcessorTime>2020-08-10T16:17:54+01:00</ProcessorTime>
   <Parameters>
     <Key>PremultiplyAlpha</Key>
     <Value>True</Value>

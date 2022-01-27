@@ -1,12 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "uUzSmq4S2QtzgEA9pN5jHx5KVC6YGq/Ycpm1eRJCyMlJSUeHn5YIJ54dsJ64/MuF54JV0zXak9hFMiQCwgezbg==",
+  "dgSpecHash": "w6kCQMZYh2JSjIbnT3fxzDBNCpii6twhvOq3eK8ks2qJvhpcS40JKw593dpQVV3Edh12b+6qMOIfxdQLiDZI0Q==",
   "success": true,
-  "projectFilePath": "C:\\Users\\CharlesHumphrey\\source\\repos\\NemoKradXNA\\GameJams\\GeopoiesisOGL\\GeopoiesisOGL.csproj",
+  "projectFilePath": "C:\\Users\\Charles Humphrey\\source\\repos\\NemoKradXNA\\GameJams\\GeopoiesisOGL\\GeopoiesisOGL.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\CharlesHumphrey\\.nuget\\packages\\monogame.content.builder.task\\3.8.0.1641\\monogame.content.builder.task.3.8.0.1641.nupkg.sha512",
-    "C:\\Users\\CharlesHumphrey\\.nuget\\packages\\monogame.framework.desktopgl\\3.8.0.1641\\monogame.framework.desktopgl.3.8.0.1641.nupkg.sha512",
-    "C:\\Users\\CharlesHumphrey\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512"
+    "C:\\Users\\Charles Humphrey\\.nuget\\packages\\monogame.content.builder.task\\3.8.0.1641\\monogame.content.builder.task.3.8.0.1641.nupkg.sha512",
+    "C:\\Users\\Charles Humphrey\\.nuget\\packages\\monogame.framework.desktopgl\\3.8.0.1641\\monogame.framework.desktopgl.3.8.0.1641.nupkg.sha512",
+    "C:\\Users\\Charles Humphrey\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512"
   ],
   "logs": []
 }

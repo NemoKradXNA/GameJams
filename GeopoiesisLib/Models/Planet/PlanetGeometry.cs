@@ -19,7 +19,7 @@ namespace Geopoiesis.Models.Planet
         protected List<Texture2D> textures = null;
 
 
-        public PlanetGeometry(Game game, string effectAsset, float noise, int mapSize, int startLod = 3) : base(game, effectAsset, 2, 2, noise, mapSize, 1971, startLod)
+        public PlanetGeometry(Game game, string effectAsset, int faceDimensions, float noise, int mapSize, int startLod = 3, int maxLod = 8) : base(game, effectAsset, faceDimensions, 2, noise, mapSize, 1971, startLod, maxLod)
         {
         }
         protected void WriteToDebug(string msg) // Should really be a "console" logging service...

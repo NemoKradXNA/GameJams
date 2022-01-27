@@ -189,15 +189,19 @@ namespace Geopoiesis.Scenes
             audioManager.PlaySFX("Audio/SFX/beep-07");
             if (sender == btnNewGame)
             {
-                LoadNewGame();
+                geopoiesisService.reSet();
+                sceneManager.LoadScene("mainGame");
             }
             else if (sender == btnContinue)
             {
-                ContinueGame();
+                geopoiesisService.LoadGame();
+                sceneManager.LoadScene("mainGame");
             }
             else if (sender == btnQuit)
             {
-                ExitGame();
+                exiting = true;
+                State = SceneStateEnum.Unloading;
+                UnloadScene();
             }
         }
 
@@ -226,36 +230,13 @@ namespace Geopoiesis.Scenes
             _spriteBatch.End();
         }
 
-        bool ExitGame()
-        {
-            exiting = true;
-            State = SceneStateEnum.Unloading;
-            UnloadScene();
-            return true;
-        }
-
-        bool LoadNewGame()
-        {
-            geopoiesisService.reSet();
-            sceneManager.LoadScene("mainGame");
-
-            return true;
-        }
-
-        bool ContinueGame()
-        {            
-
-            geopoiesisService.LoadGame();
-            sceneManager.LoadScene("mainGame");
-
-            return true;
-        }
 
         public override void LoadScene()
         {
             base.LoadScene();
             coroutineService.StartCoroutine(FadeIn());
         }
+
         public override void UnloadScene()
         {
             base.UnloadScene();
@@ -266,7 +247,7 @@ namespace Geopoiesis.Scenes
         IEnumerator FadeIn()
         {
             byte a = 255;
-            byte fadeSpeed = 1;
+            byte fadeSpeed = 4;
             fadeColor = new Color(fadeColor.R, fadeColor.G, fadeColor.B, a);
 
             while (a > 0)
@@ -284,7 +265,7 @@ namespace Geopoiesis.Scenes
         IEnumerator FadeOut()
         {
             byte a = 0;
-            byte fadeSpeed = 1;
+            byte fadeSpeed = 4;
             fadeColor = new Color(fadeColor.R, fadeColor.G, fadeColor.B, a);
 
             while (a < 255)

@@ -12,7 +12,7 @@ namespace Geopoiesis.Interfaces
         Vector3 Scale { get; set; }
         Quaternion Rotation { get; set; }
 
-        Matrix World { get; set; }
+        Matrix World { get; }
 
         void Translate(Vector3 distance);
         void Rotate(Vector3 axis, float angle);

@@ -22,6 +22,9 @@ namespace Geopoiesis.Scenes
         SpriteFont font;
         SpriteFont logFont;
 
+        Texture2D fader;
+        Color fadeColor = Color.Black;
+
         PlanetGeometry planet;
         ITransform moonAnchor;
         MorphableSphere moon;
@@ -78,30 +81,42 @@ namespace Geopoiesis.Scenes
 
         UIButton btnQuit;
 
+        Transform cameraDolly;
+
         public GameScene(Game game, string name) : base(game, name) { }
 
         public override void Initialize()
         {
+            fader = new Texture2D(Game.GraphicsDevice, 1, 1);
+            fader.SetData(new Color[] { Color.White });
+
             SkyBox skyBox = new SkyBox(Game, "Shaders/SkyBox");
             Components.Add(skyBox);
 
-            planet = new PlanetGeometry(Game, "Shaders/PlanetSplatMap", 1f, 512);
+            planet = new PlanetGeometry(Game, "Shaders/PlanetSplatMap", 128, 1f, 512, 1, 1);
             planet.Transform.Position = new Vector3(0, 0, 0);
             moonAnchor = new Transform();
             moonAnchor.Position = planet.Transform.Position;
             Components.Add(planet);
 
-            moon = new MorphableSphere(Game, "Shaders/Moon", 2, 1, 1.25f, 32, geopoiesisService.Seed * 2, 5, 7);
+            
+
+            cameraDolly = new Transform();
+            cameraDolly.Position = planet.Transform.Position;
+            camera.Transform.Parent = cameraDolly;
+
+            moon = new MorphableSphere(Game, "Shaders/Moon", 8, 1, 1.25f, 64, geopoiesisService.Seed * 2, 1, 1);
             moon.Transform.Parent = moonAnchor;
             moon.Transform.Position = (Vector3.Left + (Vector3.Up * .25f)) * 32;
             Components.Add(moon);
 
-            sun = new MorphableSphere(Game, "Shaders/Sun", 2, 10, 16, 1, 1971, 3, 7);
+            sun = new MorphableSphere(Game, "Shaders/Sun", 8, 10, 0, 1, 1971, 1 , 1);
             sun.Transform.Position = new Vector3(-1, 0, 0) * 100;
             Components.Add(sun);
 
             atmos = new Atmosphere(Game, "Shaders/AtmosShader");
-            atmos.Transform.Scale = Vector3.One * 4.25f;
+            atmos.Transform.Position = Vector3.Zero;
+            atmos.Transform.Scale = Vector3.One * 2;
             Components.Add(atmos);
 
             // Make sure all particle emitters are added last...
@@ -319,8 +334,6 @@ namespace Geopoiesis.Scenes
 
             base.Initialize();
 
-            State = SceneStateEnum.Loaded;
-
             geopoiesisService.OnSystemEventFired -= EventFired;
             geopoiesisService.OnSystemEventFired += EventFired;
 
@@ -353,7 +366,7 @@ namespace Geopoiesis.Scenes
             }
             else if (sender == nudQuake)
             {
-                geopoiesisService.Quakes = Math.Max(1, geopoiesisService.Quakes - .01f);
+                geopoiesisService.Quakes = Math.Max(0, geopoiesisService.Quakes - .01f);
             }
             else if (sender == nudAUDistance)
             {
@@ -420,29 +433,35 @@ namespace Geopoiesis.Scenes
                 translateSpeed *= (float)gameTime.ElapsedGameTime.TotalSeconds;
                 rotateSpeed *= (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                // Test moving the camera about.
-                if (kbManager.KeyDown(Keys.W))
-                    camera.Transform.Translate(Vector3.Forward * translateSpeed);
-                if (kbManager.KeyDown(Keys.S))
-                    camera.Transform.Translate(Vector3.Backward * translateSpeed);
-                if (kbManager.KeyDown(Keys.A))
-                    camera.Transform.Translate(Vector3.Left * translateSpeed);
-                if (kbManager.KeyDown(Keys.D))
-                    camera.Transform.Translate(Vector3.Right * translateSpeed);
+                if (kbManager.KeyPress(Keys.F1))
+                    camera.RenderWireFrame = !camera.RenderWireFrame;
 
-                if (kbManager.KeyDown(Keys.Down))
-                    camera.Transform.Rotate(Vector3.Left, rotateSpeed);
-                if (kbManager.KeyDown(Keys.Up))
-                    camera.Transform.Rotate(Vector3.Right, rotateSpeed);
-                if (kbManager.KeyDown(Keys.Right))
-                    camera.Transform.Rotate(Vector3.Down, rotateSpeed);
-                if (kbManager.KeyDown(Keys.Left))
-                    camera.Transform.Rotate(Vector3.Up, rotateSpeed);
+                // Test moving the camera about.
+                //if (kbManager.KeyDown(Keys.W))
+                //    camera.Transform.Translate(Vector3.Forward * translateSpeed);
+                //if (kbManager.KeyDown(Keys.S))
+                //    camera.Transform.Translate(Vector3.Backward * translateSpeed);
+                //if (kbManager.KeyDown(Keys.A))
+                //    camera.Transform.Translate(Vector3.Left * translateSpeed);
+                //if (kbManager.KeyDown(Keys.D))
+                //    camera.Transform.Translate(Vector3.Right * translateSpeed);
+
+                if (Vector3.Distance(planet.Transform.Position, camera.Transform.Position) <= 11)
+                {
+                    //if (kbManager.KeyDown(Keys.Down))
+                    //    cameraDolly.Rotate(Vector3.Left, rotateSpeed);
+                    //if (kbManager.KeyDown(Keys.Up))
+                    //    cameraDolly.Rotate(Vector3.Right, rotateSpeed);
+                    if (kbManager.KeyDown(Keys.Right))
+                        cameraDolly.Rotate(Vector3.Down, rotateSpeed);
+                    if (kbManager.KeyDown(Keys.Left))
+                        cameraDolly.Rotate(Vector3.Up, rotateSpeed);
+                }
 
                 planet.Transform.Rotate(Vector3.Up, .0025f);
                 moonAnchor.Rotate((Vector3.Up * .25f) + (Vector3.Forward * .1f), -.005f);
                
-                atmos.Transform.Scale = (Vector3.One * 4.25f) + (Vector3.One * (planet.Radius * .8f) * DisplacementMag);
+                atmos.Transform.Scale = (Vector3.One * planet.Radius * 1.05f) + (Vector3.One  * DisplacementMag);
 
 
                 if (kbManager.KeyDown(Keys.Q))
@@ -461,7 +480,8 @@ namespace Geopoiesis.Scenes
                         planet.effect.Parameters["EyePosition"].SetValue(camera.Transform.Position);
 
                     if (atmos.effect.Parameters["atmos"] != null)
-                        atmos.effect.Parameters["atmos"].SetValue(geopoiesisService.OZone);
+                        // atmos.effect.Parameters["atmos"].SetValue(geopoiesisService.OZone);
+                        atmos.effect.Parameters["atmos"].SetValue(1f);
 
                     if (planet.effect.Parameters["temp"] != null)
                         planet.effect.Parameters["temp"].SetValue(geopoiesisService.SurfaceTemp);
@@ -557,6 +577,10 @@ namespace Geopoiesis.Scenes
                 lblGeneratingSun.Position = screenCenter + new Point(0, lblGeneratingSun.Font.LineSpacing);
             }
 
+            nudVolcanism.Value = geopoiesisService.Volcanism * 100;
+            nudQuake.Value = geopoiesisService.Quakes * 100;
+            nudAUDistance.Value = geopoiesisService.DistanceFromStar;
+
             base.Update(gameTime);
         }
 
@@ -589,11 +613,11 @@ namespace Geopoiesis.Scenes
 
                 yield return new WaitForEndOfFrame(Game);
 
-                foreach (float key in LODSettings.Keys)
-                {
-                    if (d <= key && planet.LodLevel != LODSettings[key])
-                        planet.SetLODLevel(LODSettings[key]);
-                }
+                //foreach (float key in LODSettings.Keys)
+                //{
+                //    if (d <= key && planet.LodLevel != LODSettings[key])
+                //        planet.SetLODLevel(LODSettings[key]);
+                //}
 
 
                 if (d - distToPlanetTarget < .025f)
@@ -620,30 +644,21 @@ namespace Geopoiesis.Scenes
         {
             RasterizerState currentRasterizerState = GraphicsDevice.RasterizerState;
 
-            base.Draw(gameTime);
-
-            //Controls.
+            if (planet.Generated)
+                base.Draw(gameTime);
+            
             _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
 
-            // Volcanism
-            string str;
-            Vector2 p;
-            nudVolcanism.Value = geopoiesisService.Volcanism * 100;
-            nudQuake.Value = geopoiesisService.Quakes * 100;
-            nudAUDistance.Value = geopoiesisService.DistanceFromStar;
+            if (State != SceneStateEnum.Loaded)
+                _spriteBatch.Draw(fader, new Rectangle(0, 0, Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height), fadeColor);
+
+            if (!planet.Generated)
+                lblGeneratingPlanet.Draw(gameTime);
+            if(!sun.Generated)
+                lblGeneratingSun.Draw(gameTime);
+            if(!moon.Generated)
+                lblGeneratingMoon.Draw(gameTime);
             
-            //quitBox = CreateBox(150,64, new Rectangle(2, 2, 2, 2), new Color(.1f, .5f, .1f, .75f), hudColor);
-            //QuitRect = new Rectangle(Game.GraphicsDevice.Viewport.Width - (quitBox.Width+8), Game.GraphicsDevice.Viewport.Height - (quitBox.Height + 8), quitBox.Width, quitBox.Height);
-            //_spriteBatch.Draw(quitBox, QuitRect, hudColor);
-
-            //p = new Vector2(QuitRect.X, QuitRect.Y);
-
-            //str = "Quit & Save";
-            //p.X += QuitRect.Width / 2 - font.MeasureString(str).X / 2;
-            //p.Y += font.LineSpacing * .75f;
-            
-            //_spriteBatch.DrawString(font, str, p, hudColor);
-
 
             _spriteBatch.End();
 
@@ -666,14 +681,64 @@ namespace Geopoiesis.Scenes
 
         public override void LoadScene()
         {
-            audioManager.MusicVolume = 1;
             base.LoadScene();
+            coroutineService.StartCoroutine(FadeIn());
+        }
+        public override void UnloadScene()
+        {
+            nudVolcanism.OnUpMouseClick -= nudUpClick;
+            nudVolcanism.OnDownMouseClick -= nudDownClick;
+
+            nudAUDistance.OnUpMouseClick -= nudUpClick;
+            nudAUDistance.OnDownMouseClick -= nudDownClick;
+
+            nudQuake.OnUpMouseClick -= nudUpClick;
+            nudQuake.OnDownMouseClick -= nudDownClick;
+
+            btnQuit.OnMouseClick -= btnQuitClick;
+
+            base.UnloadScene();
+            coroutineService.StartCoroutine(FadeOut());
         }
 
-        public override  void UnloadScene()
+        IEnumerator FadeIn()
         {
-            base.UnloadScene();
+            byte a = 255;
+            byte fadeSpeed = 4;
+            fadeColor = new Color(fadeColor.R, fadeColor.G, fadeColor.B, a);
+
+            while(planet.Generated)
+                yield return new WaitForEndOfFrame(Game);
+
+            while (a > 0)
+            {
+                yield return new WaitForEndOfFrame(Game);
+                a = (byte)Math.Max(0, a - fadeSpeed);
+                fadeColor = new Color(fadeColor.R, fadeColor.G, fadeColor.B, a);
+
+                audioManager.MusicVolume = 1f - (a / 255f);
+            }
+
+            State = SceneStateEnum.Loaded;
+        }
+
+        IEnumerator FadeOut()
+        {
+            byte a = 0;
+            byte fadeSpeed = 4;
+            fadeColor = new Color(fadeColor.R, fadeColor.G, fadeColor.B, a);
+
+            while (a < 255)
+            {   
+                yield return new WaitForEndOfFrame(Game);
+                a = (byte)Math.Min(255, a + fadeSpeed);
+                fadeColor = new Color(fadeColor.R, fadeColor.G, fadeColor.B, a);
+
+                audioManager.MusicVolume = 1f - (a / 255f);
+            }
+
             State = SceneStateEnum.Unloaded;
         }
+
     }
 }
