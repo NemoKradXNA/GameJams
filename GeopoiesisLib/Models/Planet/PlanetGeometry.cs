@@ -56,7 +56,7 @@ namespace Geopoiesis.Models.Planet
                 c = new Color[] { new Color(.4f, .4f, .3f, 1f) };
                 textures[1].SetData(c);
 
-                c = new Color[] { new Color(.8f, .4f, .3f, 1f) };
+                c = new Color[] { /*new Color(.8f, .4f, .3f, 1f)*/ /*new Color(162, 147, 132, 255) */ new Color(96, 85, 79, 255) };
                 textures[2].SetData(c);
 
                 c = new Color[] { new Color(.8f, .8f, 1f, 1f) };

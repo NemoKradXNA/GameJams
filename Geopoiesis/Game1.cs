@@ -117,8 +117,8 @@ namespace Geopoiesis
             //_spriteBatch = new SpriteBatch(GraphicsDevice);
 
 
-            //sceneManager.LoadScene("mainMenu");
-            sceneManager.LoadScene("testing");
+            sceneManager.LoadScene("mainMenu");
+            //sceneManager.LoadScene("testing");
         }
 
         protected override void Update(GameTime gameTime)

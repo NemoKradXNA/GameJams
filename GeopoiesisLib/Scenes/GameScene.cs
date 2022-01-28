@@ -480,9 +480,8 @@ namespace Geopoiesis.Scenes
                         planet.effect.Parameters["EyePosition"].SetValue(camera.Transform.Position);
 
                     if (atmos.effect.Parameters["atmos"] != null)
-                        // atmos.effect.Parameters["atmos"].SetValue(geopoiesisService.OZone);
-                        atmos.effect.Parameters["atmos"].SetValue(1f);
-
+                        atmos.effect.Parameters["atmos"].SetValue(geopoiesisService.OZone);
+                        
                     if (planet.effect.Parameters["temp"] != null)
                         planet.effect.Parameters["temp"].SetValue(geopoiesisService.SurfaceTemp);
 
@@ -650,7 +649,10 @@ namespace Geopoiesis.Scenes
             _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
 
             if (State != SceneStateEnum.Loaded)
+            {
+                _spriteBatch.Draw(Game.Content.Load<Texture2D>("Textures/MenuBG"), new Rectangle(0, 0, Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height), Color.White);
                 _spriteBatch.Draw(fader, new Rectangle(0, 0, Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height), fadeColor);
+            }
 
             if (!planet.Generated)
                 lblGeneratingPlanet.Draw(gameTime);
