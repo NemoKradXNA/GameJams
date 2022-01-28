@@ -33,7 +33,7 @@ namespace Geopoiesis.Scenes
         ParticleEmitter pet;
         Cube cube;
 
-        protected float DisplacementMag = .15f;
+        protected float DisplacementMag = 0;//.15f;
         float NormalMag = .055f;
 
         Color hudColor = Color.LimeGreen;
@@ -478,6 +478,9 @@ namespace Geopoiesis.Scenes
                 {
                     if(planet.effect.Parameters["EyePosition"] != null)
                         planet.effect.Parameters["EyePosition"].SetValue(camera.Transform.Position);
+
+                    if (planet.effect.Parameters["vocalnism"] != null)
+                        planet.effect.Parameters["vocalnism"].SetValue(geopoiesisService.Volcanism);
 
                     if (atmos.effect.Parameters["atmos"] != null)
                         atmos.effect.Parameters["atmos"].SetValue(geopoiesisService.OZone);

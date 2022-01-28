@@ -104,9 +104,11 @@ namespace Geopoiesis
             currentRasterizerState = initialRasterizerState;
 
             sceneManager.AddScene(new MainMenuScene(this, "mainMenu"));
-
+            sceneManager.AddScene(new OptionsScene(this, "optionsMenu"));
+            sceneManager.AddScene(new HelpScene(this, "helpMenue"));
+            sceneManager.AddScene(new AudioOptionsScene(this, "audioOptions"));
+            sceneManager.AddScene(new CreditsScene(this, "creditsScene"));
             sceneManager.AddScene(new GameScene(this, "mainGame"));
-
             sceneManager.AddScene(new PlanetTestScene(this, "testing"));
 
             base.Initialize();

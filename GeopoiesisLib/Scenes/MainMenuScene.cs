@@ -43,6 +43,7 @@ namespace Geopoiesis.Scenes
         UILabel lblSubTitle;
         UIButton btnNewGame;
         UIButton btnContinue;
+        UIButton btnOptions;
         UIButton btnQuit;
         UILabel lblVersion;
 
@@ -134,7 +135,17 @@ namespace Geopoiesis.Scenes
             btnContinue.Visible = false;
             Components.Add(btnContinue);
 
-            btnQuit = new UIButton(Game, new Point((centerScreen.X) - buttonBox.Width / 2, 512 + 128), new Point(buttonBox.Width, buttonBox.Height));
+            btnOptions = new UIButton(Game, new Point((centerScreen.X) - buttonBox.Width / 2, 512 + 128), new Point(buttonBox.Width, buttonBox.Height));
+            btnOptions.Text = "Options";
+            btnOptions.BackgroundTexture = buttonBox;
+            btnOptions.Tint = Color.White;
+            btnOptions.Font = font;
+            btnOptions.TextColor = textColor;
+            btnOptions.HighlightColor = Color.Aqua;
+            btnOptions.OnMouseClick += ButtonClicked;
+            Components.Add(btnOptions);
+
+            btnQuit = new UIButton(Game, new Point((centerScreen.X) - buttonBox.Width / 2, 512 + 256), new Point(buttonBox.Width, buttonBox.Height));
             btnQuit.Text = "Quit";
             btnQuit.BackgroundTexture = buttonBox;
             btnQuit.Tint = Color.White;
@@ -172,6 +183,7 @@ namespace Geopoiesis.Scenes
             if (gameInProgress && !btnContinue.Visible)
             {
                 btnContinue.Visible = true;
+                btnOptions.Position += new Point(0, 128);
                 btnQuit.Position += new Point(0, 128);
             }
 
@@ -182,9 +194,7 @@ namespace Geopoiesis.Scenes
             if (State != SceneStateEnum.Loaded)
                 return;
 
-            btnContinue.OnMouseClick -= ButtonClicked;
-            btnNewGame.OnMouseClick -= ButtonClicked;
-            btnQuit.OnMouseClick -= ButtonClicked;
+           
 
             audioManager.PlaySFX("Audio/SFX/beep-07");
             if (sender == btnNewGame)
@@ -202,6 +212,10 @@ namespace Geopoiesis.Scenes
                 exiting = true;
                 State = SceneStateEnum.Unloading;
                 UnloadScene();
+            }
+            else if (sender == btnOptions)
+            {
+                sceneManager.LoadScene("optionsMenu");
             }
         }
 
@@ -240,7 +254,12 @@ namespace Geopoiesis.Scenes
         public override void UnloadScene()
         {
             base.UnloadScene();
+
+            btnContinue.OnMouseClick -= ButtonClicked;
             btnNewGame.OnMouseClick -= ButtonClicked;
+            btnQuit.OnMouseClick -= ButtonClicked;
+            btnOptions.OnMouseClick -= ButtonClicked;
+            
             coroutineService.StartCoroutine(FadeOut());
         }
 

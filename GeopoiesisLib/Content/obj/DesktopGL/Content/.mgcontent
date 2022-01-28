@@ -4,52 +4,56 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Audio/Music/Creepy-Hollow.mp3</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Audio/Music/Midnight-Mist.mp3</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Audio/SFX/beep-07.wav</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Audio/SFX/beep-10.wav</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Audio/SFX/dtmf-5.mp3</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Models/SkySphere.fbx</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Shaders/AtmosShader.fx</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Shaders/basic.fx</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Shaders/ColorRamp.fx</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Shaders/FaceColor.fx</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Shaders/Moon.fx</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Shaders/Particles/Billboard.fx</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Shaders/PlanetSplatMap.fx</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Shaders/ShaderColor.fx</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Shaders/SkyBox.fx</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Shaders/Sun.fx</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Shaders/Test.fx</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/SpriteFont/debugfont.spritefont</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/SpriteFont/font.spritefont</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/SpriteFont/GameFont.spritefont</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/SpriteFont/logFont.spritefont</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/CubeMap/space.dds</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Logo1.png</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/MenuBG.png</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Particles/flare0.png</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Particles/flare1.png</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Particles/flare2.png</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Particles/flare3.png</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Particles/flare4.png</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Particles/flare5.png</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Particles/smoke0.png</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/ramp1.jpg</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/ramp2.jpg</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Stars/A.png</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Stars/F.png</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Stars/G.png</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Stars/K.png</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Stars/M.png</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Terrain/foliage.jpg</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Terrain/Rock_042_BaseColor.jpg</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Terrain/Rock_042_Normal.jpg</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Terrain/Sand_005_baseColor.jpg</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Terrain/Sand_005_normal.jpg</File>
-    <File>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Terrain/snow.jpg</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Audio/Music/Creepy-Hollow.mp3</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Audio/Music/Midnight-Mist.mp3</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Audio/Music/More-Sewer-Creepers_Looping.mp3</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Audio/SFX/beep-07.wav</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Audio/SFX/beep-10.wav</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Audio/SFX/dtmf-5.mp3</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Models/SkySphere.fbx</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Shaders/AtmosShader.fx</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Shaders/basic.fx</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Shaders/ColorRamp.fx</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Shaders/FaceColor.fx</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Shaders/Moon.fx</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Shaders/Particles/Billboard.fx</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Shaders/PlanetSplatMap.fx</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Shaders/ShaderColor.fx</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Shaders/SkyBox.fx</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Shaders/Sun.fx</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Shaders/Test.fx</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/SpriteFont/debugfont.spritefont</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/SpriteFont/font.spritefont</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/SpriteFont/GameFont.spritefont</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/SpriteFont/logFont.spritefont</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/SpriteFont/titleFont.spritefont</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/CubeMap/space.dds</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Logo1.png</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/MenuBG.png</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Particles/flare0.png</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Particles/flare1.png</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Particles/flare2.png</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Particles/flare3.png</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Particles/flare4.png</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Particles/flare5.png</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Particles/smoke0.png</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/ramp1.jpg</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/ramp2.jpg</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Stars/A.png</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Stars/F.png</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Stars/G.png</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Stars/K.png</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Stars/M.png</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Terrain/foliage.jpg</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Terrain/Rock_042_BaseColor.jpg</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Terrain/Rock_042_Normal.jpg</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Terrain/Sand_005_baseColor.jpg</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Terrain/Sand_005_normal.jpg</File>
+    <File>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Terrain/snow.jpg</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

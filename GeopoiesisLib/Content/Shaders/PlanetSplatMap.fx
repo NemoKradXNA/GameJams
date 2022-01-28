@@ -17,6 +17,8 @@ float4x4 lightViewProjection : LightViewProjection;
 float displacemntMag = 1;
 float3 lightDirection;
 
+float vocalnism = 0;
+
 float _MinDeepSeaDepth = 0;
 float _MinSeaDepth = .241f;
 float _MinShoreDepth  = .328f;
@@ -198,7 +200,11 @@ PixelShaderOutput PixelShaderFunction(vOut input) : Color
     spec[2] = 0;
     spec[3] = 0;
     
+    float4 volc = float4(1, .3f, 0, 1) * pow(r * vocalnism, 20);
+    
     output.Color = (lerp(mul(splat, col), _Ice * r, (1 - ice) * r) * NdL) + mul(splat,spec);
+    
+    output.Color += volc;
     
     //output.Color = float4(input.noff, 1);
     

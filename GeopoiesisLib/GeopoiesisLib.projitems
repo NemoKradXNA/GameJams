@@ -42,8 +42,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\SkyBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Sphere.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Transform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Scenes\AudioOptionsScene.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Scenes\CreditsScene.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Scenes\GameScene.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Scenes\HelpScene.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Scenes\MainMenuScene.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Scenes\OptionsScene.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Scenes\PlanetTestScene.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Scenes\SceneBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Scenes\SplashScene.cs" />
@@ -297,6 +301,7 @@
     <None Include="$(MSBuildThisFileDirectory)Content\SpriteFont\font.spritefont" />
     <None Include="$(MSBuildThisFileDirectory)Content\SpriteFont\GameFont.spritefont" />
     <None Include="$(MSBuildThisFileDirectory)Content\SpriteFont\logFont.spritefont" />
+    <None Include="$(MSBuildThisFileDirectory)Content\SpriteFont\titleFont.spritefont" />
     <None Include="$(MSBuildThisFileDirectory)Content\Textures\CubeMap\space.dds" />
     <None Include="$(MSBuildThisFileDirectory)Content\Textures\Logo1.png" />
     <None Include="$(MSBuildThisFileDirectory)Content\Textures\MenuBG.png" />
@@ -320,5 +325,8 @@
     <None Include="$(MSBuildThisFileDirectory)Content\Textures\Terrain\Sand_005_baseColor.jpg" />
     <None Include="$(MSBuildThisFileDirectory)Content\Textures\Terrain\Sand_005_normal.jpg" />
     <None Include="$(MSBuildThisFileDirectory)Content\Textures\Terrain\snow.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)Content\Audio\Music\More-Sewer-Creepers_Looping.mp3" />
   </ItemGroup>
 </Project>
