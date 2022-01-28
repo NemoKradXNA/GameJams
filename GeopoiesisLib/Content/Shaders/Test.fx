@@ -185,6 +185,8 @@ PixelShaderOutput PixelShaderFunction(vOut input) : Color
     
     //output.Color = texCUBE(normalMapSampler, input.normal);
     
+    //aoutput.Color = float4(r, r, r, 1);
+    
     return output;
 }
 

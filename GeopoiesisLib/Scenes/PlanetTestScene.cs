@@ -38,12 +38,12 @@ namespace Geopoiesis.Scenes
             SkyBox skyBox = new SkyBox(Game, "Shaders/SkyBox");
             Components.Add(skyBox);
 
-            planet = new PlanetGeometry(Game, "Shaders/Test",128, 1.8f, 512,1,1);
+            planet = new PlanetGeometry(Game, "Shaders/Test", 2, 1.8f, 64,3,8);
             planet.Transform.Position = new Vector3(0, 0, 0);
             Components.Add(planet);
 
             atmos = new Atmosphere(Game, "Shaders/AtmosShader");
-            atmos.Transform.Scale = Vector3.One * 4.25f;
+            atmos.Transform.Scale = Vector3.One;
             Components.Add(atmos);
 
             pet = new ParticleEmitter(Game);
@@ -62,46 +62,77 @@ namespace Geopoiesis.Scenes
             
         }
 
+        Texture2D face;
+        Dictionary<CubeMapFace, Vector3> FaceNormals = new Dictionary<CubeMapFace, Vector3>
+        {
+            { CubeMapFace.PositiveZ, Vector3.Backward },
+            { CubeMapFace.PositiveY,  Vector3.Up },
+            { CubeMapFace.NegativeX, Vector3.Left },
+            { CubeMapFace.PositiveX, Vector3.Right },
+            { CubeMapFace. NegativeZ, Vector3.Forward },
+            { CubeMapFace.NegativeY, Vector3.Down },
+        };
         protected void AddVolcano(Vector3 p)
         {
-            pet.Transform.Parent = planet.Transform;
-
-            p = planet.Transform.Position + ((Vector3.Up + Vector3.Backward) * (planet.Radius));
-
-            pet.Transform.Position = p;
-
+            //CubeMapFace cubeFace = CubeMapFace.NegativeY;
+            //CubeMapFace cubeFace = CubeMapFace.PositiveY;
+            CubeMapFace cubeFace = CubeMapFace.PositiveZ;
             // Find a hight point on the height cube map.
             Color[] c = new Color[planet.CubeSize * planet.CubeSize];
-            //planet.CubeHeightMap.GetData(CubeMapFace.NegativeY, c);
             //planet.CubeHeightMap.GetData(CubeMapFace.PositiveZ, c);
             //planet.CubeHeightMap.GetData(CubeMapFace.NegativeZ, c);
             //planet.CubeHeightMap.GetData(CubeMapFace.NegativeX, c);
             //planet.CubeHeightMap.GetData(CubeMapFace.PositiveX, c);
-            planet.CubeHeightMap.GetData(CubeMapFace.PositiveY, c);
+            planet.CubeHeightMap.GetData(cubeFace, c);
 
-            Color cp = c.FirstOrDefault(c => c.R > 204);
+
+            byte m = c.Max(c => c.R);
+            Color cp = c.FirstOrDefault(c => c.R >= m);
             int idx = c.ToList().IndexOf(cp);
 
+            c[idx] = Color.Red;
+            face = new Texture2D(Game.GraphicsDevice, planet.CubeSize, planet.CubeSize);
+            face.SetData(c);
+
             // get x/y and spherize....
-            int z = idx / planet.CubeSize;
-            int x = idx - (planet.CubeSize * z);
+            int x = idx / (planet.CubeSize-1);
+            int z = idx - (planet.CubeSize * x-1);
             int y = planet.CubeSize;
 
-            x = planet.CubeSize - x;
-            z = planet.CubeSize - z;
+             
+            //z = planet.CubeSize - z;
 
             Vector3 n = (2 * (new Vector3(x, y, z) / planet.CubeSize)) - Vector3.One ;
+            
+            n = new Vector3(x, y, z) / planet.CubeSize;
+            n = (2 * n) - Vector3.One;
 
-            n *= 128 * .5f;
-            n += (Vector3.One * .5f);
+            n.Normalize();
+            //n *= 128 * .5f;
+            //n += (Vector3.One * .5f);
             //n.Normalize();
-            //Vector3 pd = Vector3.Transform(n, PlanetFace.RotateToFace(Vector3.Up));
+            //Vector3 pd = Vector3.Transform(n, PlanetFace.RotateToFace(Vector3.Down));
             //Vector3 pd = Vector3.Transform(n, PlanetFace.RotateToFace(Vector3.Backward));
             //Vector3 pd = Vector3.Transform(n, PlanetFace.RotateToFace(Vector3.Forward));
             //Vector3 pd = Vector3.Transform(n, PlanetFace.RotateToFace(Vector3.Left));
             //Vector3 pd = Vector3.Transform(n, PlanetFace.RotateToFace(Vector3.Right));
-            Vector3 pd = Vector3.Transform(n, PlanetFace.RotateToFace(Vector3.Down));
-            pd.Normalize();
+            //Vector3 pd = Vector3.Transform(n, PlanetFace.RotateToFace(Vector3.Up));
+            Vector3 pd = Vector3.Zero;
+
+            Vector3 Normal = FaceNormals[cubeFace];
+            Vector3 cubeNormal = new Vector3(Normal.X * -1, Normal.Y * -1, Normal.Z);
+
+            Quaternion cubeRot = PlanetFace.RotateToFace(cubeNormal);
+
+            if (cubeFace == CubeMapFace.PositiveY)
+                pd = Vector3.Transform(n, PlanetFace.RotateToFace(Vector3.Up));
+            else if (cubeFace == CubeMapFace.NegativeY)
+                pd = Vector3.Transform(n, PlanetFace.RotateToFace(Vector3.Down));
+            else if(cubeFace == CubeMapFace.PositiveZ)
+                pd = Vector3.Transform(n , cubeRot);
+
+
+            //pd.Normalize();
             pd *= planet.Radius + DisplacementMag;
             
             p = pd;// planet.Transform.Position + (pd) * (planet.Radius + 1);
@@ -110,7 +141,7 @@ namespace Geopoiesis.Scenes
             //p = Vector3.Transform(pd, Quaternion.Inverse( planet.Transform.Rotation));
             //p = planet.Transform.Position + (p) * (planet.Radius+1);
             pet.Transform.Position = p;
-
+            //pet.Transform.Parent = planet.Transform;
             for (int s = 0; s < 50; s++)
             {
                 pet.AddParticle(p, Vector3.One, Game.Content.Load<Texture2D>("Textures/Particles/smoke0"), Color.White, false);
@@ -197,12 +228,13 @@ namespace Geopoiesis.Scenes
                 planet.LightDirection = Vector3.Left;
                 atmos.LightDirection = planet.LightDirection;
 
-                atmos.Transform.Scale = (Vector3.One * 4.25f) + (Vector3.One * (planet.Radius * .8f) * DisplacementMag);
 
-                if(kbManager.KeyPress(Keys.Space))
+                atmos.Transform.Scale = (Vector3.One * planet.Radius * 1.05f) + (Vector3.One * DisplacementMag);
+
+                if (kbManager.KeyPress(Keys.Space))
                     AddVolcano(Vector3.Zero);
 
-                planet.Transform.Rotate(Vector3.Up, .0025f);
+                //planet.Transform.Rotate(Vector3.Up, .0025f);
 
                 for (int s = 0; s < pet.Particles.Count; s++)
                 {
@@ -210,7 +242,8 @@ namespace Geopoiesis.Scenes
 
                     if (pet.Active[particle] == true)
                     {
-                        Vector3 v = pet.Transform.Position - planet.Transform.Position;
+                        Vector3 v =  pet.Transform.Position - planet.Transform.Position;
+                        
                         v.Normalize();
 
                         float x = rnd.Next(-10, 10) / 10f;
@@ -218,13 +251,13 @@ namespace Geopoiesis.Scenes
                         //v += new Vector3(x, y,0);
                         particle.Position += v * .005f;
 
-                        float d = Vector3.Distance(particle.Position + pet.Transform.Position, pet.Transform.Position);
+                        float d = Vector3.Distance(particle.Position, pet.Transform.Position);
                         particle.Scale = Vector3.One * d * 1f;
                         if (d > 1)
                         {
                             pet.Active[particle] = false;
                             particle.Scale = Vector3.Zero;
-                            particle.Position = Vector3.Zero;
+                            particle.Position = pet.Transform.Position;
                         }
                     }
                     else
@@ -278,10 +311,13 @@ namespace Geopoiesis.Scenes
             base.Draw(gameTime);
             _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
             
-            if (!planet.Generated)
+            if (!planet.Generated && planet.GenerationString != null)
             {
-                _spriteBatch.DrawString(font, "Generating Planet", new Vector2(8, 8), Color.White);
+                _spriteBatch.DrawString(font, planet.GenerationString, new Vector2(8, 8), Color.White);
             }
+
+            if(face != null)
+                _spriteBatch.Draw(face, new Rectangle(GraphicsDevice.Viewport.Width - 512, 0, 512 ,512), Color.White);
 
             _spriteBatch.End();
 
