@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <SourceFile>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Shaders/Sun.fx</SourceFile>
-  <SourceTime>2022-01-23T16:02:33.8461004+00:00</SourceTime>
+  <SourceTime>2022-01-29T14:18:00.2674562+00:00</SourceTime>
   <DestFile>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/bin/Windows/Content/Shaders/Sun.xnb</DestFile>
-  <DestTime>2022-01-28T17:50:12.1635628+00:00</DestTime>
+  <DestTime>2022-01-29T14:18:19.697681+00:00</DestTime>
   <Importer>EffectImporter</Importer>
   <ImporterTime>2020-08-10T16:17:54+01:00</ImporterTime>
   <Processor>EffectProcessor</Processor>

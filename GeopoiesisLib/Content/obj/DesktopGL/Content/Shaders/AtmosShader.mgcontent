@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <SourceFile>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Shaders/AtmosShader.fx</SourceFile>
-  <SourceTime>2022-01-27T20:35:29.5892501+00:00</SourceTime>
+  <SourceTime>2022-01-29T14:18:00.2634571+00:00</SourceTime>
   <DestFile>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/bin/DesktopGL/Content/Shaders/AtmosShader.xnb</DestFile>
-  <DestTime>2022-01-28T17:50:07.1547282+00:00</DestTime>
+  <DestTime>2022-01-29T14:18:34.9511951+00:00</DestTime>
   <Importer>EffectImporter</Importer>
   <ImporterTime>2020-08-10T16:17:54+01:00</ImporterTime>
   <Processor>EffectProcessor</Processor>

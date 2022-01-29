@@ -9,7 +9,7 @@ namespace Geopoiesis.UI
     public class UIButton : UIBase
     {
 
-        protected bool mouseOver { get; set; }
+        public bool IsMouseOver { get; set; }
 
         public Texture2D BackgroundTexture { get; set; }
         public SpriteFont Font { get; set; }
@@ -23,18 +23,23 @@ namespace Geopoiesis.UI
 
         public event UIMouseEvent OnMouseOver;
         public event UIMouseEvent OnMouseClick;
+        public event UIMouseEvent OnMouseDown;
 
         protected Vector2 TextPosition
         {
             get
             {
-                Vector2 tp = Position.ToVector2();
-                Vector2 m = Font.MeasureString(Text) * .5f;
+                if (!string.IsNullOrEmpty(Text))
+                {
+                    Vector2 tp = Position.ToVector2();
+                    Vector2 m = Font.MeasureString(Text) * .5f;
 
-                tp.Y += (Size.Y / 2) - m.Y;
-                tp.X += (Size.X / 2) - m.X;
+                    tp.Y += (Size.Y / 2) - m.Y;
+                    tp.X += (Size.X / 2) - m.X;
 
-                return tp;
+                    return tp;
+                }
+                return Vector2.Zero;
             }
         }
 
@@ -50,9 +55,9 @@ namespace Geopoiesis.UI
             base.Update(gameTime);
 
 
-            mouseOver = inputManager.MouseManager.PositionRect.Intersects(Rectangle);
+            IsMouseOver = inputManager.MouseManager.PositionRect.Intersects(Rectangle);
 
-            if (mouseOver)
+            if (IsMouseOver)
             {
                 // Mouse over, highlight
                 bgColor = HighlightColor;
@@ -66,6 +71,12 @@ namespace Geopoiesis.UI
 
                 if (OnMouseOver != null)
                     OnMouseOver(this, inputManager.MouseManager);
+
+                if (inputManager.MouseManager.LeftButtonDown)
+                {
+                    if (OnMouseDown != null)
+                        OnMouseDown(this, inputManager.MouseManager);
+                }
             }
             else
             {
@@ -80,7 +91,8 @@ namespace Geopoiesis.UI
 
             // Draw BG
             _spriteBatch.Draw(BackgroundTexture, Rectangle, bgColor);
-            _spriteBatch.DrawString(Font, Text, TextPosition, txtColor);
+            if(!string.IsNullOrEmpty(Text))
+                _spriteBatch.DrawString(Font, Text, TextPosition, txtColor);
             _spriteBatch.End();
         }
     }

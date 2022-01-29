@@ -50,11 +50,24 @@ namespace Geopoiesis.Services
         }
     }
 
+    public class AudioSettings
+    {
+        public float MasterVolume { get; set; }
+        public float MusicVolume { get; set; }
+        public float SFXVolume { get; set; }
+
+        public AudioSettings()
+        {
+            MasterVolume = MusicVolume = SFXVolume = 1;
+        }
+    }
+    
+
     public class GeopoiesisService : GameComponent
     {
-
         protected ICameraService Camera { get { return Game.Services.GetService<ICameraService>(); } }
         protected ICoroutineService coroutineService { get { return Game.Services.GetService<ICoroutineService>(); } }
+        protected IAudioManager audioManager { get { return Game.Services.GetService<IAudioManager>(); } }
 
         public StartType StartType = StartType.None;
         public Epoch CurrentEpoch = Epoch.PlanetForming;
@@ -83,12 +96,34 @@ namespace Geopoiesis.Services
 
         public List<SystemEvent> LoggedEvents = new List<SystemEvent>();
 
+        public AudioSettings AudioSettings { get; set; }
+
         public GeopoiesisService(Game game) : base(game)
         {
             CurrentTimeFlow = YearsFullSpeed;
 
             Game.Services.AddService(typeof(GeopoiesisService), this);
             Game.Components.Add(this);
+
+            LoadAudioSettings();
+        }
+
+        public void LoadAudioSettings()
+        {
+            AudioSettings = new AudioSettings();
+            string json = JsonConvert.SerializeObject(AudioSettings);
+
+            if (File.Exists("audioSettings.json"))
+            {
+                json = File.ReadAllText("audioSettings.json");
+                AudioSettings = JsonConvert.DeserializeObject<AudioSettings>(json);
+            }
+            else
+                SaveAudioSettings();
+
+            audioManager.MasterVolume = AudioSettings.MasterVolume;
+            audioManager.MusicVolume = AudioSettings.MusicVolume;
+            audioManager.SFXVolume = AudioSettings.SFXVolume;
         }
 
         public void StartTheMarchOfTime()
@@ -103,8 +138,15 @@ namespace Geopoiesis.Services
 
             SaveGame thisGame = new SaveGame(this);
             File.WriteAllText("save.json",JsonConvert.SerializeObject(thisGame));
+        }
 
-            
+        public void SaveAudioSettings()
+        {
+            AudioSettings.MasterVolume = audioManager.MasterVolume;
+            AudioSettings.MusicVolume = audioManager.MusicVolume;
+            AudioSettings.SFXVolume = audioManager.SFXVolume;
+
+            File.WriteAllText("audioSettings.json", JsonConvert.SerializeObject(AudioSettings));
         }
 
         public void reSet()

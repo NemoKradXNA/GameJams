@@ -7,11 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geopoiesis", "Geopoiesis.cs
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "GeopoiesisLib", "..\GeopoiesisLib\GeopoiesisLib.shproj", "{A0CDBD0E-3A41-42B7-9425-A838BC2C7383}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeopoiesisOGL", "..\GeopoiesisOGL\GeopoiesisOGL.csproj", "{6710FC55-5B23-4CF5-A097-CE9297EA9AE4}"
-EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		..\GeopoiesisLib\GeopoiesisLib.projitems*{6710fc55-5b23-4cf5-a097-ce9297ea9ae4}*SharedItemsImports = 5
 		..\GeopoiesisLib\GeopoiesisLib.projitems*{a0cdbd0e-3a41-42b7-9425-a838bc2c7383}*SharedItemsImports = 13
 		..\GeopoiesisLib\GeopoiesisLib.projitems*{f5e0f5ff-4756-4880-895b-74f33619d1c6}*SharedItemsImports = 5
 	EndGlobalSection
@@ -24,10 +21,6 @@ Global
 		{F5E0F5FF-4756-4880-895B-74F33619D1C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5E0F5FF-4756-4880-895B-74F33619D1C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5E0F5FF-4756-4880-895B-74F33619D1C6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6710FC55-5B23-4CF5-A097-CE9297EA9AE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6710FC55-5B23-4CF5-A097-CE9297EA9AE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6710FC55-5B23-4CF5-A097-CE9297EA9AE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6710FC55-5B23-4CF5-A097-CE9297EA9AE4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

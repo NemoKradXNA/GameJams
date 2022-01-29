@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <SourceFile>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Textures/Particles/flare5.png</SourceFile>
-  <SourceTime>2022-01-07T00:54:24+00:00</SourceTime>
+  <SourceTime>2022-01-29T14:18:00.5484538+00:00</SourceTime>
   <DestFile>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/bin/DesktopGL/Content/Textures/Particles/flare5.xnb</DestFile>
-  <DestTime>2022-01-28T17:50:15.0669373+00:00</DestTime>
+  <DestTime>2022-01-29T14:18:40.6715142+00:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2020-08-10T16:17:54+01:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

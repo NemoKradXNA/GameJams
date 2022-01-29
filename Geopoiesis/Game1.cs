@@ -88,11 +88,12 @@ namespace Geopoiesis
 
             noiseService = new KeijiroPerlinService(this);
             coroutineService = new CoroutineService(this);
+            audioManager = new AudioManagerService(this);
             geopoiesisService = new GeopoiesisService(this);
             kbManager = new KeyboardStateManager(this);
             msManager = new MouseStateManager(this);
             inputHandlerService = new InputHandlerService(this, kbManager, msManager);
-            audioManager = new AudioManagerService(this);
+            
 
             camera = new CameraService(this, 0.1f, 20000f);
             camera.ClearColor = Color.Black;

@@ -68,6 +68,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\UILabel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UIList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UINumericUpDown.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\UISlider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UIStarBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UIStatBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)VertexType\VertexPositionColorNormalTextureTangent.cs" />
