@@ -46,6 +46,11 @@ namespace Geopoiesis.Scenes
             fader = new Texture2D(Game.GraphicsDevice, 1, 1);
             fader.SetData(new Color[] { Color.White });
 
+            UIImage imgTitle = new UIImage(Game, new Point(centerScreen.X - 512, 128), new Point(1024, 256));
+            imgTitle.Texture = Game.Content.Load<Texture2D>("Textures/Logo1");
+            imgTitle.Tint = Color.White;
+            Components.Add(imgTitle);
+
             lblTitle = new UILabel(Game);
             lblTitle.Text = "Game Options";
             lblTitle.Font = titlFont;

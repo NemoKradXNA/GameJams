@@ -82,7 +82,7 @@ namespace Geopoiesis.Scenes
                 b = (float)rnd.NextDouble() + s / 16f;
                 a = (float)rnd.NextDouble() + .0125f;
 
-
+                
                 particles.Add(new Rectangle(x, y, w, h));
                 pColor.Add(new Color(r, g, b, a));
                 pSpeed.Add(s);

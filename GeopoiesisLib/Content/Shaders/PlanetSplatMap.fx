@@ -200,7 +200,9 @@ PixelShaderOutput PixelShaderFunction(vOut input) : Color
     spec[2] = 0;
     spec[3] = 0;
     
-    float4 volc = float4(1, .3f, 0, 1) * pow(r * vocalnism, 20);
+    
+    
+    float4 volc = float4(1, 0, 0, 1) * pow(r, 10) * vocalnism * 3;
     
     output.Color = (lerp(mul(splat, col), _Ice * r, (1 - ice) * r) * NdL) + mul(splat,spec);
     
