@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SourceFile>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Shaders/FaceColor.fx</SourceFile>
+  <SourceTime>2022-01-22T15:17:46.6628944+00:00</SourceTime>
+  <DestFile>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/bin/DesktopGL/Shaders/FaceColor.xnb</DestFile>
+  <DestTime>2022-01-22T15:20:32.6278186+00:00</DestTime>
+  <Importer>EffectImporter</Importer>
+  <ImporterTime>2020-08-10T16:17:54+01:00</ImporterTime>
+  <Processor>EffectProcessor</Processor>
+  <ProcessorTime>2020-08-10T16:17:54+01:00</ProcessorTime>
+  <Parameters>
+    <Key>DebugMode</Key>
+    <Value>Auto</Value>
+  </Parameters>
+  <Dependencies />
+  <BuildAsset />
+  <BuildOutput />
+</PipelineBuildEvent>
