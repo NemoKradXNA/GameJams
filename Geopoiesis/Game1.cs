@@ -111,6 +111,7 @@ namespace Geopoiesis
             sceneManager.AddScene(new CreditsScene(this, "creditsScene"));
             sceneManager.AddScene(new GameScene(this, "mainGame"));
             sceneManager.AddScene(new PlanetTestScene(this, "testing"));
+            sceneManager.AddScene(new ImageGenTest(this, "testImg"));
 
             base.Initialize();
         }
@@ -120,8 +121,9 @@ namespace Geopoiesis
             //_spriteBatch = new SpriteBatch(GraphicsDevice);
 
 
-            sceneManager.LoadScene("mainMenu");
+            //sceneManager.LoadScene("mainMenu");
             //sceneManager.LoadScene("testing");
+            sceneManager.LoadScene("testImg");
         }
 
         protected override void Update(GameTime gameTime)

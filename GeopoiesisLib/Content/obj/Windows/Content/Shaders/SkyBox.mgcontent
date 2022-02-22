@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Shaders/SkyBox.fx</SourceFile>
-  <SourceTime>2022-01-29T14:18:00.2674562+00:00</SourceTime>
-  <DestFile>C:/Users/Charles Humphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/bin/Windows/Content/Shaders/SkyBox.xnb</DestFile>
-  <DestTime>2022-01-29T14:18:19.4251033+00:00</DestTime>
+  <SourceFile>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/Shaders/SkyBox.fx</SourceFile>
+  <SourceTime>2022-01-31T12:54:08.9281433+00:00</SourceTime>
+  <DestFile>C:/Users/CharlesHumphrey/source/repos/NemoKradXNA/GameJams/GeopoiesisLib/Content/bin/Windows/Content/Shaders/SkyBox.xnb</DestFile>
+  <DestTime>2022-01-31T12:54:20.0004142+00:00</DestTime>
   <Importer>EffectImporter</Importer>
-  <ImporterTime>2020-08-10T16:17:54+01:00</ImporterTime>
+  <ImporterTime>2020-08-10T17:17:54+01:00</ImporterTime>
   <Processor>EffectProcessor</Processor>
-  <ProcessorTime>2020-08-10T16:17:54+01:00</ProcessorTime>
+  <ProcessorTime>2020-08-10T17:17:54+01:00</ProcessorTime>
   <Parameters>
     <Key>DebugMode</Key>
     <Value>Auto</Value>
