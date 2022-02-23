@@ -174,7 +174,7 @@ namespace Geopoiesis.Scenes
             for(int p=0;p<particles.Count;p++)
             {
                 if(particles[p].X - pSpeed[p] > 0)
-                    particles[p] = new Rectangle(particles[p].X - (pSpeed[p]), particles[p].Y, particles[p].Width, particles[p].Height);
+                    particles[p] = new Rectangle(particles[p].X - pSpeed[p], particles[p].Y, particles[p].Width, particles[p].Height);
                 else
                     particles[p] = new Rectangle(Game.GraphicsDevice.Viewport.Width, rnd.Next(0,Game.GraphicsDevice.Viewport.Height), rnd.Next(1, 8), rnd.Next(1, 3));
 

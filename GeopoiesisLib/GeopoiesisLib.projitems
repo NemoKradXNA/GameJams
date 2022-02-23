@@ -46,7 +46,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Scenes\CreditsScene.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Scenes\GameScene.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Scenes\HelpScene.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Scenes\ImageGenTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Scenes\MainMenuScene.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Scenes\OptionsScene.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Scenes\PlanetTestScene.cs" />
